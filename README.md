@@ -1,12 +1,4 @@
-# Dark Tech - Project 2025
-
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+# Dark Tech - Project 2025 - ScrollTrap
 
 ## Add your files
 
@@ -44,50 +36,118 @@ Use the built-in continuous integration in GitLab.
 
 ***
 
-# Editing this README
+## Beschrijving
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
 Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
 ## Visuals
+
 Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
-## Installation
+## Installatie
+
 Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
 ## Usage
+
 Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Dit zijn de regels/afspraken om er voor te zorgen dat onze codebase consistent en overzichtelijk blijft. Documentatie voor dit project is in het **Nederlands** en Code altijd in het **Engels**
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Branches
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+**main**: De code hier hoort altijd te werken en is vooral bedoelt voor demos
+**develop:**  hier voegen wij alle features samen
+**feature branches:** maak een branch aan per feature/bugfix, bv:
 
-## License
-For open source projects, say how it is licensed.
+- `feat`/
+- `fix`/
+- `docs`/
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Als deze feature af is kan je een merge/pull-request maken naar de `develop` branch
+
+**Voorbeelden**:  
+
+- `feat/infinite-scroll`  
+- `fix/responsive-layout`  
+- `docs/update-readme`
+
+---
+
+### Commits
+
+We gebruiken [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) voor commit messages:
+
+**Types:**  
+
+- `feat` → nieuwe features
+- `fix` → bugfixes
+- `docs` → documentatie changes
+- `style` → visuele veranderingen
+- `refactor` → code-restructure zonder feature/bugfix  
+- `test` → tests toevoegen/aanpassen  
+- `chore` → build/CI/config dingen.
+
+---
+
+### Code style
+
+Gebruik **ESLint** + **Prettier** (word geconfigureerd in het project).  Hier zijn ook plug-ins voor in bijvoorbeeld vscode. Dan kan je instellen dat als je een bestand opslaat hij deze automatisch formateert met ESlint+Prettier
+
+- **JavaScript/TypeScript:**  
+  - Tabs = 2 spaties.  
+  - Single quotes `'` voor strings.  
+- **React:**  
+  - Standaard regels uit `eslint-plugin-react` (<https://github.com/jsx-eslint/eslint-plugin-react>)
+  - Hooks bovenaan component
+  - Componentnamen in PascalCase (bestandsnamen in kebab-case (`filter-component.tsx`)
+
+- **CSS/Styling (Tailwind):**  
+  - Gebruik Tailwind classes.  
+
+---
+
+### Reviews & Pull Requests
+
+- minimaal **1 review** voor elke merge naar **develop**
+- Elke commit en PR moeten voldoen aan deze checks (zodra deze tasks bestaan):
+  - `npm run lint` → code style check  
+  - `npm run build` → succesvolle build  
+  - `npm test` → unit/integration tests  
+- PR’s moeten bevatten:  
+  - Beschrijving van de wijziging.  
+  - Gelinkte issue op gitlab
+  - Definition of done
+
+---
+
+### Structuur
+
+Dit is de folder structuur voor de applicatie. Zorg ervoor dat deze ongeveer zo blijft. Als je hier van wilt afwijken laat het dan even weten met een goeie reden.
+
+```
+src/
+├── assets/
+│   ├── achtergrond.png
+├── components/
+│   ├── common/
+│   ├── landing/
+│   │   ├── FeatureCard.tsx
+├── pages/
+│   ├── landing/
+│   │   ├── DashBoard.tsx
+├── services/
+│   ├── UserService.ts
+├── hooks/
+│   ├── UseLobby.ts
+├── router/
+│   ├── Router.tsx
+├── types/            
+│    └── user.ts
+├── App.tsx
+├── main.tsx
+```
+
+---

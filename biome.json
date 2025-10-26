@@ -1,0 +1,11 @@
+{
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noUnknownAtRules": {
+          "ignore": ["tailwind", "apply", "variants", "responsive", "screen"]
+        }
+      }
+    }
+  }
+}

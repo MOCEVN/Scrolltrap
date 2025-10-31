@@ -34,7 +34,7 @@ Use the built-in continuous integration in GitLab.
 - [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
 - [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
-***
+---
 
 ## Beschrijving
 
@@ -59,7 +59,7 @@ Dit zijn de regels/afspraken om er voor te zorgen dat onze codebase consistent e
 ### Branches
 
 **main**: De code hier hoort altijd te werken en is vooral bedoelt voor demos
-**develop:**  hier voegen wij alle features samen
+**develop:** hier voegen wij alle features samen
 **feature branches:** maak een branch aan per feature/bugfix, bv:
 
 - `feat`/
@@ -68,10 +68,10 @@ Dit zijn de regels/afspraken om er voor te zorgen dat onze codebase consistent e
 
 Als deze feature af is kan je een merge/pull-request maken naar de `develop` branch
 
-**Voorbeelden**:  
+**Voorbeelden**:
 
-- `feat/infinite-scroll`  
-- `fix/responsive-layout`  
+- `feat/infinite-scroll`
+- `fix/responsive-layout`
 - `docs/update-readme`
 
 ---
@@ -80,32 +80,32 @@ Als deze feature af is kan je een merge/pull-request maken naar de `develop` bra
 
 We gebruiken [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) voor commit messages:
 
-**Types:**  
+**Types:**
 
 - `feat` → nieuwe features
 - `fix` → bugfixes
 - `docs` → documentatie changes
 - `style` → visuele veranderingen
-- `refactor` → code-restructure zonder feature/bugfix  
-- `test` → tests toevoegen/aanpassen  
+- `refactor` → code-restructure zonder feature/bugfix
+- `test` → tests toevoegen/aanpassen
 - `chore` → build/CI/config dingen.
 
 ---
 
 ### Code style
 
-Gebruik **ESLint** + **Prettier** (word geconfigureerd in het project).  Hier zijn ook plug-ins voor in bijvoorbeeld vscode. Dan kan je instellen dat als je een bestand opslaat hij deze automatisch formateert met ESlint+Prettier
+Gebruik **ESLint** + **Prettier** (word geconfigureerd in het project). Hier zijn ook plug-ins voor in bijvoorbeeld vscode. Dan kan je instellen dat als je een bestand opslaat hij deze automatisch formateert met ESlint+Prettier
 
-- **JavaScript/TypeScript:**  
-  - Tabs = 2 spaties.  
-  - Single quotes `'` voor strings.  
-- **React:**  
+- **JavaScript/TypeScript:**
+  - Tabs = 2 spaties.
+  - Single quotes `'` voor strings.
+- **React:**
   - Standaard regels uit `eslint-plugin-react` (<https://github.com/jsx-eslint/eslint-plugin-react>)
   - Hooks bovenaan component
   - Componentnamen in PascalCase (bestandsnamen in kebab-case (`filter-component.tsx`)
 
-- **CSS/Styling (Tailwind):**  
-  - Gebruik Tailwind classes.  
+- **CSS/Styling (Tailwind):**
+  - Gebruik Tailwind classes.
 
 ---
 
@@ -113,11 +113,11 @@ Gebruik **ESLint** + **Prettier** (word geconfigureerd in het project).  Hier zi
 
 - minimaal **1 review** voor elke merge naar **develop**
 - Elke commit en PR moeten voldoen aan deze checks (zodra deze tasks bestaan):
-  - `npm run lint` → code style check  
-  - `npm run build` → succesvolle build  
-  - `npm test` → unit/integration tests  
-- PR’s moeten bevatten:  
-  - Beschrijving van de wijziging.  
+  - `npm run lint` → code style check
+  - `npm run build` → succesvolle build
+  - `npm test` → unit/integration tests
+- PR’s moeten bevatten:
+  - Beschrijving van de wijziging.
   - Gelinkte issue op gitlab
   - Definition of done
 
@@ -144,7 +144,7 @@ src/
 │   ├── UseLobby.ts
 ├── router/
 │   ├── Router.tsx
-├── types/            
+├── types/
 │    └── user.ts
 ├── App.tsx
 ├── main.tsx

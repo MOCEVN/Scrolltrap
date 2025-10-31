@@ -1,96 +1,100 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Lock, User } from "lucide-react";
+import { Button } from "@/components/ui/button"; // jouw button component
 import { useRouter } from "next/navigation";
-import { type ChangeEvent, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import {
+	HiOutlineArrowLeft,
+	HiOutlineLockClosed,
+	HiOutlineUser,
+} from "react-icons/hi";
 
-interface UserMock {
-	username: string;
-	password: string;
-}
-
-const MOCK_USER: UserMock = {
+const MOCK_USER = {
 	username: "testuser",
 	password: "1234",
 };
 
-export default function Login() {
-	const [username, setUsername] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
+export default function DarkLogin() {
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
 	const router = useRouter();
 
 	const handleLogin = () => {
 		if (username === MOCK_USER.username && password === MOCK_USER.password) {
-			toast.success("Welkom 👋 Je bent succesvol ingelogd!");
-
-			setTimeout(() => {
-				router.replace("/profile");
-			}, 1000);
+			toast.success("Welkom 👋 Je bent ingelogd!");
+			setTimeout(() => router.push("/profile"), 1000);
 		} else {
 			toast.error("Ongeldige gebruikersnaam of wachtwoord");
 		}
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 flex items-center justify-center px-8">
-			<div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-lg">
-				<h1 className="text-3xl font-extrabold text-center text-slate-800 mb-8">
-					Inloggen
+		<div className="relative min-h-screen bg-gray-900 flex items-center justify-center px-4">
+			{/* Terug naar Home knop linksboven */}
+			<div className="absolute top-4 left-4">
+				<Button
+					onClick={() => router.push("/")}
+					className="flex items-center text-gray-400 hover:text-white"
+					variant="default"
+				>
+					<HiOutlineArrowLeft size={20} className="mr-2" />
+					Terug naar Home
+				</Button>
+			</div>
+
+			{/* Login card */}
+			<div className="w-full max-w-md bg-gray-800 rounded-2xl p-8 shadow-xl">
+				<h1 className="text-4xl font-bold text-center mb-6 text-white">
+					Login
 				</h1>
+				<p className="text-gray-400 text-center mb-8">
+					Welkom terug! Vul je gegevens in om verder te gaan.
+				</p>
 
 				{/* Gebruikersnaam */}
-				<div className="w-full mb-4">
-					<div className="flex items-center border border-gray-300 rounded-2xl px-4 py-3 bg-gray-50">
-						<User size={20} className="text-slate-500" />
+				<div className="mb-4">
+					<div className="flex items-center bg-gray-700 rounded-xl px-4 py-3">
+						<HiOutlineUser className="text-gray-400" size={20} />
 						<input
 							type="text"
-							className="flex-1 ml-3 bg-transparent outline-none text-gray-700"
 							placeholder="Gebruikersnaam"
+							className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
 							value={username}
-							onChange={(e: ChangeEvent<HTMLInputElement>) =>
-								setUsername(e.target.value)
-							}
+							onChange={(e) => setUsername(e.target.value)}
 						/>
 					</div>
 				</div>
 
 				{/* Wachtwoord */}
-				<div className="w-full mb-2">
-					<div className="flex items-center border border-gray-300 rounded-2xl px-4 py-3 bg-gray-50">
-						<Lock size={20} className="text-slate-500" />
+				<div className="mb-6">
+					<div className="flex items-center bg-gray-700 rounded-xl px-4 py-3">
+						<HiOutlineLockClosed className="text-gray-400" size={20} />
 						<input
 							type="password"
-							className="flex-1 ml-3 bg-transparent outline-none text-gray-700"
 							placeholder="Wachtwoord"
+							className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
 							value={password}
-							onChange={(e: ChangeEvent<HTMLInputElement>) =>
-								setPassword(e.target.value)
-							}
+							onChange={(e) => setPassword(e.target.value)}
 						/>
 					</div>
 				</div>
 
-				{/* Wachtwoord vergeten */}
-				<Button className="text-blue-600 text-sm font-medium mb-6 float-right">
-					Wachtwoord vergeten?
-				</Button>
-
 				{/* Login knop */}
 				<Button
 					onClick={handleLogin}
-					className="bg-blue-600 rounded-2xl w-full py-3 shadow-md text-white text-lg font-semibold"
+					className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl flex items-center justify-center transition"
 				>
 					Log in
 				</Button>
 
 				{/* Extra tekst */}
-				<div className="flex justify-center mt-6">
-					<p className="text-gray-500">Nog geen account?</p>
+				<div className="mt-6 text-center text-gray-400">
+					<span>Nog geen account? </span>
 					<Button
 						onClick={() => toast("Registratie komt later 😉")}
-						className="text-blue-600 font-semibold ml-1"
+						className="text-indigo-500 font-semibold ml-1"
+						variant="ghost"
 					>
 						Registreer
 					</Button>

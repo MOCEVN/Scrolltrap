@@ -28,7 +28,7 @@ export default function Sidebar() {
   const activeNav: NavKey | undefined = NAV_ITEMS.find(item => item.href === pathname)?.key;
 
   return (
-    <aside className="hidden min-h-screen w-24 flex-col items-center border-r border-slate-200 bg-white px-3 py-6 shadow-sm sm:flex lg:w-32">
+    <aside className="hidden min-h-screen w-24 flex-col items-center border-r border-slate-200 bg-dark px-3 py-6 shadow-sm sm:flex lg:w-32">
       <div className="flex flex-col items-center text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">
         <span>Scroll</span>
         <span className="text-indigo-500">Trap</span>

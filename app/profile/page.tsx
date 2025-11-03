@@ -32,72 +32,72 @@ export default function ProfilePage() {
               <form action="" method="post">
                 <table>
                   <tbody>
-                  <tr>
-                    <td>
-                      <label htmlFor="Voornaam"><span>Voornaam</span><input type="text" name="txt_Voornaam" id="Voornaam" placeholder="Voornaam" /></label>
-                    </td>
-                    <td>
-                      <label htmlFor="Achternaam"><span>Achternaam</span><input type="text" name="txt_Achternaam" id="Achternaam" placeholder="Achternaam" /></label>
-                    </td>
-                  </tr>
+                    <tr>
+                      <td>
+                        <label htmlFor="Voornaam"><span>Voornaam</span><input type="text" name="txt_Voornaam" id="Voornaam" placeholder="Voornaam" /></label>
+                      </td>
+                      <td>
+                        <label htmlFor="Achternaam"><span>Achternaam</span><input type="text" name="txt_Achternaam" id="Achternaam" placeholder="Achternaam" /></label>
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <td>
-                      <label htmlFor="straat"><span>Straat</span>
-                        <input type="text" name="txt_straat" id="straat" placeholder="Straat" />
-                      </label>
-                    </td>
+                    <tr>
+                      <td>
+                        <label htmlFor="straat"><span>Straat</span>
+                          <input type="text" name="txt_straat" id="straat" placeholder="Straat" />
+                        </label>
+                      </td>
 
-                    <td>
-                      <label htmlFor="huisnummer"><span>Huisnummer</span>
-                        <input type="text" name="txt_huisnummer" id="huisnummer" placeholder="Huisnummer" />
-                      </label>
-                    </td>
-                  </tr>
+                      <td>
+                        <label htmlFor="huisnummer"><span>Huisnummer</span>
+                          <input type="text" name="txt_huisnummer" id="huisnummer" placeholder="Huisnummer" />
+                        </label>
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <td>
-                      <label htmlFor="postcode"><span>Postcode</span>
-                        <input type="text" name="txt_postcode" id="postcode" placeholder="Postcode" />
-                      </label>
-                    </td>
+                    <tr>
+                      <td>
+                        <label htmlFor="postcode"><span>Postcode</span>
+                          <input type="text" name="txt_postcode" id="postcode" placeholder="Postcode" />
+                        </label>
+                      </td>
 
-                    <td>
-                      <label htmlFor="woonplaats"><span>Woonplaats</span>
-                        <input type="text" name="txt_woonplaats" id="woonplaats" placeholder="Woonplaats" />
-                      </label>
-                    </td>
-                  </tr>
+                      <td>
+                        <label htmlFor="woonplaats"><span>Woonplaats</span>
+                          <input type="text" name="txt_woonplaats" id="woonplaats" placeholder="Woonplaats" />
+                        </label>
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <td colSpan={2}>
-                      <label htmlFor="Telefoon"><span>Telefoon</span>
-                        <input type="tel" name="txt_Telefoon" id="Telefoon" placeholder="Telefoon" />
-                      </label>
-                    </td>
-                  </tr>
+                    <tr>
+                      <td colSpan={2}>
+                        <label htmlFor="Telefoon"><span>Telefoon</span>
+                          <input type="tel" name="txt_Telefoon" id="Telefoon" placeholder="Telefoon" />
+                        </label>
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <td colSpan={2}>
-                      <label htmlFor="email"><span>Email</span>
-                        <input type="email" name="txt_email" id="email" autoComplete="true" placeholder="Email" required />
-                      </label>
-                    </td>
-                  </tr>
+                    <tr>
+                      <td colSpan={2}>
+                        <label htmlFor="email"><span>Email</span>
+                          <input type="email" name="txt_email" id="email" autoComplete="true" placeholder="Email" required />
+                        </label>
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <td colSpan={2}>
-                      <label htmlFor="wachtwoord"><span>Wachtwoord</span>
-                        <input type="password" name="txt_wachtwoord" id="wachtwoord" placeholder="Wachtwoord" required />
-                      </label>
-                    </td>
-                  </tr>
+                    <tr>
+                      <td colSpan={2}>
+                        <label htmlFor="wachtwoord"><span>Wachtwoord</span>
+                          <input type="password" name="txt_wachtwoord" id="wachtwoord" placeholder="Wachtwoord" autoComplete="current-password" required />
+                        </label>
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <td colSpan={2}>
-                      <button type="submit" className="bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl px-3 py-2 text-xs font-medium transition">Update</button>
-                    </td>
-                  </tr>
+                    <tr>
+                      <td colSpan={2}>
+                        <button type="submit" className="bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl px-3 py-2 text-xs font-medium transition">Update</button>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </form>

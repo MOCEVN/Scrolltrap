@@ -34,24 +34,24 @@ export default function ProfilePage() {
 									<tbody>
 										<tr>
 											<td>
-												<label htmlFor="Voornaam">
-													<span>Voornaam</span>
+												<label htmlFor="First name">
+													<span>First name</span>
 													<input
 														type="text"
-														name="txt_Voornaam"
-														id="Voornaam"
-														placeholder="Voornaam"
+														name="txt_First_Name"
+														id="Firstname"
+														placeholder="First name"
 													/>
 												</label>
 											</td>
 											<td>
-												<label htmlFor="Achternaam">
+												<label htmlFor="Last name">
 													<span>Achternaam</span>
 													<input
 														type="text"
-														name="txt_Achternaam"
-														id="Achternaam"
-														placeholder="Achternaam"
+														name="txt_Last_Name"
+														id="Lastname"
+														placeholder="Last name"
 													/>
 												</label>
 											</td>
@@ -59,25 +59,25 @@ export default function ProfilePage() {
 
 										<tr>
 											<td>
-												<label htmlFor="straat">
-													<span>Straat</span>
+												<label htmlFor="Street">
+													<span>Street</span>
 													<input
 														type="text"
-														name="txt_straat"
-														id="straat"
-														placeholder="Straat"
+														name="txt_street"
+														id="street"
+														placeholder="street"
 													/>
 												</label>
 											</td>
 
 											<td>
-												<label htmlFor="huisnummer">
-													<span>Huisnummer</span>
+												<label htmlFor="House number">
+													<span>House number</span>
 													<input
 														type="text"
-														name="txt_huisnummer"
-														id="huisnummer"
-														placeholder="Huisnummer"
+														name="txt_house_number"
+														id="housenumber"
+														placeholder="Housenumber"
 													/>
 												</label>
 											</td>
@@ -97,13 +97,13 @@ export default function ProfilePage() {
 											</td>
 
 											<td>
-												<label htmlFor="woonplaats">
-													<span>Woonplaats</span>
+												<label htmlFor="place of residence">
+													<span>Place of Residence</span>
 													<input
 														type="text"
-														name="txt_woonplaats"
-														id="woonplaats"
-														placeholder="Woonplaats"
+														name="txt_place_of_residence"
+														id="placeofresidence"
+														placeholder="Place of Residence"
 													/>
 												</label>
 											</td>
@@ -111,13 +111,13 @@ export default function ProfilePage() {
 
 										<tr>
 											<td colSpan={2}>
-												<label htmlFor="Telefoon">
-													<span>Telefoon</span>
+												<label htmlFor="Phone Number">
+													<span>Phone number</span>
 													<input
 														type="tel"
-														name="txt_Telefoon"
-														id="Telefoon"
-														placeholder="Telefoon"
+														name="txt_phone_number"
+														id="phonenumber"
+														placeholder="Phone Number"
 													/>
 												</label>
 											</td>
@@ -141,13 +141,13 @@ export default function ProfilePage() {
 
 										<tr>
 											<td colSpan={2}>
-												<label htmlFor="wachtwoord">
-													<span>Wachtwoord</span>
+												<label htmlFor="password">
+													<span>Password</span>
 													<input
 														type="password"
-														name="txt_wachtwoord"
-														id="wachtwoord"
-														placeholder="Wachtwoord"
+														name="txt_password"
+														id="password"
+														placeholder="Password"
 														required
 													/>
 												</label>

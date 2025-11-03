@@ -22,10 +22,10 @@ export default function DarkLogin() {
 
 	const handleLogin = () => {
 		if (username === MOCK_USER.username && password === MOCK_USER.password) {
-			toast.success("Welkom 👋 Je bent ingelogd!");
+			toast.success("Welcome 👋 You're logged in!");
 			setTimeout(() => router.push("/profile"), 1000);
 		} else {
-			toast.error("Ongeldige gebruikersnaam of wachtwoord");
+			toast.error("Invalid username or password.");
 		}
 	};
 
@@ -39,7 +39,7 @@ export default function DarkLogin() {
 					variant="default"
 				>
 					<HiOutlineArrowLeft size={20} className="mr-2" />
-					Terug naar Home
+					Back to Home
 				</Button>
 			</div>
 
@@ -49,7 +49,7 @@ export default function DarkLogin() {
 					Login
 				</h1>
 				<p className="text-gray-400 text-center mb-8">
-					Welkom terug! Vul je gegevens in om verder te gaan.
+					Welcome back! Please enter your credentials to log in.
 				</p>
 
 				{/* Gebruikersnaam */}
@@ -58,7 +58,7 @@ export default function DarkLogin() {
 						<HiOutlineUser className="text-gray-400" size={20} />
 						<input
 							type="text"
-							placeholder="Gebruikersnaam"
+							placeholder="Username"
 							className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
@@ -72,7 +72,7 @@ export default function DarkLogin() {
 						<HiOutlineLockClosed className="text-gray-400" size={20} />
 						<input
 							type="password"
-							placeholder="Wachtwoord"
+							placeholder="Password"
 							className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
@@ -90,13 +90,13 @@ export default function DarkLogin() {
 
 				{/* Extra tekst */}
 				<div className="mt-6 text-center text-gray-400">
-					<span>Nog geen account? </span>
+					<span>No account yet? </span>
 					<Button
 						onClick={() => toast("Registratie komt later 😉")}
 						className="text-indigo-500 font-semibold ml-1"
 						variant="ghost"
 					>
-						Registreer
+						Register
 					</Button>
 				</div>
 			</div>

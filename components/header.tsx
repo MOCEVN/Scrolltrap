@@ -70,7 +70,7 @@ export default function Header({
         </h1>
 
         {likedCount > 0 && (
-          <button
+          <Button
             type="button"
             onClick={onToggleShowLiked}
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition ${
@@ -81,7 +81,7 @@ export default function Header({
           >
             {showLikedOnly ? "Viewing likes" : "Show likes"}
             <span className="text-base">❤️ {likedCount}</span>
-          </button>
+          </Button>
         )}
       </div>
     </header>

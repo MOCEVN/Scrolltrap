@@ -46,6 +46,7 @@ export default function Header({
 
           {/* Messages button */}
           <Button
+          variant="ghost"
             type="button"
             className="hidden h-11 w-11 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition hover:border-accent hover:text-accent sm:flex"
             title="Messages (coming soon)"
@@ -76,11 +77,11 @@ export default function Header({
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition ${
               showLikedOnly
                 ? "bg-accent text-accent-foreground shadow-md shadow-accent/25"
-                : "bg-border text-accent hover:bg-accent/10"
+                : "bg-border text-accent text-white hover:bg-accent/10"
             }`}
           >
             {showLikedOnly ? "Viewing likes" : "Show likes"}
-            <span className="text-base">❤️ {likedCount}</span>
+            <span className="text-base ">❤️ {likedCount}</span>
           </Button>
         )}
       </div>

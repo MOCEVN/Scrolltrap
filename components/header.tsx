@@ -55,19 +55,27 @@ export default function Header({
 					</button>
 
 					{/* Login button */}
-					<Link href="/login">
-						<Button className="flex items-center px-4 py-2 bg-primary text-primary-foreground rounded hover:opacity-90">
-							<LogIn size={20} className="mr-2" />
-							Login
-						</Button>
-					</Link>
+				<Link href="/login">
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white hover:text-primary transition rounded-xl"
+        >
+          <LogIn size={20} className="transition" />
+          Login
+        </Button>
+      </Link>
 
-					<Link href="/register">
-						<Button className="flex items-center px-4 py-2 bg-primary text-primary-foreground rounded hover:opacity-90">
-							<UserRoundPlus size={20} className="mr-2" />
-							Register
-						</Button>
-					</Link>
+      <Link href="/register">
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white hover:text-primary transition rounded-xl"
+        >
+          <UserRoundPlus size={20} className="transition" />
+          Register
+        </Button>
+      </Link>
+
+
 				</div>
 			</div>
 
@@ -84,7 +92,7 @@ export default function Header({
 						className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition ${
 							showLikedOnly
 								? "bg-accent text-accent-foreground shadow-md shadow-accent/25"
-								: "bg-border text-accent text-white hover:bg-accent/10"
+								: "bg-border text-accent text-white shadow-accent/25"
 						}`}
 					>
 						{showLikedOnly ? "Viewing likes" : "Show likes"}

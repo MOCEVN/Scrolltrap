@@ -30,7 +30,7 @@ export default function DarkRegister() {
 		}
 
 		toast.success("Account created ✅");
-		setTimeout(() => router.push("/login"), 1200);
+		setTimeout(() => router.push("/"), 1200);
 	};
 
 	return (

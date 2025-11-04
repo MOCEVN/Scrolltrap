@@ -18,7 +18,7 @@ const NAV_ITEMS: Array<{
   { key: 'explore', label: 'Explore', icon: Compass, isReady: false, href: '/explore' },
   { key: 'create', label: 'Create', icon: PlusCircle, isReady: true, href: '/create' },
   { key: 'profile', label: 'Profile', icon: User, isReady: true, href: '/profile' },
-  { key: 'info', label: 'Info', icon: Info, isReady: false, href: '/info' },
+  { key: 'info', label: 'Info', icon: Info, isReady: true, href: '/info' },
 ];
 
 export default function Sidebar() {

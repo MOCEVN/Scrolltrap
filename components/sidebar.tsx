@@ -42,15 +42,15 @@ export default function Sidebar() {
             flex w-full flex-col items-center gap-1 rounded-xl px-3 py-2 text-xs font-medium transition
             ${
               isActive
-                ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md shadow-sidebar-primary/25"
-                : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                ? "text-primary font-semibold"
+                : "text-sidebar-foreground hover:text-sidebar-accent-foreground/60"
             }
             ${!isReady ? "cursor-not-allowed opacity-40" : ""}
           `;
 
           const inner = (
             <div className={classes} title={isReady ? label : `${label} (coming soon)`}>
-              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.4 : 1.8} />
+              <Icon className="h-6 w-6" strokeWidth={isActive ? 2.4 : 1.8} />
               <span>{label}</span>
             </div>
           );

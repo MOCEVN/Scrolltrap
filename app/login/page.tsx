@@ -1,14 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import {
-	HiOutlineArrowLeft,
-	HiOutlineLockClosed,
-	HiOutlineUser,
-} from "react-icons/hi";
+import { HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi";
 
 const MOCK_USER = {
 	username: "testuser",
@@ -32,7 +29,7 @@ export default function DarkLogin() {
 	return (
 		<div className="relative min-h-screen bg-gray-900 flex items-center justify-center px-4">
 			{/* Terug naar Home knop linksboven */}
-			<div className="absolute top-4 left-4">
+			{/* <div className="absolute top-4 left-4">
 				<Button
 					onClick={() => router.push("/")}
 					className="flex items-center text-gray-400 hover:text-white"
@@ -41,7 +38,7 @@ export default function DarkLogin() {
 					<HiOutlineArrowLeft size={20} className="mr-2" />
 					Back to Home
 				</Button>
-			</div>
+			</div> */}
 
 			{/* Login card */}
 			<div className="w-full max-w-md bg-gray-800 rounded-2xl p-8 shadow-xl">
@@ -91,13 +88,14 @@ export default function DarkLogin() {
 				{/* Extra tekst */}
 				<div className="mt-6 text-center text-gray-400">
 					<span>No account yet? </span>
-					<Button
-						onClick={() => toast("Registratie komt later 😉")}
-						className="text-indigo-500 font-semibold ml-1"
-						variant="ghost"
-					>
-						Register
-					</Button>
+					<Link href="/register">
+						<Button
+							className="text-indigo-500 font-semibold ml-1"
+							variant="ghost"
+						>
+							Register
+						</Button>
+					</Link>
 				</div>
 			</div>
 		</div>

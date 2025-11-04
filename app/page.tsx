@@ -27,7 +27,7 @@ const NAV_ITEMS: Array<{
 }> = [
   { key: 'home', label: 'Home', icon: HomeIcon, isReady: true },
   { key: 'explore', label: 'Explore', icon: Compass, isReady: false },
-  { key: 'create', label: 'Create', icon: PlusCircle, isReady: false },
+  { key: 'create', label: 'Create', icon: PlusCircle, isReady: true },
   { key: 'profile', label: 'Profile', icon: User, isReady: false },
   { key: 'info', label: 'Info', icon: Info, isReady: false },
 ];

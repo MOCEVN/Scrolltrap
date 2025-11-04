@@ -170,8 +170,20 @@ form input {
   width: 100%;
 }
 
-form input:required {
-  border-right: 5px solid coral;
+    &:required {
+      border-right: 5px solid coral;
+    }
+
+    &:required:user-invalid {
+      background-color: #fddede;
+      border-right-color: crimson;
+    }
+
+    &:required:user-valid {
+      background-color: #e0f7e9;
+      border-right-color: mediumseagreen;
+    }
+  }
 }
 
 button,

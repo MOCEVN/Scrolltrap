@@ -32,9 +32,9 @@ export default function ProfilePage() {
 							<form action="" method="post">
 								<table>
 									<tbody>
-										<tr>
-											<td>
-												<label htmlFor="First name">
+  										<tr>
+  											<td>
+  												<label htmlFor="First name">
 													<span>First name</span>
 													<input
 														type="text"
@@ -43,9 +43,9 @@ export default function ProfilePage() {
 														placeholder="First name"
 													/>
 												</label>
-											</td>
-											<td>
-												<label htmlFor="Last name">
+  											</td>
+  											<td>
+  												<label htmlFor="Last name">
 													<span>Achternaam</span>
 													<input
 														type="text"
@@ -54,80 +54,80 @@ export default function ProfilePage() {
 														placeholder="Last name"
 													/>
 												</label>
-											</td>
-										</tr>
+  											</td>
+  										</tr>
 
-										<tr>
-											<td>
-												<label htmlFor="Street">
+  										<tr>
+  											<td>
+  												<label htmlFor="Street">
 													<span>Street</span>
-													<input
+  													<input
 														type="text"
 														name="txt_street"
 														id="street"
 														placeholder="street"
 													/>
-												</label>
-											</td>
+  												</label>
+  											</td>
 
-											<td>
-												<label htmlFor="House number">
+  											<td>
+  												<label htmlFor="House number">
 													<span>House number</span>
-													<input
+  													<input
 														type="text"
 														name="txt_house_number"
 														id="housenumber"
 														placeholder="Housenumber"
 													/>
-												</label>
-											</td>
-										</tr>
+  												</label>
+  											</td>
+  										</tr>
 
-										<tr>
-											<td>
-												<label htmlFor="postcode">
+  										<tr>
+  											<td>
+  												<label htmlFor="postcode">
 													<span>Postcode</span>
-													<input
+  													<input
 														type="text"
 														name="txt_postcode"
 														id="postcode"
 														placeholder="Postcode"
 													/>
-												</label>
-											</td>
+  												</label>
+  											</td>
 
-											<td>
-												<label htmlFor="place of residence">
+  											<td>
+  												<label htmlFor="place of residence">
 													<span>Place of Residence</span>
-													<input
+  													<input
 														type="text"
 														name="txt_place_of_residence"
 														id="placeofresidence"
 														placeholder="Place of Residence"
 													/>
-												</label>
-											</td>
-										</tr>
+  												</label>
+  											</td>
+  										</tr>
 
-										<tr>
-											<td colSpan={2}>
-												<label htmlFor="Phone Number">
+  										<tr>
+  											<td colSpan={2}>
+  												<label htmlFor="Phone Number">
 													<span>Phone number</span>
-													<input
+  													<input
 														type="tel"
 														name="txt_phone_number"
 														id="phonenumber"
 														placeholder="Phone Number"
 													/>
-												</label>
-											</td>
-										</tr>
+  												</label>
+  											</td>
+  										</tr>
 
-										<tr>
-											<td colSpan={2}>
-												<label htmlFor="email">
+  										<tr>
+  											<td colSpan={2}>
+  												<label htmlFor="email">
 													<span>Email</span>
-													<input
+  													<input
 														type="email"
 														name="txt_email"
 														id="email"
@@ -135,9 +135,9 @@ export default function ProfilePage() {
 														placeholder="Email"
 														required
 													/>
-												</label>
-											</td>
-										</tr>
+  												</label>
+  											</td>
+  										</tr>
 
 										<tr>
 											<td colSpan={2}>
@@ -154,16 +154,16 @@ export default function ProfilePage() {
 											</td>
 										</tr>
 
-										<tr>
-											<td colSpan={2}>
-												<button
+  										<tr>
+  											<td colSpan={2}>
+  												<button
 													type="submit"
 													className="bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl px-3 py-2 text-xs font-medium transition"
 												>
 													Update
 												</button>
-											</td>
-										</tr>
+  											</td>
+  										</tr>
 									</tbody>
 								</table>
 							</form>

@@ -1,5 +1,7 @@
 "use client";
 
+
+import Sidebar from "@/components/sidebar";
 import { Upload } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -39,33 +41,37 @@ export default function Create() {
 		setTitle("");
 	};
 
-	return (
-		<div className="flex flex-col items-center justify-center min-h-screen gap-6 p-4">
-			<div
-				onClick={() => fileInputRef.current?.click()}
-				className="w-64 h-64 rounded-xl shadow-md border border-dashed border-gray-400 flex flex-col items-center justify-center text-gray-500 cursor-pointer overflow-hidden"
-			>
-				{previewUrl ? (
-					file?.type.startsWith("image") ? (
-						<img
-							src={previewUrl}
-							alt="Preview"
-							className="w-full h-full object-cover"
-						/>
-					) : (
-						<video
-							src={previewUrl}
-							controls
-							className="w-full h-full object-cover"
-						/>
-					)
-				) : (
-					<>
-						<Upload className="w-10 h-10 mb-2" />
-						<p className="text-sm text-center">Upload your photo/video</p>
-					</>
-				)}
-			</div>
+  return (
+           <div className="flex min-h-screen bg-slate-100 text-slate-900">
+               {/* Sidebar component */}
+               <Sidebar />
+                <div className="flex-1 flex flex-col">
+    <main className="flex flex-col items-center justify-center min-h-screen gap-6 p-4">
+      <div
+        onClick={() => fileInputRef.current?.click()}
+        className="w-64 h-64 rounded-xl shadow-md border border-dashed border-gray-400 flex flex-col items-center justify-center text-gray-500 cursor-pointer overflow-hidden"
+      >
+        {previewUrl ? (
+          file?.type.startsWith("image") ? (
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <video
+              src={previewUrl}
+              controls
+              className="w-full h-full object-cover"
+            />
+          )
+        ) : (
+          <>
+            <Upload className="w-10 h-10 mb-2" />
+            <p className="text-sm text-center">Upload your photo/video</p>
+          </>
+        )}
+      </div>
 
 			<input
 				ref={fileInputRef}
@@ -86,12 +92,14 @@ export default function Create() {
 				/>
 			)}
 
-			<button
-				onClick={handleSubmit}
-				className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-2xl cursor-pointer shadow-md transition-all active:scale-95"
-			>
-				Upload
-			</button>
-		</div>
-	);
+      <button
+        onClick={handleSubmit}
+        className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-2xl cursor-pointer shadow-md transition-all active:scale-95"
+      >
+        Upload
+      </button>
+      </main>
+    </div>
+    </div>
+  );
 }

@@ -4,12 +4,12 @@ import type { ImageItem } from "@/types/image";
 import Image from "next/image";
 import type React from "react";
 import {
-  startTransition,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+	startTransition,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
 } from "react";
 
 type MasonryGridProps = {
@@ -340,9 +340,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 			)}
 
 			<section className="bg-slate-50">
-				<div className="mx-auto max-w-6xl px-4 pb-12">
+				<div className="mx-auto max-w-6xl px-4 pb-12 bg-secondary">
 					<div
-						className="flex flex-row gap-4"
+						className="flex flex-row gap-4 "
 						style={{ marginLeft: -spacing / 2, marginRight: -spacing / 2 }}
 					>
 						{columns.map((column, columnIndex) => (

@@ -1,5 +1,7 @@
 "use client";
 
+
+import Sidebar from "@/components/sidebar";
 import { Upload } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -40,7 +42,11 @@ export default function Create() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-6 p-4">
+           <div className="flex min-h-screen bg-slate-100 text-slate-900">
+               {/* Sidebar component */}
+               <Sidebar />
+                <div className="flex-1 flex flex-col">
+    <main className="flex flex-col items-center justify-center min-h-screen gap-6 p-4">
       <div
         onClick={() => fileInputRef.current?.click()}
         className="w-64 h-64 rounded-xl shadow-md border border-dashed border-gray-400 flex flex-col items-center justify-center text-gray-500 cursor-pointer overflow-hidden"
@@ -92,6 +98,8 @@ export default function Create() {
       >
         Upload
       </button>
+      </main>
+    </div>
     </div>
   );
 }

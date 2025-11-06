@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import Header from '@/components/header';
 import InterestSelector from '@/components/interest-selector';
@@ -8,6 +8,7 @@ import MasonryGrid from '@/components/masonry-grid';
 import Sidebar from '@/components/sidebar';
 import { useInterests } from '@/hooks/use-interests';
 import { useLikedImages } from '@/hooks/use-liked-images';
+import { useScenario } from '@/hooks/use-scenario';
 
 const Home = () => {
   const [showLikedOnly, setShowLikedOnly] = useState(false);
@@ -21,15 +22,19 @@ const Home = () => {
     likedCount,
     isLoading: likesLoading,
   } = useLikedImages();
+  const { mode, isDream } = useScenario();
 
   const isBootstrapping = interestsLoading || likesLoading;
 
   const handleInterestsUpdate = useCallback(
     (next: string[]) => {
+      if (!isDream) {
+        return;
+      }
       updateInterests(next);
       if (next.length === 0) setShowLikedOnly(false);
     },
-    [updateInterests]
+    [isDream, updateInterests]
   );
 
   const handleToggleShowLiked = useCallback(() => {
@@ -41,11 +46,10 @@ const Home = () => {
     console.info('Search is not wired up yet', searchQuery.trim());
   }, [searchQuery]);
 
-  const headerSubtitle = useMemo(() => {
-    if (showLikedOnly) return 'Your saved favourites in one place.';
-    if (interests.length === 0) return 'Pick a few topics to personalise your feed.';
-    return '';
-  }, [interests.length, showLikedOnly]);
+  const gridColumns = mode === 'doom' ? 5 : 4;
+  const gridSpacing = mode === 'doom' ? 10 : 12;
+
+  const activeInterests = interests;
 
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-900">
@@ -62,11 +66,10 @@ const Home = () => {
           setSearchQuery={setSearchQuery}
           handleSearch={handleSearch}
         />
-
-        <main className="flex-1 overflow-y-auto bg-secondary bg-secondary">
-          <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 ">
+    <main className="flex-1 overflow-y-auto" data-scroll-container>
+          <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
             {/* Interest Selector */}
-            {!showLikedOnly && (
+            {!showLikedOnly && isDream && (
               <div className="mb-6">
                 <InterestSelector
                   interests={interests}
@@ -82,9 +85,9 @@ const Home = () => {
               </section>
             ) : (
               <MasonryGrid
-                numColumns={4}
-                spacing={12}
-                userInterests={interests}
+                numColumns={gridColumns}
+                spacing={gridSpacing}
+                userInterests={activeInterests}
                 likedImages={likedImages}
                 toggleLike={toggleLike}
                 isImageLiked={isImageLiked}
@@ -93,7 +96,7 @@ const Home = () => {
               />
             )}
           </div>
-        </main>
+  </main>
       </div>
     </div>
   );

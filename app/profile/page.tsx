@@ -2,12 +2,78 @@
 
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
-import { useState } from "react";
+import { useLikedImages } from "@/hooks/use-liked-images";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function ProfilePage() {
 	const [showLikedOnly, setShowLikedOnly] = useState(false);
-	const [likedCount, setLikedCount] = useState(0); // or get from your hook
+	const { likedCount } = useLikedImages();
 	const [searchQuery, setSearchQuery] = useState("");
+	const [user, setUser] = useState<{
+		username: string;
+		email: string;
+		createdAt: string;
+	} | null>(null);
+	const [isLoadingUser, setIsLoadingUser] = useState(true);
+
+	useEffect(() => {
+		let isMounted = true;
+
+		const fetchUser = async () => {
+			try {
+				const response = await fetch("/api/auth/me", {
+					method: "GET",
+					credentials: "include",
+					cache: "no-store",
+				});
+
+				if (!response.ok) {
+					throw new Error(`Unexpected status ${response.status}`);
+				}
+
+				const payload = await response.json();
+
+				if (isMounted) {
+					setUser(payload.user);
+				}
+			} catch (error) {
+				console.error("Failed to load session", error);
+				if (isMounted) {
+					setUser(null);
+				}
+			} finally {
+				if (isMounted) {
+					setIsLoadingUser(false);
+				}
+			}
+		};
+
+		void fetchUser();
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
+
+	const handleLogout = async () => {
+		try {
+			const response = await fetch("/api/auth/logout", {
+				method: "POST",
+				credentials: "include",
+			});
+
+			if (!response.ok) {
+				throw new Error("Logout failed");
+			}
+
+			setUser(null);
+			toast.success("You are logged out.");
+		} catch (error) {
+			console.error("Logout failed", error);
+			toast.error("Unable to log out, please try again.");
+		}
+	};
 
 	return (
 		<div className="flex min-h-screen bg-slate-100 text-slate-900">
@@ -23,151 +89,167 @@ export default function ProfilePage() {
 					handleSearch={() => console.log("Search:", searchQuery)}
 				/>
 
-				<main className="flex-1 overflow-y-auto">
-					<div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-						<h1 className="text-2xl font-bold">Your Profile</h1>
-						<p className="mt-4">This is your profile page.</p>
+				<main className="flex-1 overflow-y-auto" data-scroll-container>
+						<div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+							<h1 className="text-2xl font-bold">Your Profile</h1>
+							<p className="mt-2 text-sm text-slate-600">
+								Keep track of your demo account details below.
+							</p>
 
-						<div className="border-b border-slate-200 backdrop-blur bg-white/95 py-6 px-4">
-							<form action="" method="post">
-								<table>
-									<tbody>
-										<tr>
-											<td>
-												<label htmlFor="First name">
-													<span>First name</span>
-													<input
-														type="text"
-														name="txt_First_Name"
-														id="Firstname"
-														placeholder="First name"
-													/>
-												</label>
-											</td>
-											<td>
-												<label htmlFor="Last name">
-													<span>Achternaam</span>
-													<input
-														type="text"
-														name="txt_Last_Name"
-														id="Lastname"
-														placeholder="Last name"
-													/>
-												</label>
-											</td>
-										</tr>
+							<div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+								{isLoadingUser ? (
+									<div className="flex items-center justify-center py-12">
+										<div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+									</div>
+								) : user ? (
+									<dl className="grid gap-4 sm:grid-cols-2">
+										<div>
+											<dt className="text-xs uppercase tracking-wide text-slate-500">
+												Username
+											</dt>
+											<dd className="mt-1 text-base font-semibold text-slate-900">
+												{user.username}
+											</dd>
+										</div>
+										<div>
+											<dt className="text-xs uppercase tracking-wide text-slate-500">
+												Email
+											</dt>
+											<dd className="mt-1 text-base font-semibold text-slate-900">
+												{user.email}
+											</dd>
+										</div>
+										<div>
+											<dt className="text-xs uppercase tracking-wide text-slate-500">
+												Joined
+											</dt>
+											<dd className="mt-1 text-base font-semibold text-slate-900">
+												{new Date(user.createdAt).toLocaleString()}
+											</dd>
+										</div>
+									</dl>
+								) : (
+									<div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+										<p className="text-slate-600">
+											You are not logged in. Log in to see your saved details.
+										</p>
+										<a
+											href="/login"
+											className="inline-flex items-center justify-center rounded-full bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-600"
+										>
+											Go to login
+										</a>
+									</div>
+								)}
 
-										<tr>
-											<td>
-												<label htmlFor="Street">
-													<span>Street</span>
-													<input
-														type="text"
-														name="txt_street"
-														id="street"
-														placeholder="street"
-													/>
-												</label>
-											</td>
+								{user && (
+									<div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+										<button
+											type="button"
+											onClick={handleLogout}
+											className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+										>
+											Log out
+										</button>
+									</div>
+								)}
+							</div>
 
-											<td>
-												<label htmlFor="House number">
-													<span>House number</span>
-													<input
-														type="text"
-														name="txt_house_number"
-														id="housenumber"
-														placeholder="Housenumber"
-													/>
-												</label>
-											</td>
-										</tr>
+							{/* Restored editable profile fields */}
+							{user && (
+								<div className="mt-8 rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm">
+									<h2 className="text-lg font-semibold">Edit details</h2>
+									<p className="mt-1 text-sm text-slate-500">These fields were previously on the profile page.</p>
+									<form action="#" method="post" className="mt-4 user-details">
+										<table className="w-full text-sm">
+											<tbody className="[&_td]:p-2 [&_input]:w-full [&_input]:rounded-md [&_input]:border [&_input]:border-slate-300 [&_input]:bg-white [&_input]:px-3 [&_input]:py-2">
+												<tr>
+													<td className="align-top">
+														<label htmlFor="Firstname" className="block text-slate-600">
+															<span className="block text-xs font-medium">First name</span>
+															<input type="text" id="Firstname" name="txt_first_name" placeholder="First name" />
+														</label>
+													</td>
+													<td className="align-top">
+														<label htmlFor="Lastname" className="block text-slate-600">
+															<span className="block text-xs font-medium">Last name</span>
+															<input type="text" id="Lastname" name="txt_last_name" placeholder="Last name" />
+														</label>
+													</td>
+												</tr>
 
-										<tr>
-											<td>
-												<label htmlFor="postcode">
-													<span>Postcode</span>
-													<input
-														type="text"
-														name="txt_postcode"
-														id="postcode"
-														placeholder="Postcode"
-													/>
-												</label>
-											</td>
+												<tr>
+													<td className="align-top">
+														<label htmlFor="street" className="block text-slate-600">
+															<span className="block text-xs font-medium">Street</span>
+															<input type="text" id="street" name="txt_street" placeholder="Street" />
+														</label>
+													</td>
+													<td className="align-top">
+														<label htmlFor="housenumber" className="block text-slate-600">
+															<span className="block text-xs font-medium">House number</span>
+															<input type="text" id="housenumber" name="txt_house_number" placeholder="House number" />
+														</label>
+													</td>
+												</tr>
 
-											<td>
-												<label htmlFor="place of residence">
-													<span>Place of Residence</span>
-													<input
-														type="text"
-														name="txt_place_of_residence"
-														id="placeofresidence"
-														placeholder="Place of Residence"
-													/>
-												</label>
-											</td>
-										</tr>
+												<tr>
+													<td className="align-top">
+														<label htmlFor="postcode" className="block text-slate-600">
+															<span className="block text-xs font-medium">Postcode</span>
+															<input type="text" id="postcode" name="txt_postcode" placeholder="Postcode" />
+														</label>
+													</td>
+													<td className="align-top">
+														<label htmlFor="placeofresidence" className="block text-slate-600">
+															<span className="block text-xs font-medium">Place of Residence</span>
+															<input type="text" id="placeofresidence" name="txt_place_of_residence" placeholder="Place of Residence" />
+														</label>
+													</td>
+												</tr>
 
-										<tr>
-											<td colSpan={2}>
-												<label htmlFor="Phone Number">
-													<span>Phone number</span>
-													<input
-														type="tel"
-														name="txt_phone_number"
-														id="phonenumber"
-														placeholder="Phone Number"
-													/>
-												</label>
-											</td>
-										</tr>
+												<tr>
+													<td colSpan={2} className="align-top">
+														<label htmlFor="phonenumber" className="block text-slate-600">
+															<span className="block text-xs font-medium">Phone number</span>
+															<input type="tel" id="phonenumber" name="txt_phone_number" placeholder="Phone number" />
+														</label>
+													</td>
+												</tr>
 
-										<tr>
-											<td colSpan={2}>
-												<label htmlFor="email">
-													<span>Email</span>
-													<input
-														type="email"
-														name="txt_email"
-														id="email"
-														autoComplete="true"
-														placeholder="Email"
-														required
-													/>
-												</label>
-											</td>
-										</tr>
+												<tr>
+													<td colSpan={2} className="align-top">
+														<label htmlFor="email-edit" className="block text-slate-600">
+															<span className="block text-xs font-medium">Email</span>
+															<input type="email" id="email-edit" name="txt_email" placeholder="Email" autoComplete="email" />
+														</label>
+													</td>
+												</tr>
 
-										<tr>
-											<td colSpan={2}>
-												<label htmlFor="password">
-													<span>Password</span>
-													<input
-														type="password"
-														name="txt_password"
-														id="password"
-														placeholder="Password"
-														required
-													/>
-												</label>
-											</td>
-										</tr>
+												<tr>
+													<td colSpan={2} className="align-top">
+														<label htmlFor="password-edit" className="block text-slate-600">
+															<span className="block text-xs font-medium">Password</span>
+															<input type="password" id="password-edit" name="txt_password" placeholder="Password" autoComplete="new-password" />
+														</label>
+													</td>
+												</tr>
 
-										<tr>
-											<td colSpan={2}>
-												<button
-													type="submit"
-													className="bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 rounded-xl px-3 py-2 text-xs font-medium transition"
-												>
-													Update
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</form>
-						</div>
+												<tr>
+													<td colSpan={2} className="pt-2">
+														<button
+															type="submit"
+															className="rounded-full bg-indigo-500 px-4 py-2 text-xs font-semibold text-white shadow transition hover:bg-indigo-600"
+														>
+															Update
+														</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</form>
+								</div>
+							)}
 					</div>
 				</main>
 			</div>

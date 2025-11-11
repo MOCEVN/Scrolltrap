@@ -3,26 +3,55 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi";
-
-const MOCK_USER = {
-	username: "testuser",
-	password: "1234",
-};
 
 export default function DarkLogin() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const router = useRouter();
 
-	const handleLogin = () => {
-		if (username === MOCK_USER.username && password === MOCK_USER.password) {
-			toast.success("Welcome 👋 You're logged in!");
-			setTimeout(() => router.push("/profile"), 1000);
-		} else {
-			toast.error("Invalid username or password.");
+	const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		if (isSubmitting) {
+			return;
+		}
+
+		if (!username || !password) {
+			toast.error("Please fill in both fields.");
+			return;
+		}
+
+		setIsSubmitting(true);
+
+		try {
+			const response = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ username, password }),
+			});
+
+			const payload = await response.json();
+
+			if (!response.ok) {
+				const message = typeof payload.error === "string"
+					? payload.error
+					: "We couldn't log you in.";
+				toast.error(message);
+				return;
+			}
+
+			toast.success(`Welcome back, ${payload.user.username}!`);
+			setTimeout(() => router.push("/profile"), 800);
+		} catch (error) {
+			console.error("Login failed", error);
+			toast.error("Unable to reach the server. Please try again.");
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -49,41 +78,46 @@ export default function DarkLogin() {
 					Welcome back! Please enter your credentials to log in.
 				</p>
 
-				{/* Gebruikersnaam */}
-				<div className="mb-4">
-					<div className="flex items-center bg-gray-700 rounded-xl px-4 py-3">
-						<HiOutlineUser className="text-gray-400" size={20} />
-						<input
-							type="text"
-							placeholder="Username"
-							className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-						/>
+				<form onSubmit={handleLogin} className="space-y-6">
+					{/* Gebruikersnaam */}
+					<div>
+						<div className="flex items-center bg-gray-700 rounded-xl px-4 py-3">
+							<HiOutlineUser className="text-gray-400" size={20} />
+							<input
+								type="text"
+								placeholder="Username"
+								className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
+								autoComplete="username"
+							/>
+						</div>
 					</div>
-				</div>
 
-				{/* Wachtwoord */}
-				<div className="mb-6">
-					<div className="flex items-center bg-gray-700 rounded-xl px-4 py-3">
-						<HiOutlineLockClosed className="text-gray-400" size={20} />
-						<input
-							type="password"
-							placeholder="Password"
-							className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-						/>
+					{/* Wachtwoord */}
+					<div>
+						<div className="flex items-center bg-gray-700 rounded-xl px-4 py-3">
+							<HiOutlineLockClosed className="text-gray-400" size={20} />
+							<input
+								type="password"
+								placeholder="Password"
+								className="ml-3 flex-1 bg-transparent outline-none text-white placeholder-gray-400"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								autoComplete="current-password"
+							/>
+						</div>
 					</div>
-				</div>
 
-				{/* Login knop */}
-				<Button
-					onClick={handleLogin}
-					className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl flex items-center justify-center transition"
-				>
-					Log in
-				</Button>
+					{/* Login knop */}
+					<Button
+						type="submit"
+						disabled={isSubmitting}
+						className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-70 text-white font-semibold rounded-xl flex items-center justify-center transition"
+					>
+						{isSubmitting ? "Logging in..." : "Log in"}
+					</Button>
+				</form>
 
 				{/* Extra tekst */}
 				<div className="mt-6 text-center text-gray-400">

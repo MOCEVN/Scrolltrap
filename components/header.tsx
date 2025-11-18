@@ -1,10 +1,9 @@
 "use client";
 
+import { useScenario } from "@/hooks/use-scenario";
 import { LogIn, MessageSquare, Search, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
-
-import { useScenario } from "@/hooks/use-scenario";
-
+import { useEffect, useState } from "react";
 import ScenarioSwitch from "./scenario-switch";
 import { Button } from "./ui/button";
 
@@ -33,7 +32,21 @@ export default function Header({
 			? "Explore (doomscroll mode)"
 			: "Explore";
 
-	const subheading = showLikedOnly
+	const subheading = showLikedOnly;
+
+	const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+
+	useEffect(() => {
+		fetch("/api/auth/me", {
+			method: "GET",
+			credentials: "include",
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				setLoggedIn(!!data.user);
+			})
+			.catch(() => setLoggedIn(false));
+	}, []);
 
 	return (
 		<header className="border-b border-border bg-card px-4 py-4 shadow-sm backdrop-blur sm:px-6">
@@ -68,28 +81,29 @@ export default function Header({
 						<MessageSquare className="h-5 w-5" />
 					</button>
 
-					{/* Login button */}
-					<Link href="/login">
-						<Button
-							variant="ghost"
-							className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
-						>
-							<LogIn size={20} className="transition" />
-							Login
-						</Button>
-					</Link>
+					{loggedIn === false && (
+						<>
+							<Link href="/login">
+								<Button
+									variant="ghost"
+									className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
+								>
+									<LogIn size={20} className="transition" />
+									Login
+								</Button>
+							</Link>
 
-					<Link href="/register">
-						<Button
-							variant="ghost"
-							className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
-						>
-							<UserRoundPlus size={20} className="transition" />
-							Register
-						</Button>
-					</Link>
-
-
+							<Link href="/register">
+								<Button
+									variant="ghost"
+									className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
+								>
+									<UserRoundPlus size={20} className="transition" />
+									Register
+								</Button>
+							</Link>
+						</>
+					)}
 				</div>
 			</div>
 

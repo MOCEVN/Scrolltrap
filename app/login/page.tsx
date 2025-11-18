@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi";
 
@@ -38,9 +38,10 @@ export default function DarkLogin() {
 			const payload = await response.json();
 
 			if (!response.ok) {
-				const message = typeof payload.error === "string"
-					? payload.error
-					: "We couldn't log you in.";
+				const message =
+					typeof payload.error === "string"
+						? payload.error
+						: "We couldn't log you in.";
 				toast.error(message);
 				return;
 			}

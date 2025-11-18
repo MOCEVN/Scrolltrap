@@ -1,6 +1,6 @@
 "use client";
 
-import { LogIn, MessageSquare, Search, UserRoundPlus } from "lucide-react";
+import { LogIn, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 
 import { useScenario } from "@/hooks/use-scenario";
@@ -40,34 +40,10 @@ export default function Header({
 			{/* ✅ Top row: Search bar (left) + Message + Login (right) */}
 			<div className="flex w-full items-center justify-between gap-3">
 				{/* LEFT SIDE */}
-				<div className="flex items-center flex-1">
-					<div className="relative w-full max-w-md">
-						<Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-
-						<input
-							type="search"
-							name="search"
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-							placeholder="Search..."
-							aria-label="Search images"
-							className="w-full rounded-full border border-border bg-background px-3 py-2 pl-10 text-sm text-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
-						/>
-					</div>
-				</div>
+				<div className="flex items-center flex-1"></div>
 
 				{/* RIGHT SIDE */}
 				<div className="flex items-center gap-4">
-					{/* Messages button */}
-					<button
-						type="button"
-						className="h-12 w-12 flex items-center justify-center rounded-xl text-white hover:opacity-80"
-						title="Messages (coming soon)"
-					>
-						<MessageSquare className="h-5 w-5" />
-					</button>
-
 					{/* Login button */}
 					<Link href="/login">
 						<Button

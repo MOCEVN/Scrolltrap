@@ -62,11 +62,11 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		() =>
 			isDream
 				? {
-					time: DREAM_BREAK_TIME_THRESHOLD,
-				}
+						time: DREAM_BREAK_TIME_THRESHOLD,
+					}
 				: {
-					time: DOOM_BREAK_TIME_THRESHOLD,
-				},
+						time: DOOM_BREAK_TIME_THRESHOLD,
+					},
 		[isDream],
 	);
 	const [timeUntilBreak, setTimeUntilBreak] = useState<number | null>(null);
@@ -176,12 +176,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 				setImagesViewedInSession(imagesSinceLastBreakRef.current);
 			}
 		}
-	}, [
-		breakConfig.time,
-		isDream,
-		showBreakPoint,
-		stopCountdown,
-	]);
+	}, [breakConfig.time, isDream, showBreakPoint, stopCountdown]);
 
 	const startCountdown = useCallback(() => {
 		if (!isDream) {
@@ -268,7 +263,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 			setLoadingMore(true);
 
 			const timeoutId = window.setTimeout(() => {
-				let shouldOpenBreak = false;
+				const shouldOpenBreak = false;
 				let viewedSinceLastBreak = imagesSinceLastBreakRef.current;
 
 				setImages((prevImages) => {
@@ -283,8 +278,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 					viewedSinceLastBreak = imagesSinceLastBreakRef.current;
 
 					const timeSinceLastBreak = Date.now() - lastBreakTimestampRef.current;
-					const reachedTimeThreshold =
-						timeSinceLastBreak >= breakConfig.time;
+					const reachedTimeThreshold = timeSinceLastBreak >= breakConfig.time;
 
 					return combined;
 				});
@@ -434,8 +428,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 			return;
 		}
 
-		const scrollContainer = target.closest("[data-scroll-container]") as
-			HTMLElement | null;
+		const scrollContainer = target.closest(
+			"[data-scroll-container]",
+		) as HTMLElement | null;
 
 		if (typeof IntersectionObserver === "undefined") {
 			return;
@@ -532,8 +527,12 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 						<span className="mb-4 text-5xl" aria-hidden>
 							🌿
 						</span>
-						<h2 className="text-2xl font-bold text-zinc-900">{breakHeadline}</h2>
-						<p className="mt-3 max-w-md text-sm text-zinc-600">{breakDescription}</p>
+						<h2 className="text-2xl font-bold text-zinc-900">
+							{breakHeadline}
+						</h2>
+						<p className="mt-3 max-w-md text-sm text-zinc-600">
+							{breakDescription}
+						</p>
 						{breakCountdownDisplay && (
 							<div className="mt-6 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
 								<span className="text-xs font-medium uppercase tracking-wide text-emerald-500">
@@ -551,7 +550,8 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 						</button>
 						{!breakCompleted && (
 							<p className="mt-3 text-xs text-zinc-400">
-								It is okay to step away for longer—your feed will be right where you left it.
+								It is okay to step away for longer—your feed will be right where
+								you left it.
 							</p>
 						)}
 					</div>
@@ -592,15 +592,15 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 				</div>
 			)}
 
-		<section className="bg-slate-50">
-			<div className="mx-auto max-w-6xl px-4 pb-12">
-				{isDream && timeUntilBreak !== null && !showBreakPoint && (
-					<div className="mb-4 flex justify-end">
-						<div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/90 px-4 py-2 text-sm font-semibold text-indigo-600 shadow">
-							<span>Next check-in in {formatTime(timeUntilBreak)}</span>
+			<section className="bg-slate-50">
+				<div className="mx-auto max-w-6xl px-4 pb-12">
+					{isDream && timeUntilBreak !== null && !showBreakPoint && (
+						<div className="mb-4 flex justify-end">
+							<div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/90 px-4 py-2 text-sm font-semibold text-indigo-600 shadow">
+								<span>Next check-in in {formatTime(timeUntilBreak)}</span>
+							</div>
 						</div>
-					</div>
-				)}
+					)}
 					<div
 						className="flex flex-row gap-4 "
 						style={{ marginLeft: -spacing / 2, marginRight: -spacing / 2 }}

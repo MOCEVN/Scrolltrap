@@ -13,41 +13,52 @@ export default function DarkLogin() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const router = useRouter();
 
+	const validateForm = (username: string, password: string) => {
+		if (!username || !password) {
+			toast.error("Please fill in both fields.");
+			return false;
+		}
+		return true;
+	};
+
+	const sendLoginRequest = async (username: string, password: string) => {
+		return await fetch("/api/auth/login", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({ username, password }),
+		});
+	};
+
+	const handleResponse = async (response: Response, router: any) => {
+		const payload = await response.json();
+
+		if (!response.ok) {
+			const message =
+				typeof payload.error === "string"
+					? payload.error
+					: "We couldn't log you in.";
+			toast.error(message);
+			return false;
+		}
+
+		toast.success(`Welcome back, ${payload.user.username}!`);
+		setTimeout(() => router.push("/profile"), 800);
+		return true;
+	};
+
 	const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
-		if (isSubmitting) {
-			return;
-		}
+		if (isSubmitting) return;
 
-		if (!username || !password) {
-			toast.error("Please fill in both fields.");
-			return;
-		}
+		if (!validateForm(username, password)) return;
 
 		setIsSubmitting(true);
 
 		try {
-			const response = await fetch("/api/auth/login", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({ username, password }),
-			});
-
-			const payload = await response.json();
-
-			if (!response.ok) {
-				const message =
-					typeof payload.error === "string"
-						? payload.error
-						: "We couldn't log you in.";
-				toast.error(message);
-				return;
-			}
-
-			toast.success(`Welcome back, ${payload.user.username}!`);
-			setTimeout(() => router.push("/profile"), 800);
+			const response = await sendLoginRequest(username, password);
+			await handleResponse(response, router);
 		} catch (error) {
 			console.error("Login failed", error);
 			toast.error("Unable to reach the server. Please try again.");
@@ -58,18 +69,6 @@ export default function DarkLogin() {
 
 	return (
 		<div className="relative min-h-screen bg-gray-900 flex items-center justify-center px-4">
-			{/* Terug naar Home knop linksboven */}
-			{/* <div className="absolute top-4 left-4">
-				<Button
-					onClick={() => router.push("/")}
-					className="flex items-center text-gray-400 hover:text-white"
-					variant="default"
-				>
-					<HiOutlineArrowLeft size={20} className="mr-2" />
-					Back to Home
-				</Button>
-			</div> */}
-
 			{/* Login card */}
 			<div className="w-full max-w-md bg-gray-800 rounded-2xl p-8 shadow-xl">
 				<h1 className="text-4xl font-bold text-center mb-6 text-white">

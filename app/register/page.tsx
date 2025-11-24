@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import {
-    HiOutlineEnvelope,
-    HiOutlineLockClosed,
-    HiOutlineUser,
+	HiOutlineEnvelope,
+	HiOutlineLockClosed,
+	HiOutlineUser,
 } from "react-icons/hi2";
 
 export default function DarkRegister() {
@@ -49,9 +49,10 @@ export default function DarkRegister() {
 			const payload = await response.json();
 
 			if (!response.ok) {
-				const message = typeof payload.error === "string"
-					? payload.error
-					: "We couldn't create your account.";
+				const message =
+					typeof payload.error === "string"
+						? payload.error
+						: "We couldn't create your account.";
 				toast.error(message);
 				return;
 			}

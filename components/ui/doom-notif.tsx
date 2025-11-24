@@ -15,15 +15,13 @@ export const DoomNotification: React.FC<DoomNotificationProps> = ({
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6">
 			<div className="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-				<div
-					className="absolute inset-0"
-					role="button"
-					tabIndex={0}
-					onClick={onClose}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" || e.key === " ") onClose();
-					}}
-				/>
+        <button
+          className="absolute inset-0 bg-transparent border-none p-0 m-0"
+          onClick={onClose}
+          type="button"
+          aria-label="Close overlay"
+        />
+
 				<div className="relative text-center">
 					<p className="mb-4 text-5xl">⚠️</p>
 					<p className="mb-2 text-2xl font-bold text-zinc-900">Doom Warning!</p>

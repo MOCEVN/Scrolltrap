@@ -12,7 +12,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { Button } from "./ui/button";
+import { DoomNotification } from "./ui/doom-notif";
 
 type MasonryGridProps = {
 	numColumns: number;
@@ -580,46 +580,11 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 	return (
 		<>
 			{/* DOOM MODE: Fullscreen, persistente waarschuwing */}
-			{showDoomWarning && !isDream && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-red-900/95 backdrop-blur-md">
-					<div className="w-full max-w-2xl px-8 py-12 text-center">
-						<div className="mb-8 animate-pulse">
-							<span className="text-9xl">⚠️</span>
-						</div>
+			<DoomNotification
+				visible={showDoomWarning}
+				onClose={() => setShowDoomWarning(false)}
+			/>
 
-						<h1 className="mb-6 text-4xl font-black text-white md:text-6xl">
-							YOU ARE IN DOOM MODE
-						</h1>
-
-						<div className="mb-8 space-y-4 text-xl font-medium text-red-100 md:text-2xl">
-							<p>This feed is designed to trigger, disturb, and overwhelm.</p>
-							<p className="text-red-200">
-								There is no break. There is no escape.
-							</p>
-							<p className="mt-6 text-lg italic opacity-90">
-								You chose this. You can stop anytime.
-							</p>
-						</div>
-
-						<Button
-							onClick={() => setShowDoomWarning(false)}
-							className="rounded-full bg-white px-10 py-5 text-2xl font-bold text-red-900 shadow-2xl transition-all hover:scale-105 hover:bg-red-50"
-						>
-							I understand — let me continue
-						</Button>
-
-						<p className="mt-8 text-sm uppercase tracking-wider text-red-300">
-							Click anywhere to close
-						</p>
-					</div>
-
-					{/* Achtergrond klik om te sluiten */}
-					<div
-						className="absolute inset-0"
-						onClick={() => setShowDoomWarning(false)}
-					/>
-				</div>
-			)}
 			{showBreakPoint && (
 				<div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 px-6">
 					<div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">

@@ -30,7 +30,7 @@ const createKeyForInterests = (interests: string[]) =>
 	JSON.stringify([...interests].sort());
 
 const DREAM_BREAK_IMAGE_THRESHOLD = 24;
-const DREAM_BREAK_TIME_THRESHOLD = 10 * 1000;
+// const DREAM_BREAK_TIME_THRESHOLD = 10 * 1000;
 const DOOM_BREAK_IMAGE_THRESHOLD = Number.POSITIVE_INFINITY;
 const DOOM_BREAK_TIME_THRESHOLD = Number.POSITIVE_INFINITY;
 const DREAM_SUGGESTED_BREAK_DURATION = 90 * 1000;
@@ -67,7 +67,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		() =>
 			isDream
 				? {
-						time: DREAM_BREAK_TIME_THRESHOLD,
+						// time: DREAM_BREAK_TIME_THRESHOLD,
 					}
 				: {
 						time: DOOM_BREAK_TIME_THRESHOLD,
@@ -460,13 +460,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		return () => {
 			observer.disconnect();
 		};
-	}, [
-		loadMoreImages,
-		showBreakPoint,
-		showLikedOnly,
-		images.length,
-		likedImages.length,
-	]);
+	}, [loadMoreImages, showBreakPoint, showLikedOnly]);
 
 	const displayImages = showLikedOnly ? likedImages : images;
 
@@ -622,9 +616,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 				<div className="mx-auto max-w-6xl px-4 pb-12">
 					{isDream && timeUntilBreak !== null && !showBreakPoint && (
 						<div className="mb-4 flex justify-end">
-							<div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/90 px-4 py-2 text-sm font-semibold text-indigo-600 shadow">
+							{/* <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/90 px-4 py-2 text-sm font-semibold text-indigo-600 shadow">
 								<span>Next check-in in {formatTime(timeUntilBreak)}</span>
-							</div>
+							</div> */}
 						</div>
 					)}
 					<div

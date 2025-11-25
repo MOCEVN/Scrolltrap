@@ -1,4 +1,5 @@
 import type React from "react";
+import { Button } from "./button";
 
 type DoomNotificationProps = {
 	visible: boolean;
@@ -32,13 +33,13 @@ export const DoomNotification: React.FC<DoomNotificationProps> = ({
         We've just added something special to your feed — don’t miss it!
       </p>
 
-      <button
+      <Button
         type="button"
         onClick={onClose}
-        className="mt-2 w-full rounded-xl bg-indigo-500 px-6 py-3 text-white font-semibold shadow-lg transition-transform hover:-translate-y-1 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        className="mt-2 w-full rounded-xl bg-[limegreen] px-6 py-3 text-white font-semibold shadow-lg transition-transform hover:-translate-y-1 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400"
       >
         Watch Now
-      </button>
+      </Button>
     </div>
   </div>
 </div>

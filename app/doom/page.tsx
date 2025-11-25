@@ -1,3 +1,4 @@
+// app/doom/page.tsx
 "use client";
 
 import Header from "@/components/header";
@@ -131,9 +132,9 @@ export default function Doom() {
 
 				<div
 					ref={containerRef}
-					className="flex-1 overflow-y-auto snap-y snap-mandatory px-4 py-6"
+					className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide px-4 py-6"
 				>
-					<div className="max-w-md mx-auto space-y-6">
+					<div className="max-w-sm mx-auto space-y-6">
 						{demoShorts.map((short, idx) => {
 							const isMuted = !unmuted.has(short.id);
 
@@ -143,7 +144,7 @@ export default function Doom() {
 									data-index={idx}
 									className="snap-start bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
 								>
-									<div className="relative aspect-square bg-black">
+									<div className="relative aspect-[9/16] bg-black">
 										<iframe
 											className="w-full h-full"
 											src={`https://www.youtube.com/embed/${short.id}?autoplay=1&mute=${isMuted ? 1 : 0}&start=0&end=15&loop=1&playlist=${short.id}&controls=0&modestbranding=1&rel=0&fs=0`}
@@ -155,29 +156,29 @@ export default function Doom() {
 
 										<Button
 											onClick={() => toggleSound(short.id)}
-											className="absolute bottom-2 right-2 bg-white/90 hover:bg-white text-black p-2 rounded-full shadow-sm"
+											className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-black p-3 rounded-full shadow-md"
 											size="icon"
 										>
 											{isMuted ? (
-												<VolumeX className="w-4 h-4" />
+												<VolumeX className="w-6 h-6" />
 											) : (
-												<Volume2 className="w-4 h-4" />
+												<Volume2 className="w-6 h-6" />
 											)}
 										</Button>
 									</div>
 
-									<div className="p-3 flex items-center justify-between gap-2">
-										<p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate flex-1">
+									<div className="p-4 flex items-center justify-between gap-3">
+										<h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate flex-1">
 											{short.title}
-										</p>
+										</h3>
 										<Button
 											variant="ghost"
 											size="icon"
-											className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+											className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
 											onClick={() => toggleLike(short.id)}
 										>
 											<Heart
-												className={`w-4 h-4 ${liked.has(short.id) ? "text-red-500 fill-red-500" : "text-gray-500"}`}
+												className={`w-6 h-6 ${liked.has(short.id) ? "text-red-500 fill-red-500" : "text-gray-600"}`}
 											/>
 										</Button>
 									</div>

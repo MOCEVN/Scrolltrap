@@ -4,7 +4,9 @@ import { LogIn, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 
 import { useScenario } from "@/hooks/use-scenario";
-
+import { LogIn, Search, UserRoundPlus } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import ScenarioSwitch from "./scenario-switch";
 import { Button } from "./ui/button";
 
@@ -27,13 +29,37 @@ export default function Header({
 }: HeaderProps) {
 	const { mode, isDream } = useScenario();
 
+	const handleLogout = async () => {
+		await fetch("/api/auth/logout", {
+			method: "POST",
+			credentials: "include",
+		});
+
+		setLoggedIn(false);
+		window.location.href = "/";
+	};
+
 	const heading = showLikedOnly
 		? "Your liked images"
 		: mode === "doom"
 			? "Explore (doomscroll mode)"
 			: "Explore";
 
-	const subheading = showLikedOnly
+	const subheading = showLikedOnly;
+
+	const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+
+	useEffect(() => {
+		fetch("/api/auth/me", {
+			method: "GET",
+			credentials: "include",
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				setLoggedIn(!!data.user);
+			})
+			.catch(() => setLoggedIn(false));
+	}, []);
 
 	return (
 		<header className="border-b border-border bg-card px-4 py-4 shadow-sm backdrop-blur sm:px-6">
@@ -44,28 +70,39 @@ export default function Header({
 
 				{/* RIGHT SIDE */}
 				<div className="flex items-center gap-4">
-					{/* Login button */}
-					<Link href="/login">
+					{loggedIn === false && (
+						<>
+							<Link href="/login">
+								<Button
+									variant="ghost"
+									className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
+								>
+									<LogIn size={20} className="transition" />
+									Login
+								</Button>
+							</Link>
+
+							<Link href="/register">
+								<Button
+									variant="ghost"
+									className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
+								>
+									<UserRoundPlus size={20} className="transition" />
+									Register
+								</Button>
+							</Link>
+						</>
+					)}
+
+					{loggedIn === true && (
 						<Button
 							variant="ghost"
+							onClick={handleLogout}
 							className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
 						>
-							<LogIn size={20} className="transition" />
-							Login
+							Logout
 						</Button>
-					</Link>
-
-					<Link href="/register">
-						<Button
-							variant="ghost"
-							className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
-						>
-							<UserRoundPlus size={20} className="transition" />
-							Register
-						</Button>
-					</Link>
-
-
+					)}
 				</div>
 			</div>
 
@@ -82,7 +119,8 @@ export default function Header({
 
 				<div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
 					<ScenarioSwitch />
-					{likedCount > 0 && (
+
+					{likedCount > 0 && loggedIn === true && (
 						<Button
 							type="button"
 							onClick={onToggleShowLiked}

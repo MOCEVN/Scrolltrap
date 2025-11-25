@@ -50,7 +50,11 @@
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+
+  --card-light: oklch(1 0 0);
+  --card-dark: oklch(0.22 0 0);
+  --card: var(--card-light); /* default = light */
+
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -183,18 +187,6 @@ form.user-details input {
   border-right-color: mediumseagreen;
 }
 
-/* button,
-a[role="button"],
-.button {
-  background-color: lab(48.295% 38.3129 -81.9673);
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  font-size: 1rem;
-}
 
 button:hover,
 a[role="button"]:hover,
@@ -254,3 +246,4 @@ a[role="button"]:hover,
     transition: background-color 0.3s ease;
   }
 }
+

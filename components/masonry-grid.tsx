@@ -12,6 +12,8 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { DoomNotification } from "./ui/doom-notif";
+import { DreamNotification } from "./ui/dream-notif";
 
 type MasonryGridProps = {
 	numColumns: number;
@@ -28,7 +30,7 @@ const createKeyForInterests = (interests: string[]) =>
 	JSON.stringify([...interests].sort());
 
 const DREAM_BREAK_IMAGE_THRESHOLD = 24;
-const DREAM_BREAK_TIME_THRESHOLD = 10 * 1000;
+// const DREAM_BREAK_TIME_THRESHOLD = 10 * 1000;
 const DOOM_BREAK_IMAGE_THRESHOLD = Number.POSITIVE_INFINITY;
 const DOOM_BREAK_TIME_THRESHOLD = Number.POSITIVE_INFINITY;
 const DREAM_SUGGESTED_BREAK_DURATION = 90 * 1000;
@@ -57,16 +59,18 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 	const [showBreakPoint, setShowBreakPoint] = useState(false);
 	const [imagesViewedInSession, setImagesViewedInSession] = useState(0);
 
+	const calmTimerRef = useRef<NodeJS.Timeout | null>(null);
+
 	const { mode, isDream } = useScenario();
 	const breakConfig = useMemo(
 		() =>
 			isDream
 				? {
-					time: DREAM_BREAK_TIME_THRESHOLD,
-				}
+						// time: DREAM_BREAK_TIME_THRESHOLD,
+					}
 				: {
-					time: DOOM_BREAK_TIME_THRESHOLD,
-				},
+						time: DOOM_BREAK_TIME_THRESHOLD,
+					},
 		[isDream],
 	);
 	const [timeUntilBreak, setTimeUntilBreak] = useState<number | null>(null);
@@ -176,12 +180,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 				setImagesViewedInSession(imagesSinceLastBreakRef.current);
 			}
 		}
-	}, [
-		breakConfig.time,
-		isDream,
-		showBreakPoint,
-		stopCountdown,
-	]);
+	}, [breakConfig.time, isDream, showBreakPoint, stopCountdown]);
 
 	const startCountdown = useCallback(() => {
 		if (!isDream) {
@@ -268,7 +267,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 			setLoadingMore(true);
 
 			const timeoutId = window.setTimeout(() => {
-				let shouldOpenBreak = false;
+				const shouldOpenBreak = false;
 				let viewedSinceLastBreak = imagesSinceLastBreakRef.current;
 
 				setImages((prevImages) => {
@@ -283,8 +282,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 					viewedSinceLastBreak = imagesSinceLastBreakRef.current;
 
 					const timeSinceLastBreak = Date.now() - lastBreakTimestampRef.current;
-					const reachedTimeThreshold =
-						timeSinceLastBreak >= breakConfig.time;
+					const reachedTimeThreshold = timeSinceLastBreak >= breakConfig.time;
 
 					return combined;
 				});
@@ -434,8 +432,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 			return;
 		}
 
-		const scrollContainer = target.closest("[data-scroll-container]") as
-			HTMLElement | null;
+		const scrollContainer = target.closest(
+			"[data-scroll-container]",
+		) as HTMLElement | null;
 
 		if (typeof IntersectionObserver === "undefined") {
 			return;
@@ -460,15 +459,25 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		return () => {
 			observer.disconnect();
 		};
-	}, [
-		loadMoreImages,
-		showBreakPoint,
-		showLikedOnly,
-		images.length,
-		likedImages.length,
-	]);
+	}, [loadMoreImages, showBreakPoint, showLikedOnly]);
 
 	const displayImages = showLikedOnly ? likedImages : images;
+
+	const [showDoomWarning, setShowDoomWarning] = useState(false);
+
+	// Trigger: toon de waarschuwing na bijv. 30 seconden in Doom mode
+	useEffect(() => {
+		if (isDream) {
+			setShowDoomWarning(false);
+			return;
+		}
+
+		const timer = setTimeout(() => {
+			setShowDoomWarning(true);
+		}, 30_000); // 30 seconden in Doom mode → waarschuwing
+
+		return () => clearTimeout(timer);
+	}, [isDream]);
 
 	const columns = useMemo(() => {
 		const buckets: Array<Array<{ item: ImageItem; priority: boolean }>> =
@@ -532,8 +541,12 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 						<span className="mb-4 text-5xl" aria-hidden>
 							🌿
 						</span>
-						<h2 className="text-2xl font-bold text-zinc-900">{breakHeadline}</h2>
-						<p className="mt-3 max-w-md text-sm text-zinc-600">{breakDescription}</p>
+						<h2 className="text-2xl font-bold text-zinc-900">
+							{breakHeadline}
+						</h2>
+						<p className="mt-3 max-w-md text-sm text-zinc-600">
+							{breakDescription}
+						</p>
 						{breakCountdownDisplay && (
 							<div className="mt-6 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
 								<span className="text-xs font-medium uppercase tracking-wide text-emerald-500">
@@ -551,7 +564,8 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 						</button>
 						{!breakCompleted && (
 							<p className="mt-3 text-xs text-zinc-400">
-								It is okay to step away for longer—your feed will be right where you left it.
+								It is okay to step away for longer—your feed will be right where
+								you left it.
 							</p>
 						)}
 					</div>
@@ -562,49 +576,28 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
 	return (
 		<>
-			{showBreakPoint && (
-				<div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 px-6">
-					<div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-						<p className="mb-4 text-center text-5xl">🌸</p>
-						<p className="mb-3 text-center text-2xl font-bold text-zinc-900">
-							Fancy a quick break?
-						</p>
-						<p className="mb-4 text-center text-base font-medium text-indigo-600">
-							You&apos;ve explored {imagesViewedInSession} images
-						</p>
-						<div className="flex flex-col gap-3">
-							<button
-								type="button"
-								onClick={handleContinueScrolling}
-								className="rounded-xl bg-indigo-500 px-6 py-3 text-base font-bold text-white shadow-md transition-transform hover:translate-y-0.5 hover:bg-indigo-600"
-							>
-								Continue exploring
-							</button>
-							<button
-								type="button"
-								onClick={handleTakeBreak}
-								className="rounded-xl border border-slate-200 bg-slate-100 px-6 py-3 text-base font-semibold text-slate-700 transition-colors hover:bg-white"
-							>
-								Take a break
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
+			<DoomNotification
+				visible={showDoomWarning}
+				onClose={() => setShowDoomWarning(false)}
+			/>
 
-		<section className="bg-slate-50">
-			<div className="mx-auto max-w-6xl px-4 pb-12">
-				{isDream && timeUntilBreak !== null && !showBreakPoint && (
-					<div className="mb-4 flex justify-end">
-						<div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/90 px-4 py-2 text-sm font-semibold text-indigo-600 shadow">
-							<span>Next check-in in {formatTime(timeUntilBreak)}</span>
+			<DreamNotification
+				visible={showBreakPoint}
+				imagesViewedInSession={imagesViewedInSession}
+				onContinue={handleContinueScrolling}
+				onTakeBreak={handleTakeBreak}
+			/>
+
+			<section className="bg-slate-50">
+				<div className="mx-auto max-w-6xl px-4 pb-12">
+					{isDream && timeUntilBreak !== null && !showBreakPoint && (
+						<div className="mb-4 flex justify-end">
+							{/* <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/90 px-4 py-2 text-sm font-semibold text-indigo-600 shadow">
+								<span>Next check-in in {formatTime(timeUntilBreak)}</span>
+							</div> */}
 						</div>
-					</div>
-				)}
-					<div
-						className="flex flex-row gap-4 "
-						style={{ marginLeft: -spacing / 2, marginRight: -spacing / 2 }}
-					>
+					)}
+					<div className="flex flex-row gap-4">
 						{columns.map((column, columnIndex) => (
 							<div
 								key={columnIndex}

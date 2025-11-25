@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -29,42 +29,46 @@ const Home = () => {
   const [showLikedOnly, setShowLikedOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { interests, updateInterests, isLoading: interestsLoading } = useInterests();
-  const {
-    likedImages,
-    toggleLike,
-    isImageLiked,
-    likedCount,
-    isLoading: likesLoading,
-  } = useLikedImages();
-  const { mode, isDream } = useScenario();
+	const {
+		interests,
+		updateInterests,
+		isLoading: interestsLoading,
+	} = useInterests();
+	const {
+		likedImages,
+		toggleLike,
+		isImageLiked,
+		likedCount,
+		isLoading: likesLoading,
+	} = useLikedImages();
+	const { mode, isDream } = useScenario();
 
-  const isBootstrapping = interestsLoading || likesLoading;
+	const isBootstrapping = interestsLoading || likesLoading;
 
-  const handleInterestsUpdate = useCallback(
-    (next: string[]) => {
-      if (!isDream) {
-        return;
-      }
-      updateInterests(next);
-      if (next.length === 0) setShowLikedOnly(false);
-    },
-    [isDream, updateInterests]
-  );
+	const handleInterestsUpdate = useCallback(
+		(next: string[]) => {
+			if (!isDream) {
+				return;
+			}
+			updateInterests(next);
+			if (next.length === 0) setShowLikedOnly(false);
+		},
+		[isDream, updateInterests],
+	);
 
-  const handleToggleShowLiked = useCallback(() => {
-    setShowLikedOnly((prev) => !prev);
-  }, []);
+	const handleToggleShowLiked = useCallback(() => {
+		setShowLikedOnly((prev) => !prev);
+	}, []);
 
-  const handleSearch = useCallback(() => {
-    if (!searchQuery.trim()) return;
-    console.info('Search is not wired up yet', searchQuery.trim());
-  }, [searchQuery]);
+	const handleSearch = useCallback(() => {
+		if (!searchQuery.trim()) return;
+		console.info("Search is not wired up yet", searchQuery.trim());
+	}, [searchQuery]);
 
-  const gridColumns = mode === 'doom' ? 5 : 4;
-  const gridSpacing = mode === 'doom' ? 10 : 12;
+	const gridColumns = mode === "doom" ? 1 : 4;
+	const gridSpacing = mode === "doom" ? 10 : 12;
 
-  const activeInterests = interests;
+	const activeInterests = interests;
 
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-900">

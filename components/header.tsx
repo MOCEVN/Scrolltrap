@@ -1,10 +1,7 @@
 "use client";
 
-import { LogIn, UserRoundPlus } from "lucide-react";
-import Link from "next/link";
-
 import { useScenario } from "@/hooks/use-scenario";
-import { LogIn, Search, UserRoundPlus } from "lucide-react";
+import { LogIn, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ScenarioSwitch from "./scenario-switch";

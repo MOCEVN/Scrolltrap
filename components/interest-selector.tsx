@@ -55,11 +55,7 @@ export const InterestSelector: React.FC<InterestSelectorProps> = ({
               key={interest}
               type="button"
               onClick={() => toggleInterest(interest)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                isActive
-                  ? 'border-indigo-300 bg-indigo-100 text-indigo-700'
-                  : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-indigo-200 hover:text-indigo-600'
-              }`}
+              className={`interestButton ${isActive ? 'active' : ''}`}
               aria-pressed={isActive}
             >
               {interest}

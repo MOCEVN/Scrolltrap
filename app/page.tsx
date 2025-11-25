@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import Header from '@/components/header';
 import InterestSelector from '@/components/interest-selector';
+import IntroPopup from '@/components/intro-popup';
 import MasonryGrid from '@/components/masonry-grid';
 import Sidebar from '@/components/sidebar';
 import { useInterests } from '@/hooks/use-interests';
@@ -11,6 +12,20 @@ import { useLikedImages } from '@/hooks/use-liked-images';
 import { useScenario } from '@/hooks/use-scenario';
 
 const Home = () => {
+  const [showIntro, setShowIntro] = useState(false);
+
+  useEffect(() => {
+    const hasSeen = sessionStorage.getItem("intro_seen");
+    if (!hasSeen) {
+      setShowIntro(true);
+    }
+  }, []);
+
+  const closeIntro = () => {
+    sessionStorage.setItem("intro_seen", "true");
+    setShowIntro(false);
+  };
+
   const [showLikedOnly, setShowLikedOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -53,6 +68,11 @@ const Home = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-900">
+      {/* === Intro Popup === */}
+      {showIntro && (
+        <IntroPopup onClose={closeIntro} />
+      )}
+
       {/* Sidebar component */}
       <Sidebar />
 
@@ -66,7 +86,7 @@ const Home = () => {
           setSearchQuery={setSearchQuery}
           handleSearch={handleSearch}
         />
-    <main className="flex-1 overflow-y-auto" data-scroll-container>
+        <main className="flex-1 overflow-y-auto" data-scroll-container>
           <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
             {/* Interest Selector */}
             {!showLikedOnly && isDream && (
@@ -96,7 +116,7 @@ const Home = () => {
               />
             )}
           </div>
-  </main>
+        </main>
       </div>
     </div>
   );

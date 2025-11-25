@@ -2,7 +2,7 @@
 
 ## Quickstart
 
-1. `cp .env.example .env.local`
+1. `cp .env.example .env`
 2. `docker compose up -d db`
 3. `npm install`
 4. `npm run dev`

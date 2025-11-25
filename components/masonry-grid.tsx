@@ -59,6 +59,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 	const [showBreakPoint, setShowBreakPoint] = useState(false);
 	const [imagesViewedInSession, setImagesViewedInSession] = useState(0);
 
+	const [calmMode, setCalmMode] = useState(false);
+	const calmTimerRef = useRef<NodeJS.Timeout | null>(null);
+
 	const { mode, isDream } = useScenario();
 	const breakConfig = useMemo(
 		() =>
@@ -469,6 +472,29 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
 	const [showDoomWarning, setShowDoomWarning] = useState(false);
 
+	useEffect(() => {
+		// Start timer na 3 minuten (180.000 ms)
+		calmTimerRef.current = setTimeout(() => {
+			setCalmMode(true);
+
+			// Optioneel: subtiele toast (verdwijnt vanzelf)
+			const toast = document.createElement("div");
+			toast.textContent = "Rustmodus actief – minder prikkels, meer focus";
+			toast.className = `
+      fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+      px-4 py-2 rounded-full text-sm font-medium
+      bg-black/70 text-white backdrop-blur
+      animate-in fade-in slide-in-from-bottom duration-300
+    `;
+			document.body.appendChild(toast);
+			setTimeout(() => toast.remove(), 4000);
+		}, 10 * 1000); // 3 minuten
+
+		return () => {
+			if (calmTimerRef.current) clearTimeout(calmTimerRef.current);
+		};
+	}, []); // Start één keer bij mount
+
 	// Trigger: toon de waarschuwing na bijv. 30 seconden in Doom mode
 	useEffect(() => {
 		if (isDream) {
@@ -478,7 +504,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
 		const timer = setTimeout(() => {
 			setShowDoomWarning(true);
-		}, 10_000); // 30 seconden in Doom mode → waarschuwing
+		}, 30_000); // 30 seconden in Doom mode → waarschuwing
 
 		return () => clearTimeout(timer);
 	}, [isDream]);
@@ -602,7 +628,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 						</div>
 					)}
 					<div
-						className="flex flex-row gap-4 "
+						className={`flex flex-row gap-4 ${calmMode ? "calm-mode" : ""}`}
 						style={{ marginLeft: -spacing / 2, marginRight: -spacing / 2 }}
 					>
 						{columns.map((column, columnIndex) => (

@@ -60,6 +60,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 	const [imagesViewedInSession, setImagesViewedInSession] = useState(0);
 
 	const [calmMode, setCalmMode] = useState(false);
+	const [calmDarkMode, setCalmDarkMode] = useState(false);
 	const calmTimerRef = useRef<NodeJS.Timeout | null>(null);
 
 	const { mode, isDream } = useScenario();

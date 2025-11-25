@@ -50,7 +50,11 @@
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+
+  --card-light: oklch(1 0 0);
+  --card-dark: oklch(0.22 0 0);
+  --card: var(--card-light); /* default = light */
+
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -202,3 +206,5 @@ form.user-details input {
 .calm-mode h1, .calm-mode h2, .calm-mode .text-indigo-600 {
   @apply text-indigo-500;
 }
+
+

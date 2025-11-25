@@ -1,6 +1,6 @@
 "use client";
 
-
+import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import { Upload } from "lucide-react";
 import { useRef, useState } from "react";
@@ -46,6 +46,15 @@ export default function Create() {
                {/* Sidebar component */}
                <Sidebar />
                 <div className="flex-1 flex flex-col">
+								<Header 
+									showLikedOnly={false}
+									likedCount={0}
+									onToggleShowLiked={() => {}}
+									searchQuery=""
+									setSearchQuery={() => {}}
+									handleSearch={() => {}}	
+								/>
+
     <main className="flex flex-col items-center justify-center min-h-screen gap-6 p-4">
       <div
         onClick={() => fileInputRef.current?.click()}

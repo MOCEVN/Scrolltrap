@@ -15,21 +15,21 @@ interface Short {
 const demoShorts: Short[] = [
 	{ id: "dQw4w9WgXcQ", title: "Rick Astley – Never Gonna Give You Up" },
 	{ id: "LPChtaKsVgU", title: "Funny Cat Chase Fail" },
-	{ id: "4DPFfsYF9yM", title: "Funny Cat Chase Fail" },
+	{ id: "4DPFfsYF9yM", title: "Cat vs Laser" },
 	{ id: "I5z1eYo8SLw", title: "DIY Life Hack Gone Wrong" },
 	{ id: "Cd5v14yJC4k", title: "Quick Street Food Recipe" },
 	{ id: "RfH9uQRzO8I", title: "Epic Skateboard Trick" },
 	{ id: "lFibEYEv3nM", title: "Viral Dance Challenge 2024" },
-	{ id: "G3GIh42weTo", title: "Viral Dance Challenge 2024" },
+	{ id: "G3GIh42weTo", title: "Dance Challenge" },
 	{ id: "s_3qEGBo-FA", title: "Hidden iPhone Features" },
 	{ id: "Z7UKBN0TwjQ", title: "Random Animal Facts" },
 	{ id: "w4-TTbZ8zC0", title: "Budget Travel Tips" },
 	{ id: "WMfOaOSz0R4", title: "ASMR Whisper Challenge" },
-	{ id: "1sTWZ2ViKAs", title: "Ivete Sangalo" },
-	{ id: "VCcmLaApMCo", title: "Universidad" },
-	{ id: "DmbnuVHQ96U", title: "Universidad" },
+	{ id: "1sTWZ2ViKAs", title: "Ivete Sangalo Live" },
+	{ id: "VCcmLaApMCo", title: "Universidad Meme" },
+	{ id: "DmbnuVHQ96U", title: "Campus Life" },
 	{ id: "jyIDhIXKsW8", title: "Quick Guitar Lesson" },
-	{ id: "BdpdKqm1G6w", title: "Quick Guitar Lesson" },
+	{ id: "BdpdKqm1G6w", title: "Guitar Cover" },
 	{ id: "9Gqz6nYA4Ls", title: "Urban Photography Tips" },
 	{ id: "dzq7zgXwWeY", title: "Funny Pet Reactions" },
 	{ id: "ybQ53LrxUJE", title: "Easy Vegan Snack Ideas" },
@@ -40,9 +40,8 @@ const demoShorts: Short[] = [
 	{ id: "nvkB_gsAK0k", title: "Street Magic Illusion" },
 	{ id: "31max-5gvcA", title: "Sustainable Fashion Haul" },
 	{ id: "7oy1PyaewmU", title: "Coding Tip for Noobs" },
-	{ id: "XKYMGepj7Y8", title: "Coding Tip for Noobs" },
+	{ id: "XKYMGepj7Y8", title: "Code Snippet" },
 	{ id: "0JqslJv4ktk", title: "Vintage Car Restoration" },
-	{ id: "y8u9i0o1p2a", title: "Poetry Reading Session" },
 	{ id: "6C_xFde9_lc", title: "Beach Cleanup Challenge" },
 ];
 
@@ -54,10 +53,7 @@ export default function Doom() {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			setShowDoomWarning(true);
-		}, 30_000);
-
+		const timer = setTimeout(() => setShowDoomWarning(true), 30_000);
 		return () => clearTimeout(timer);
 	}, []);
 
@@ -135,101 +131,60 @@ export default function Doom() {
 
 				<div
 					ref={containerRef}
-					className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide px-4 py-4 space-y-5"
+					className="flex-1 overflow-y-auto snap-y snap-mandatory px-4 py-6"
 				>
-					{demoShorts.map((short, idx) => {
-						const isMuted = !unmuted.has(short.id);
+					<div className="max-w-md mx-auto space-y-6">
+						{demoShorts.map((short, idx) => {
+							const isMuted = !unmuted.has(short.id);
 
-						return (
-							<div
-								key={short.id}
-								data-index={idx}
-								className="snap-start w-full max-w-lg mx-auto bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg"
-							>
-								<div className="relative aspect-[9/16] bg-black">
-									<iframe
-										className="w-full h-full"
-										src={`https://www.youtube.com/embed/${short.id}?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=${short.id}&controls=0&modestbranding=1&rel=0&fs=0&enablejsapi=1`}
-										title={short.title}
-										allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-										allowFullScreen
-										loading="lazy"
-									/>
+							return (
+								<div
+									key={short.id}
+									data-index={idx}
+									className="snap-start bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+								>
+									<div className="relative aspect-square bg-black">
+										<iframe
+											className="w-full h-full"
+											src={`https://www.youtube.com/embed/${short.id}?autoplay=1&mute=${isMuted ? 1 : 0}&start=0&end=15&loop=1&playlist=${short.id}&controls=0&modestbranding=1&rel=0&fs=0`}
+											title={short.title}
+											allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+											allowFullScreen
+											loading="lazy"
+										/>
 
-									<Button
-										onClick={() => toggleSound(short.id)}
-										className="absolute bottom-16 right-4 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-lg transition-all"
-										aria-label={isMuted ? "Geluid aan" : "Geluid uit"}
-									>
-										{isMuted ? (
-											<svg
-												className="w-6 h-6"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-												/>
-											</svg>
-										) : (
-											<svg
-												className="w-6 h-6"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5 5l14 14"
-												/>
-											</svg>
-										)}
-									</Button>
+										<Button
+											onClick={() => toggleSound(short.id)}
+											className="absolute bottom-2 right-2 bg-white/90 hover:bg-white text-black p-2 rounded-full shadow-sm"
+											size="icon"
+										>
+											{isMuted ? (
+												<VolumeX className="w-4 h-4" />
+											) : (
+												<Volume2 className="w-4 h-4" />
+											)}
+										</Button>
+									</div>
+
+									<div className="p-3 flex items-center justify-between gap-2">
+										<p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate flex-1">
+											{short.title}
+										</p>
+										<Button
+											variant="ghost"
+											size="icon"
+											className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+											onClick={() => toggleLike(short.id)}
+										>
+											<Heart
+												className={`w-4 h-4 ${liked.has(short.id) ? "text-red-500 fill-red-500" : "text-gray-500"}`}
+											/>
+										</Button>
+									</div>
 								</div>
-
-								<div className="p-4 flex items-center justify-between gap-3">
-									<h3 className="text-lg font-bold text-gray-900 dark:text-white truncate flex-1">
-										{short.title}
-									</h3>
-									<Button
-										onClick={() => toggleSound(short.id)}
-										className="absolute bottom-16 right-4 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-lg transition-all"
-										aria-label={isMuted ? "Geluid aan" : "Geluid uit"}
-									>
-										{isMuted ? (
-											<VolumeX className="w-6 h-6" />
-										) : (
-											<Volume2 className="w-6 h-6" />
-										)}
-									</Button>
-								</div>
-
-								<div className="p-4 flex items-center justify-between gap-3">
-									<h3 className="text-lg font-bold text-gray-900 dark:text-white truncate flex-1">
-										{short.title}
-									</h3>
-									<Button
-										variant="ghost"
-										size="sm"
-										className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
-										onClick={() => toggleLike(short.id)}
-									>
-										{liked.has(short.id) ? (
-											<Heart className="h-7 w-7 text-red-500 fill-current" />
-										) : (
-											<Heart className="h-7 w-7 text-gray-600" />
-										)}
-									</Button>
-								</div>
-							</div>
-						);
-					})}
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		</div>

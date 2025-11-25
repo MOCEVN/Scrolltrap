@@ -29,59 +29,57 @@ const Home = () => {
   const [showLikedOnly, setShowLikedOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-	const {
-		interests,
-		updateInterests,
-		isLoading: interestsLoading,
-	} = useInterests();
-	const {
-		likedImages,
-		toggleLike,
-		isImageLiked,
-		likedCount,
-		isLoading: likesLoading,
-	} = useLikedImages();
-	const { mode, isDream } = useScenario();
+  const {
+    interests,
+    updateInterests,
+    isLoading: interestsLoading,
+  } = useInterests();
+  const {
+    likedImages,
+    toggleLike,
+    isImageLiked,
+    likedCount,
+    isLoading: likesLoading,
+  } = useLikedImages();
 
-	const isBootstrapping = interestsLoading || likesLoading;
+  // scenario wordt nog gebruikt voor isDream, maar mode is verwijderd
+  const { isDream } = useScenario();
 
-	const handleInterestsUpdate = useCallback(
-		(next: string[]) => {
-			if (!isDream) {
-				return;
-			}
-			updateInterests(next);
-			if (next.length === 0) setShowLikedOnly(false);
-		},
-		[isDream, updateInterests],
-	);
+  const isBootstrapping = interestsLoading || likesLoading;
 
-	const handleToggleShowLiked = useCallback(() => {
-		setShowLikedOnly((prev) => !prev);
-	}, []);
+  const handleInterestsUpdate = useCallback(
+    (next: string[]) => {
+      if (!isDream) return;
+      updateInterests(next);
+      if (next.length === 0) setShowLikedOnly(false);
+    },
+    [isDream, updateInterests],
+  );
 
-	const handleSearch = useCallback(() => {
-		if (!searchQuery.trim()) return;
-		console.info("Search is not wired up yet", searchQuery.trim());
-	}, [searchQuery]);
+  const handleToggleShowLiked = useCallback(() => {
+    setShowLikedOnly(prev => !prev);
+  }, []);
 
-	const gridColumns = mode === "doom" ? 1 : 4;
-	const gridSpacing = mode === "doom" ? 10 : 12;
+  const handleSearch = useCallback(() => {
+    if (!searchQuery.trim()) return;
+    console.info("Search is not wired up yet", searchQuery.trim());
+  }, [searchQuery]);
 
-	const activeInterests = interests;
+  // doom-specific logic removed → altijd dezelfde grid
+  const gridColumns = 4;
+  const gridSpacing = 12;
+
+  const activeInterests = interests;
 
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-900">
-      {/* === Intro Popup === */}
       {showIntro && (
         <IntroPopup onClose={closeIntro} />
       )}
 
-      {/* Sidebar component */}
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
-        {/* Header component */}
         <Header
           showLikedOnly={showLikedOnly}
           likedCount={likedCount}
@@ -90,9 +88,9 @@ const Home = () => {
           setSearchQuery={setSearchQuery}
           handleSearch={handleSearch}
         />
+
         <main className="flex-1 overflow-y-auto" data-scroll-container>
           <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-            {/* Interest Selector */}
             {!showLikedOnly && isDream && (
               <div className="mb-6">
                 <InterestSelector
@@ -102,7 +100,6 @@ const Home = () => {
               </div>
             )}
 
-            {/* Masonry Grid or Loading */}
             {isBootstrapping ? (
               <section className="flex min-h-[50vh] items-center justify-center">
                 <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />

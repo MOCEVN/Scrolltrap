@@ -1,10 +1,8 @@
 "use client";
 
-import { useScenario } from "@/hooks/use-scenario";
 import { LogIn, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import ScenarioSwitch from "./scenario-switch";
 import { Button } from "./ui/button";
 
 interface HeaderProps {
@@ -20,29 +18,7 @@ export default function Header({
 	showLikedOnly,
 	likedCount,
 	onToggleShowLiked,
-	searchQuery,
-	setSearchQuery,
-	handleSearch,
 }: HeaderProps) {
-	const { mode, isDream } = useScenario();
-
-	const handleLogout = async () => {
-		await fetch("/api/auth/logout", {
-			method: "POST",
-			credentials: "include",
-		});
-
-		setLoggedIn(false);
-		window.location.href = "/";
-	};
-
-	const heading = showLikedOnly
-		? "Your liked images"
-		: mode === "doom"
-			? "Explore (doomscroll mode)"
-			: "Explore";
-
-	const subheading = showLikedOnly;
 
 	const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 
@@ -58,14 +34,25 @@ export default function Header({
 			.catch(() => setLoggedIn(false));
 	}, []);
 
+	const handleLogout = async () => {
+		await fetch("/api/auth/logout", {
+			method: "POST",
+			credentials: "include",
+		});
+
+		setLoggedIn(false);
+		window.location.href = "/";
+	};
+
+
+	const heading = showLikedOnly ? "Your liked images" : "Explore";
+	const subheading = showLikedOnly ? "" : "";
+
 	return (
 		<header className="border-b border-border bg-card px-4 py-4 shadow-sm backdrop-blur sm:px-6">
-			{/* ✅ Top row: Search bar (left) + Message + Login (right) */}
 			<div className="flex w-full items-center justify-between gap-3">
-				{/* LEFT SIDE */}
 				<div className="flex items-center flex-1"></div>
 
-				{/* RIGHT SIDE */}
 				<div className="flex items-center gap-4">
 					{loggedIn === false && (
 						<>
@@ -103,7 +90,6 @@ export default function Header({
 				</div>
 			</div>
 
-			{/* ✅ Bottom row */}
 			<div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<h1 className="text-xl font-semibold text-foreground sm:text-2xl">
@@ -115,8 +101,7 @@ export default function Header({
 				</div>
 
 				<div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
-					<ScenarioSwitch />
-
+		
 					{likedCount > 0 && loggedIn === true && (
 						<Button
 							type="button"

@@ -12,7 +12,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { DoomNotification } from "./ui/doom-notif";
+
 import { DreamNotification } from "./ui/dream-notif";
 
 type MasonryGridProps = {
@@ -26,15 +26,8 @@ type MasonryGridProps = {
 	onToggleShowLiked?: () => void;
 };
 
-const createKeyForInterests = (interests: string[]) =>
-	JSON.stringify([...interests].sort());
-
 const DREAM_BREAK_IMAGE_THRESHOLD = 24;
-// const DREAM_BREAK_TIME_THRESHOLD = 10 * 1000;
-const DOOM_BREAK_IMAGE_THRESHOLD = Number.POSITIVE_INFINITY;
-const DOOM_BREAK_TIME_THRESHOLD = Number.POSITIVE_INFINITY;
 const DREAM_SUGGESTED_BREAK_DURATION = 90 * 1000;
-const DOOM_SUGGESTED_BREAK_DURATION = 45 * 1000;
 
 const formatTime = (ms: number) => {
 	const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -59,190 +52,24 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 	const [showBreakPoint, setShowBreakPoint] = useState(false);
 	const [imagesViewedInSession, setImagesViewedInSession] = useState(0);
 
-	const calmTimerRef = useRef<NodeJS.Timeout | null>(null);
+	const { isDream } = useScenario();
 
-	const { mode, isDream } = useScenario();
-	const breakConfig = useMemo(
-		() =>
-			isDream
-				? {
-						// time: DREAM_BREAK_TIME_THRESHOLD,
-					}
-				: {
-						time: DOOM_BREAK_TIME_THRESHOLD,
-					},
-		[isDream],
-	);
-	const [timeUntilBreak, setTimeUntilBreak] = useState<number | null>(null);
-	const [isOnBreak, setIsOnBreak] = useState(false);
-	const [breakTimeRemaining, setBreakTimeRemaining] = useState<number | null>(
-		null,
-	);
-	const [breakCompleted, setBreakCompleted] = useState(false);
-	const countdownIntervalRef = useRef<number | null>(null);
-	const breakIntervalRef = useRef<number | null>(null);
-	const previousModeRef = useRef(mode);
-	const breakCountdownDisplay =
-		breakTimeRemaining !== null && breakTimeRemaining > 0
-			? formatTime(breakTimeRemaining)
-			: null;
-	const breakHeadline = breakCompleted
-		? "Nice work taking a breather"
-		: "Take a mindful pause";
-	const breakDescription = breakCompleted
-		? "Notice how you feel before you dive back in. Give yourself a moment to process what you just explored."
-		: "Step away from the feed for a moment. Try this light grounding exercise to support your nervous system.";
-	const resumeButtonLabel = breakCompleted ? "Return to feed" : "Skip break";
-
-	const lastInterestsKeyRef = useRef<string>("");
-	const imagesRef = useRef<ImageItem[]>([]);
 	const timeoutsRef = useRef<number[]>([]);
-	const loadMoreRef = useRef<HTMLDivElement | null>(null);
-	const lastBreakTimestampRef = useRef<number>(0);
-	const imagesSinceLastBreakRef = useRef(0);
-	const breakEndsAtRef = useRef<number | null>(null);
-	const registerTimeout = useCallback((timeoutId: number) => {
-		timeoutsRef.current.push(timeoutId);
-	}, []);
-
-	const clearScheduledTimeouts = useCallback(() => {
-		timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+	const registerTimeout = (id: number) => timeoutsRef.current.push(id);
+	const clearTimeouts = () => {
+		timeoutsRef.current.forEach((id) => clearTimeout(id));
 		timeoutsRef.current = [];
-	}, []);
+	};
 
-	const resetBreakMetrics = useCallback(() => {
-		lastBreakTimestampRef.current = Date.now();
-		imagesSinceLastBreakRef.current = 0;
-	}, []);
+	const lastBreakTimestampRef = useRef(Date.now());
+	const imagesSinceLastBreakRef = useRef(0);
 
-	const stopBreakTimer = useCallback(() => {
-		if (breakIntervalRef.current !== null) {
-			window.clearInterval(breakIntervalRef.current);
-			breakIntervalRef.current = null;
-		}
-		breakEndsAtRef.current = null;
-	}, []);
-
-	const updateBreakRemaining = useCallback(() => {
-		if (breakEndsAtRef.current === null) {
-			setBreakTimeRemaining(null);
-			return;
-		}
-
-		const remaining = breakEndsAtRef.current - Date.now();
-		if (remaining <= 0) {
-			stopBreakTimer();
-			setBreakTimeRemaining(0);
-			setBreakCompleted(true);
-			return;
-		}
-
-		setBreakTimeRemaining(remaining);
-	}, [stopBreakTimer]);
-
-	const startBreakTimer = useCallback(
-		(durationMs: number) => {
-			stopBreakTimer();
-			setBreakCompleted(false);
-			const endsAt = Date.now() + durationMs;
-			breakEndsAtRef.current = endsAt;
-			setBreakTimeRemaining(durationMs);
-			updateBreakRemaining();
-			breakIntervalRef.current = window.setInterval(() => {
-				updateBreakRemaining();
-			}, 500);
-		},
-		[stopBreakTimer, updateBreakRemaining],
-	);
-
-	const stopCountdown = useCallback(() => {
-		if (countdownIntervalRef.current !== null) {
-			window.clearInterval(countdownIntervalRef.current);
-			countdownIntervalRef.current = null;
-		}
-	}, []);
-
-	const updateTimeRemaining = useCallback(() => {
-		if (!isDream) {
-			setTimeUntilBreak(null);
-			return;
-		}
-
-		const elapsed = Date.now() - lastBreakTimestampRef.current;
-		const remaining = Math.max(breakConfig.time - elapsed, 0);
-		setTimeUntilBreak(remaining);
-
-		if (remaining <= 0) {
-			stopCountdown();
-			setTimeUntilBreak(null);
-			if (!showBreakPoint) {
-				setShowBreakPoint(true);
-				setImagesViewedInSession(imagesSinceLastBreakRef.current);
-			}
-		}
-	}, [breakConfig.time, isDream, showBreakPoint, stopCountdown]);
-
-	const startCountdown = useCallback(() => {
-		if (!isDream) {
-			setTimeUntilBreak(null);
-			stopCountdown();
-			return;
-		}
-
-		stopCountdown();
-		updateTimeRemaining();
-
-		countdownIntervalRef.current = window.setInterval(() => {
-			updateTimeRemaining();
-		}, 500);
-	}, [isDream, stopCountdown, updateTimeRemaining]);
-
-	const resetBreakCooldown = useCallback(() => {
-		resetBreakMetrics();
-
-		if (isDream) {
-			startCountdown();
-		} else {
-			setTimeUntilBreak(null);
-			stopCountdown();
-		}
-	}, [isDream, resetBreakMetrics, startCountdown, stopCountdown]);
-
-	useEffect(() => {
-		return () => {
-			clearScheduledTimeouts();
-			stopCountdown();
-			stopBreakTimer();
-		};
-	}, [clearScheduledTimeouts, stopBreakTimer, stopCountdown]);
-
-	useEffect(() => {
-		if (lastBreakTimestampRef.current === 0) {
-			lastBreakTimestampRef.current = Date.now();
-			if (isDream) {
-				startCountdown();
-			}
-		}
-	}, [isDream, startCountdown]);
-
-	useEffect(() => {
-		if (previousModeRef.current !== mode) {
-			previousModeRef.current = mode;
-			resetBreakCooldown();
-			setShowBreakPoint(false);
-			setImagesViewedInSession(0);
-			setIsOnBreak(false);
-			setBreakCompleted(false);
-			setBreakTimeRemaining(null);
-			stopBreakTimer();
-		}
-	}, [mode, resetBreakCooldown, stopBreakTimer]);
+	const loadMoreRef = useRef<HTMLDivElement | null>(null);
+	const imagesRef = useRef<ImageItem[]>([]);
 
 	const generateImages = useCallback(
 		(count: number, startIndex = 0): ImageItem[] => {
-			if (userInterests.length === 0) {
-				return [];
-			}
+			if (userInterests.length === 0) return [];
 
 			return Array.from({ length: count }, (_, index) => {
 				const width = 640;
@@ -267,185 +94,81 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 			setLoadingMore(true);
 
 			const timeoutId = window.setTimeout(() => {
-				const shouldOpenBreak = false;
-				let viewedSinceLastBreak = imagesSinceLastBreakRef.current;
-
-				setImages((prevImages) => {
-					const moreImages = generateImages(count, prevImages.length);
-					if (moreImages.length === 0) {
-						return prevImages;
-					}
-
-					const combined = [...prevImages, ...moreImages];
+				setImages((prev) => {
+					const more = generateImages(count, prev.length);
+					const combined = [...prev, ...more];
 					imagesRef.current = combined;
-					imagesSinceLastBreakRef.current += moreImages.length;
-					viewedSinceLastBreak = imagesSinceLastBreakRef.current;
 
-					const timeSinceLastBreak = Date.now() - lastBreakTimestampRef.current;
-					const reachedTimeThreshold = timeSinceLastBreak >= breakConfig.time;
+					imagesSinceLastBreakRef.current += more.length;
 
 					return combined;
 				});
 
 				setLoadingMore(false);
-
-				if (shouldOpenBreak) {
-					stopCountdown();
-					setTimeUntilBreak(null);
-					setImagesViewedInSession(viewedSinceLastBreak);
-				}
 			}, 300);
 
 			registerTimeout(timeoutId);
 		},
-		[breakConfig, generateImages, isDream, registerTimeout, stopCountdown],
+		[generateImages],
 	);
 
+	// initial load
 	useEffect(() => {
-		const interestsKey = createKeyForInterests(userInterests);
-
 		if (userInterests.length === 0) {
-			clearScheduledTimeouts();
-			resetBreakCooldown();
-			stopCountdown();
-			stopBreakTimer();
-			setTimeUntilBreak(null);
-			setIsOnBreak(false);
-			setBreakCompleted(false);
-			setBreakTimeRemaining(null);
 			startTransition(() => {
 				setImages([]);
 				setLoading(false);
-				setShowBreakPoint(false);
-				setImagesViewedInSession(0);
 			});
 			imagesRef.current = [];
-			lastInterestsKeyRef.current = interestsKey;
 			return;
 		}
 
-		if (
-			interestsKey === lastInterestsKeyRef.current &&
-			imagesRef.current.length > 0
-		) {
-			return;
-		}
-
-		clearScheduledTimeouts();
-		startTransition(() => {
-			setLoading(true);
-		});
+		clearTimeouts();
+		startTransition(() => setLoading(true));
 
 		const timeoutId = window.setTimeout(() => {
-			const freshImages = generateImages(20);
-			imagesRef.current = freshImages;
-			resetBreakCooldown();
-			imagesSinceLastBreakRef.current = freshImages.length;
+			const fresh = generateImages(20);
+			imagesRef.current = fresh;
+			imagesSinceLastBreakRef.current = fresh.length;
+			lastBreakTimestampRef.current = Date.now();
+
 			startTransition(() => {
-				setImages(freshImages);
+				setImages(fresh);
 				setLoading(false);
-				setImagesViewedInSession(freshImages.length);
-				setIsOnBreak(false);
-				setBreakCompleted(false);
-				setBreakTimeRemaining(null);
+				setImagesViewedInSession(fresh.length);
 			});
-			lastInterestsKeyRef.current = interestsKey;
 		}, 400);
 
 		registerTimeout(timeoutId);
-	}, [
-		clearScheduledTimeouts,
-		generateImages,
-		registerTimeout,
-		resetBreakCooldown,
-		stopCountdown,
-		stopBreakTimer,
-		userInterests,
-	]);
 
-	useEffect(() => {
-		imagesRef.current = images;
-	}, [images]);
+		return () => clearTimeouts();
+	}, [generateImages, userInterests]);
 
 	const loadMoreImages = useCallback(() => {
-		if (
-			loadingMore ||
-			showBreakPoint ||
-			isOnBreak ||
-			showLikedOnly ||
-			userInterests.length === 0 ||
-			imagesRef.current.length === 0
-		) {
-			return;
-		}
+		if (loadingMore || showBreakPoint || showLikedOnly) return;
+		if (userInterests.length === 0 || imagesRef.current.length === 0) return;
 
 		scheduleImageAppend(10);
 	}, [
 		loadingMore,
 		scheduleImageAppend,
 		showBreakPoint,
-		isOnBreak,
 		showLikedOnly,
 		userInterests.length,
 	]);
 
-	const handleContinueScrolling = useCallback(() => {
-		resetBreakCooldown();
-		setShowBreakPoint(false);
-		setImagesViewedInSession(0);
-		scheduleImageAppend(10);
-	}, [resetBreakCooldown, scheduleImageAppend]);
-
-	const handleTakeBreak = useCallback(() => {
-		const suggestedDuration = isDream
-			? DREAM_SUGGESTED_BREAK_DURATION
-			: DOOM_SUGGESTED_BREAK_DURATION;
-
-		setShowBreakPoint(false);
-		setIsOnBreak(true);
-		setBreakCompleted(false);
-		setImagesViewedInSession(0);
-		setTimeUntilBreak(null);
-		stopCountdown();
-		clearScheduledTimeouts();
-		resetBreakMetrics();
-		startBreakTimer(suggestedDuration);
-	}, [
-		clearScheduledTimeouts,
-		isDream,
-		resetBreakMetrics,
-		startBreakTimer,
-		stopCountdown,
-	]);
-
-	const handleResumeFromBreak = useCallback(() => {
-		stopBreakTimer();
-		setBreakTimeRemaining(null);
-		setBreakCompleted(false);
-		setIsOnBreak(false);
-		resetBreakCooldown();
-	}, [resetBreakCooldown, stopBreakTimer]);
-
 	useEffect(() => {
 		const target = loadMoreRef.current;
-		if (!target || showBreakPoint || showLikedOnly) {
-			return;
-		}
+		if (!target || showBreakPoint || showLikedOnly) return;
 
 		const scrollContainer = target.closest(
 			"[data-scroll-container]",
 		) as HTMLElement | null;
 
-		if (typeof IntersectionObserver === "undefined") {
-			return;
-		}
-
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						loadMoreImages();
-					}
+					if (entry.isIntersecting) loadMoreImages();
 				});
 			},
 			{
@@ -455,29 +178,23 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		);
 
 		observer.observe(target);
-
-		return () => {
-			observer.disconnect();
-		};
+		return () => observer.disconnect();
 	}, [loadMoreImages, showBreakPoint, showLikedOnly]);
 
+	const handleContinueScrolling = useCallback(() => {
+		lastBreakTimestampRef.current = Date.now();
+		imagesSinceLastBreakRef.current = 0;
+		setShowBreakPoint(false);
+		scheduleImageAppend(10);
+	}, [scheduleImageAppend]);
+
+	const handleTakeBreak = useCallback(() => {
+		const suggested = DREAM_SUGGESTED_BREAK_DURATION;
+		setShowBreakPoint(false);
+		// Break UI stays inside DreamNotification (unchanged)
+	}, []);
+
 	const displayImages = showLikedOnly ? likedImages : images;
-
-	const [showDoomWarning, setShowDoomWarning] = useState(false);
-
-	// Trigger: toon de waarschuwing na bijv. 30 seconden in Doom mode
-	useEffect(() => {
-		if (isDream) {
-			setShowDoomWarning(false);
-			return;
-		}
-
-		const timer = setTimeout(() => {
-			setShowDoomWarning(true);
-		}, 30_000); // 30 seconden in Doom mode → waarschuwing
-
-		return () => clearTimeout(timer);
-	}, [isDream]);
 
 	const columns = useMemo(() => {
 		const buckets: Array<Array<{ item: ImageItem; priority: boolean }>> =
@@ -516,7 +233,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 					<button
 						type="button"
 						onClick={onToggleShowLiked}
-						className="mb-6 inline-flex items-center justify-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-sm transition-colors hover:bg-indigo-50"
+						className="mb-6 inline-flex items-center justify-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50"
 					>
 						← Back to all images
 					</button>
@@ -533,54 +250,8 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		);
 	}
 
-	if (isOnBreak) {
-		return (
-			<section className="flex min-h-[60vh] items-center justify-center bg-gradient-to-br from-indigo-50 via-slate-50 to-emerald-50 px-6 py-16">
-				<div className="w-full max-w-xl rounded-3xl bg-white/85 p-8 shadow-2xl backdrop-blur">
-					<div className="flex flex-col items-center text-center">
-						<span className="mb-4 text-5xl" aria-hidden>
-							🌿
-						</span>
-						<h2 className="text-2xl font-bold text-zinc-900">
-							{breakHeadline}
-						</h2>
-						<p className="mt-3 max-w-md text-sm text-zinc-600">
-							{breakDescription}
-						</p>
-						{breakCountdownDisplay && (
-							<div className="mt-6 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
-								<span className="text-xs font-medium uppercase tracking-wide text-emerald-500">
-									Breathe
-								</span>
-								<span>{breakCountdownDisplay} remaining</span>
-							</div>
-						)}
-						<button
-							type="button"
-							onClick={handleResumeFromBreak}
-							className="mt-8 inline-flex items-center justify-center rounded-full bg-indigo-500 px-6 py-3 text-base font-semibold text-white shadow transition-transform hover:translate-y-0.5 hover:bg-indigo-600"
-						>
-							{resumeButtonLabel}
-						</button>
-						{!breakCompleted && (
-							<p className="mt-3 text-xs text-zinc-400">
-								It is okay to step away for longer—your feed will be right where
-								you left it.
-							</p>
-						)}
-					</div>
-				</div>
-			</section>
-		);
-	}
-
 	return (
 		<>
-			<DoomNotification
-				visible={showDoomWarning}
-				onClose={() => setShowDoomWarning(false)}
-			/>
-
 			<DreamNotification
 				visible={showBreakPoint}
 				imagesViewedInSession={imagesViewedInSession}
@@ -590,13 +261,6 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
 			<section className="bg-slate-50">
 				<div className="mx-auto max-w-6xl px-4 pb-12">
-					{isDream && timeUntilBreak !== null && !showBreakPoint && (
-						<div className="mb-4 flex justify-end">
-							{/* <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/90 px-4 py-2 text-sm font-semibold text-indigo-600 shadow">
-								<span>Next check-in in {formatTime(timeUntilBreak)}</span>
-							</div> */}
-						</div>
-					)}
 					<div className="flex flex-row gap-4">
 						{columns.map((column, columnIndex) => (
 							<div
@@ -615,7 +279,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 									return (
 										<article
 											key={image.id}
-											className="group relative overflow-hidden rounded-3xl bg-white shadow-sm transition-shadow hover:shadow-xl"
+											className="group relative overflow-hidden rounded-3xl bg-white shadow-sm hover:shadow-xl"
 										>
 											<div
 												className="relative w-full"
@@ -640,11 +304,8 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 											<button
 												type="button"
 												onClick={() => toggleLike(image.id, image)}
-												className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg shadow transition-transform hover:scale-105"
+												className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg shadow hover:scale-105"
 												aria-pressed={liked}
-												aria-label={
-													liked ? "Remove from likes" : "Add to likes"
-												}
 											>
 												{liked ? "❤️" : "🤍"}
 											</button>
@@ -655,7 +316,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 						))}
 					</div>
 
-					<div ref={loadMoreRef} className="h-12" aria-hidden />
+					<div ref={loadMoreRef} className="h-12" />
 
 					{loadingMore && (
 						<div className="flex justify-center py-6">

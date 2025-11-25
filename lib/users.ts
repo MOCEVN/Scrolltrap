@@ -112,3 +112,14 @@ export const verifyCredentials = async (
 
   return toPublicUser(user);
 };
+
+export const deleteUser = async (id: number): Promise<boolean> => {
+  const db = getDb();
+
+  const existing = await findUserById(id);
+    if (!existing) return false;
+
+  await db.delete(users).where(eq(users.id, id));
+
+  return true;
+};

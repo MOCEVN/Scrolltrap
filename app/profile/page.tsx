@@ -4,6 +4,7 @@ import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import { useLikedImages } from "@/hooks/use-liked-images";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function ProfilePage() {
 	const [showLikedOnly, setShowLikedOnly] = useState(false);
@@ -76,6 +77,29 @@ export default function ProfilePage() {
 	};
 	*/
 
+	const handleDeleteAccount = async () => {
+        const confirmationOnDelete = window.confirm(
+     	 "Are you sure you want to delete your account?"
+    );
+     if (!confirmationOnDelete) return;
+
+  const result = await fetch("/api/auth/delete", {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const data = await result.json();
+
+  if (!result.ok) {
+    toast.error(data.error || "Failed to delete account");
+    return;
+  }
+
+  toast.success("Your account has been successfully deleted");
+
+  window.location.href = "/";
+};
+
 	return (
 		<div className="flex min-h-screen bg-slate-100 text-slate-900">
 			<Sidebar />
@@ -143,19 +167,18 @@ export default function ProfilePage() {
 								</div>
 							)}
 
-							{/*
 							{user && (
-								<div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+								<div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ">
 									<button
 										type="button"
-										onClick={handleLogout}
+										onClick={handleDeleteAccount}
 										className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
 									>
-										Log out
+										Remove my account
 									</button>
 								</div>
 							)}
-							*/}
+							
 						</div>
 
 						{/* Restored editable profile fields */}

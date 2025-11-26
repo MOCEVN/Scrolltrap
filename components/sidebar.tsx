@@ -1,11 +1,11 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Home as HomeIcon, Info, PlusCircle, User } from "lucide-react";
+import { Home as HomeIcon, Info, PlusCircle, User, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-type NavKey = "home" | "create" | "profile" | "info";
+type NavKey = "home" | "create" | "profile" | "friends" | "info";
 
 const NAV_ITEMS: Array<{
   key: NavKey;
@@ -17,6 +17,7 @@ const NAV_ITEMS: Array<{
   { key: 'home', label: 'Home', icon: HomeIcon, isReady: true, href: '/' },
   { key: 'create', label: 'Create', icon: PlusCircle, isReady: true, href: '/create' },
   { key: 'profile', label: 'Profile', icon: User, isReady: true, href: '/profile' },
+  { key: 'friends', label: 'Friends', icon: Users, isReady: true, href: '/friends' },
   { key: 'info', label: 'Info', icon: Info, isReady: true, href: '/info' },
 ];
 

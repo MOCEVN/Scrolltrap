@@ -51,7 +51,7 @@ export default function Sidebar() {
           const inner = (
            <div className={classes} title={isReady ? label : `${label} (coming soon)`}>
       <div className="relative flex items-center justify-center">
-        <Icon className="h-8 w-9" strokeWidth={isActive ? 2.4 : 1.8} />
+        <Icon className="h-6 w-8" strokeWidth={isActive ? 2.4 : 1.8} />
         {hasNotification && (
           <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 animate-pulse" />
         )}

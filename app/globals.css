@@ -128,6 +128,7 @@
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(0.35 0 0 / 50%);
   --sidebar-ring: oklch(0.70 0.20 250);
+  
 }
 
 
@@ -186,13 +187,6 @@ form.user-details input {
   background-color: #e0f7e9;
   border-right-color: mediumseagreen;
 }
-
-
-button:hover,
-a[role="button"]:hover,
-.button:hover {
-  background-color: #005bb5;
-} 
 
 .interestButton {
   @apply 

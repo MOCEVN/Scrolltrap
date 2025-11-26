@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/header";
+import HeaderDoom from "@/components/header-doom";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { DoomNotification } from "@/components/ui/doom-notif";
@@ -115,14 +115,7 @@ export default function Doom() {
 			<Sidebar />
 
 			<div className="flex-1 flex flex-col">
-				<Header
-					showLikedOnly={false}
-					likedCount={0}
-					onToggleShowLiked={() => {}}
-					searchQuery=""
-					setSearchQuery={() => {}}
-					handleSearch={() => {}}
-				/>
+				<HeaderDoom />
 
 				<DoomNotification
 					visible={showDoomWarning}

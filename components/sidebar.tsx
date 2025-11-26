@@ -13,12 +13,13 @@ const NAV_ITEMS: Array<{
   icon: LucideIcon;
   isReady: boolean;
   href: string;
+  hasNotification?: boolean;
 }> = [
   { key: 'home', label: 'Home', icon: HomeIcon, isReady: true, href: '/' },
   { key: 'create', label: 'Create', icon: PlusCircle, isReady: true, href: '/create' },
   { key: 'profile', label: 'Profile', icon: User, isReady: true, href: '/profile' },
   { key: 'info', label: 'Info', icon: Info, isReady: true, href: '/info' },
-  { key: 'doom', label: 'Doom', icon: Video, isReady: true, href: '/doom' },
+  { key: 'doom', label: 'Doom', icon: Video, isReady: true, href: '/doom', hasNotification: true },
 ];
 
 export default function Sidebar() {
@@ -28,18 +29,17 @@ export default function Sidebar() {
   return (
     <aside className="hidden min-h-screen w-24 flex-col items-center border-r border-sidebar-border bg-sidebar px-3 py-6 shadow-sm sm:flex lg:w-32">
       
-      {/* Logo */}
       <div className="flex flex-col items-center text-xs font-semibold uppercase tracking-[0.35em] text-sidebar-foreground/70">
         <span>Scroll</span>
         <span className="text-sidebar-primary">Trap</span>
       </div>
 
       <div className="mt-10 flex flex-1 flex-col items-center gap-3">
-        {NAV_ITEMS.map(({ key, label, icon: Icon, isReady, href }) => {
+        {NAV_ITEMS.map(({ key, label, icon: Icon, isReady, href, hasNotification }) => {
           const isActive = activeNav === key;
 
           const classes = `
-            flex w-full flex-col items-center gap-1 rounded-xl px-3 py-2 text-xs font-medium transition
+            flex w-full flex-col items-center gap-1 rounded-xl px-3 py-2 text-s font-medium transition
             ${
               isActive
                 ? "text-primary font-semibold"
@@ -49,10 +49,15 @@ export default function Sidebar() {
           `;
 
           const inner = (
-            <div className={classes} title={isReady ? label : `${label} (coming soon)`}>
-              <Icon className="h-6 w-6" strokeWidth={isActive ? 2.4 : 1.8} />
-              <span>{label}</span>
-            </div>
+           <div className={classes} title={isReady ? label : `${label} (coming soon)`}>
+      <div className="relative flex items-center justify-center">
+        <Icon className="h-8 w-9" strokeWidth={isActive ? 2.4 : 1.8} />
+        {hasNotification && (
+          <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 animate-pulse" />
+        )}
+      </div>
+      <span>{label}</span>
+    </div>
           );
 
           if (isReady) {

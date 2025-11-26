@@ -12,6 +12,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { ShareInvite } from "./share";
 import { DoomNotification } from "./ui/doom-notif";
 import { DreamNotification } from "./ui/dream-notif";
 
@@ -428,7 +429,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
 	useEffect(() => {
 		const target = loadMoreRef.current;
-		if (!target || showBreakPoint || showLikedOnly) {
+		if (!target || showBreakPoint || showLikedOnly || isDream) {
 			return;
 		}
 
@@ -459,13 +460,12 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		return () => {
 			observer.disconnect();
 		};
-	}, [loadMoreImages, showBreakPoint, showLikedOnly]);
+	}, [loadMoreImages, showBreakPoint, showLikedOnly, isDream]);
 
 	const displayImages = showLikedOnly ? likedImages : images;
 
 	const [showDoomWarning, setShowDoomWarning] = useState(false);
 
-	// Trigger: toon de waarschuwing na bijv. 30 seconden in Doom mode
 	useEffect(() => {
 		if (isDream) {
 			setShowDoomWarning(false);
@@ -474,7 +474,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
 		const timer = setTimeout(() => {
 			setShowDoomWarning(true);
-		}, 30_000); // 30 seconden in Doom mode → waarschuwing
+		}, 30_000); 
 
 		return () => clearTimeout(timer);
 	}, [isDream]);
@@ -637,17 +637,23 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 												</div>
 											</div>
 
-											<button
-												type="button"
-												onClick={() => toggleLike(image.id, image)}
-												className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg shadow transition-transform hover:scale-105"
-												aria-pressed={liked}
-												aria-label={
-													liked ? "Remove from likes" : "Add to likes"
-												}
-											>
-												{liked ? "❤️" : "🤍"}
-											</button>
+											<div className="absolute right-4 top-4 flex flex-col gap-2">
+												<button
+													type="button"
+													onClick={() => toggleLike(image.id, image)}
+													className="flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg shadow transition-transform hover:scale-105"
+													aria-pressed={liked}
+													aria-label={
+														liked ? "Remove from likes" : "Add to likes"
+													}
+												>
+													{liked ? "❤️" : "🤍"}
+												</button>
+												<ShareInvite 
+													imageUrl={image.url} 
+													imageTitle={`${image.topic} afbeelding`} 
+												/>
+											</div>
 										</article>
 									);
 								})}
@@ -660,6 +666,25 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 					{loadingMore && (
 						<div className="flex justify-center py-6">
 							<div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+						</div>
+					)}
+
+					{isDream && !loadingMore && !showBreakPoint && !showLikedOnly && (
+						<div className="flex flex-col items-center gap-3 py-8">
+							<p className="text-sm text-slate-500">
+								Je hebt <span className="font-semibold text-slate-700">{images.length}</span> afbeeldingen bekeken
+							</p>
+							<button
+								type="button"
+								onClick={loadMoreImages}
+								className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 hover:shadow-md"
+							>
+								<span>Laad 10 meer</span>
+								<span className="text-xs text-slate-400">→</span>
+							</button>
+							<p className="max-w-xs text-center text-xs text-slate-400">
+								Jij bepaalt wanneer je meer laadt. Neem je tijd.
+							</p>
 						</div>
 					)}
 				</div>

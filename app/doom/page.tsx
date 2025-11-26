@@ -1,4 +1,3 @@
-// app/doom/page.tsx
 "use client";
 
 import Header from "@/components/header";

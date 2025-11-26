@@ -5,12 +5,12 @@ import type { ImageItem } from "@/types/image";
 import Image from "next/image";
 import type React from "react";
 import {
-	startTransition,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
+    startTransition,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import { ShareInvite } from "./share";
 import { DoomNotification } from "./ui/doom-notif";
@@ -67,7 +67,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 		() =>
 			isDream
 				? {
-						// time: DREAM_BREAK_TIME_THRESHOLD,
+						time: Number.POSITIVE_INFINITY,
 					}
 				: {
 						time: DOOM_BREAK_TIME_THRESHOLD,

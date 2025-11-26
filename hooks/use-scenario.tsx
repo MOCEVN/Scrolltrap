@@ -30,7 +30,7 @@ const STORAGE_KEY = "scrolltrap_scenario_mode";
 export const ScenarioProvider = ({ children }: { children: ReactNode }) => {
 	const [mode, setModeState] = useState<ScenarioMode>(() => {
 		if (typeof window === "undefined") {
-			return "dream";
+			return "doom";
 		}
 
 		const stored = window.localStorage.getItem(STORAGE_KEY);

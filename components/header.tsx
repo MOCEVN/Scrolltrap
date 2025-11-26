@@ -38,9 +38,7 @@ export default function Header({
 
 	const heading = showLikedOnly
 		? "Your liked images"
-		: mode === "doom"
-			? "Explore (doomscroll mode)"
-			: "Explore";
+		: "Explore";
 
 	const subheading = showLikedOnly;
 
@@ -117,18 +115,18 @@ export default function Header({
 				<div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
 					<ScenarioSwitch />
 
-					{likedCount > 0 && loggedIn === true && (
+					{likedCount > 0 && loggedIn === true && isDream && (
 						<Button
 							type="button"
 							onClick={onToggleShowLiked}
-							className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition ${
+							className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
 								showLikedOnly
-									? "bg-accent text-accent-foreground shadow-md shadow-accent/25"
-									: "bg-border text-indigo-600 shadow-accent/25"
+									? "bg-pink-500 text-white shadow-md hover:bg-pink-600"
+									: "bg-white border border-pink-200 text-pink-600 hover:bg-pink-50"
 							}`}
 						>
-							{showLikedOnly ? "Viewing likes" : "Show likes"}
-							<span className="text-base">❤️ {likedCount}</span>
+							<span className="text-base">❤️</span>
+							{showLikedOnly ? `Viewing ${likedCount} likes` : `${likedCount} liked`}
 						</Button>
 					)}
 				</div>

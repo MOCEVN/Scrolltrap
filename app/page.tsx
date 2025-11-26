@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Header from '@/components/header';
 import InterestSelector from '@/components/interest-selector';
@@ -10,6 +10,23 @@ import Sidebar from '@/components/sidebar';
 import { useInterests } from '@/hooks/use-interests';
 import { useLikedImages } from '@/hooks/use-liked-images';
 import { useScenario } from '@/hooks/use-scenario';
+
+const AVAILABLE_INTERESTS = [
+  'nature',
+  'office',
+  'people',
+  'technology',
+  'abstract',
+  'food',
+  'sport',
+  'science',
+];
+
+const getRandomInterests = () => {
+  const shuffled = [...AVAILABLE_INTERESTS].sort(() => Math.random() - 0.5);
+  const count = 2 + Math.floor(Math.random() * 4);
+  return shuffled.slice(0, count);
+};
 
 const Home = () => {
   const [showIntro, setShowIntro] = useState(false);
@@ -68,7 +85,8 @@ const Home = () => {
 	const gridColumns = mode === "doom" ? 1 : 4;
 	const gridSpacing = mode === "doom" ? 10 : 12;
 
-	const activeInterests = interests;
+	const doomInterests = useMemo(() => getRandomInterests(), []);
+	const activeInterests = isDream ? interests : doomInterests;
 
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-900">

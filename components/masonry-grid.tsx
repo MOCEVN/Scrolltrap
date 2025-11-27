@@ -522,10 +522,10 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 												>
 													{liked ? "❤️" : "🤍"}
 												</button>
-												<DreamShare
-													imageUrl={image.url}
-													imageTitle={`${image.topic} afbeelding`}
-												/>
+											<DreamShare
+														imageUrl={image.url}
+														imageTitle={`${image.topic} image`}
+													/>
 											</div>
 										</article>
 									);
@@ -545,22 +545,22 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 					{!loadingMore && !showBreakPoint && !showLikedOnly && (
 						<div className="flex flex-col items-center gap-3 py-8">
 							<p className="text-sm text-slate-500">
-								Je hebt{" "}
+								You have viewed{" "}
 								<span className="font-semibold text-slate-700">
 									{images.length}
 								</span>{" "}
-								afbeeldingen bekeken
+								images
 							</p>
 							<button
 								type="button"
 								onClick={loadMoreImages}
 								className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 hover:shadow-md"
 							>
-								<span>Laad 10 meer</span>
+								<span>Load 10 more</span>
 								<span className="text-xs text-slate-400">→</span>
 							</button>
 							<p className="max-w-xs text-center text-xs text-slate-400">
-								Jij bepaalt wanneer je meer laadt. Neem je tijd.
+								You decide when to load more. Take your time.
 							</p>
 						</div>
 					)}

@@ -1,10 +1,8 @@
 "use client";
 
-import { useScenario } from "@/hooks/use-scenario";
 import { LogIn, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import ScenarioSwitch from "./scenario-switch";
 import { Button } from "./ui/button";
 
 interface HeaderProps {
@@ -20,28 +18,7 @@ export default function Header({
 	showLikedOnly,
 	likedCount,
 	onToggleShowLiked,
-	searchQuery,
-	setSearchQuery,
-	handleSearch,
 }: HeaderProps) {
-	const { mode, isDream } = useScenario();
-
-	const handleLogout = async () => {
-		await fetch("/api/auth/logout", {
-			method: "POST",
-			credentials: "include",
-		});
-
-		setLoggedIn(false);
-		window.location.href = "/";
-	};
-
-	const heading = showLikedOnly
-		? "Your liked images"
-		: "Explore";
-
-	const subheading = showLikedOnly;
-
 	const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 
 	useEffect(() => {
@@ -56,23 +33,45 @@ export default function Header({
 			.catch(() => setLoggedIn(false));
 	}, []);
 
+	const handleLogout = async () => {
+		await fetch("/api/auth/logout", {
+			method: "POST",
+			credentials: "include",
+		});
+
+		setLoggedIn(false);
+		window.location.href = "/";
+	};
+
 	return (
-		<header className="border-b border-border bg-card px-4 py-4 shadow-sm backdrop-blur sm:px-6">
-			{/* ✅ Top row: Search bar (left) + Message + Login (right) */}
+		<header className="border-b border-emerald-100 bg-gradient-to-r from-emerald-50/80 via-slate-50 to-indigo-50/80 px-4 py-3 shadow-sm backdrop-blur sm:px-6">
 			<div className="flex w-full items-center justify-between gap-3">
-				{/* LEFT SIDE */}
 				<div className="flex items-center flex-1"></div>
 
-				{/* RIGHT SIDE */}
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-3">
+					{likedCount > 0 && loggedIn === true && (
+						<Button
+							type="button"
+							onClick={onToggleShowLiked}
+							className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition ${
+								showLikedOnly
+									? "bg-pink-500 text-white shadow-md hover:bg-pink-600"
+									: "bg-white border border-pink-200 text-pink-600 hover:bg-pink-50"
+							}`}
+						>
+							<span className="text-sm">❤️</span>
+							{showLikedOnly ? `${likedCount} likes` : `${likedCount}`}
+						</Button>
+					)}
+
 					{loggedIn === false && (
 						<>
 							<Link href="/login">
 								<Button
 									variant="ghost"
-									className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
+									className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100/50 text-emerald-700 transition hover:bg-emerald-100 hover:text-emerald-800 rounded-xl text-sm"
 								>
-									<LogIn size={20} className="transition" />
+									<LogIn size={18} className="transition" />
 									Login
 								</Button>
 							</Link>
@@ -80,9 +79,9 @@ export default function Header({
 							<Link href="/register">
 								<Button
 									variant="ghost"
-									className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
+									className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100/50 text-emerald-700 transition hover:bg-emerald-100 hover:text-emerald-800 rounded-xl text-sm"
 								>
-									<UserRoundPlus size={20} className="transition" />
+									<UserRoundPlus size={18} className="transition" />
 									Register
 								</Button>
 							</Link>
@@ -93,40 +92,9 @@ export default function Header({
 						<Button
 							variant="ghost"
 							onClick={handleLogout}
-							className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white transition hover:text-primary rounded-xl"
+							className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100/50 text-emerald-700 transition hover:bg-emerald-100 hover:text-emerald-800 rounded-xl text-sm"
 						>
 							Logout
-						</Button>
-					)}
-				</div>
-			</div>
-
-			{/* ✅ Bottom row */}
-			<div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-				<div>
-					<h1 className="text-xl font-semibold text-foreground sm:text-2xl">
-						{heading}
-					</h1>
-					<p className="mt-1 text-sm text-muted-foreground max-w-md">
-						{subheading}
-					</p>
-				</div>
-
-				<div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end">
-					<ScenarioSwitch />
-
-					{likedCount > 0 && loggedIn === true && isDream && (
-						<Button
-							type="button"
-							onClick={onToggleShowLiked}
-							className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
-								showLikedOnly
-									? "bg-pink-500 text-white shadow-md hover:bg-pink-600"
-									: "bg-white border border-pink-200 text-pink-600 hover:bg-pink-50"
-							}`}
-						>
-							<span className="text-base">❤️</span>
-							{showLikedOnly ? `Viewing ${likedCount} likes` : `${likedCount} liked`}
 						</Button>
 					)}
 				</div>

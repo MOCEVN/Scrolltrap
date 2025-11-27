@@ -1,7 +1,6 @@
 'use client';
 
-import { useScenario } from '@/hooks/use-scenario';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 
@@ -26,7 +25,8 @@ type FriendNotificationsProps = {
 };
 
 export default function FriendNotifications({ friends }: FriendNotificationsProps) {
-  const { isDoom } = useScenario();
+  const pathname = usePathname();
+  const isDoom = pathname === '/doom';
   const router = useRouter();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -60,9 +60,8 @@ export default function FriendNotifications({ friends }: FriendNotificationsProp
                 type="button"
                 onClick={() => {
                   toast.dismiss(t.id);
-                  router.push('/');
                 }}
-                className="flex-shrink-0 rounded-lg bg-indigo-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-600"
+                className="flex-shrink-0 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-red-500"
               >
                 View
               </button>

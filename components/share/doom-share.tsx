@@ -29,7 +29,7 @@ export function DoomShare(_props: { imageUrl: string; imageTitle: string }) {
 			<button
 				type="button"
 				onClick={() => setIsOpen(true)}
-				className="flex h-10 w-10 items-center justify-center rounded-full border border-red-200 bg-red-50 text-red-500 shadow hover:scale-105 hover:bg-red-100"
+				className="flex h-10 w-10 items-center justify-center rounded-full border border-red-500/40 bg-red-950/80 text-red-400 shadow-lg shadow-red-500/20 transition-all hover:scale-105 hover:bg-red-900 hover:text-red-300"
 				aria-label="Deel met vrienden"
 			>
 				<Users size={18} />

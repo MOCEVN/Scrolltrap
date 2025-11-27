@@ -1,15 +1,11 @@
 "use client";
 
-import Header from "@/components/header";
+import HeaderSimple from "@/components/header-simple";
 import Sidebar from "@/components/sidebar";
-import { useLikedImages } from "@/hooks/use-liked-images";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ProfilePage() {
-	const [showLikedOnly, setShowLikedOnly] = useState(false);
-	const { likedCount } = useLikedImages();
-	const [searchQuery, setSearchQuery] = useState("");
 	const [user, setUser] = useState<{
 		username: string;
 		email: string;
@@ -105,14 +101,7 @@ export default function ProfilePage() {
 			<Sidebar />
 
 			<div className="flex-1 flex flex-col">
-				<Header
-					showLikedOnly={showLikedOnly}
-					likedCount={likedCount}
-					onToggleShowLiked={() => setShowLikedOnly((prev) => !prev)}
-					searchQuery={searchQuery}
-					setSearchQuery={setSearchQuery}
-					handleSearch={() => console.log("Search:", searchQuery)}
-				/>
+				<HeaderSimple />
 
 				<main className="flex-1 overflow-y-auto" data-scroll-container>
 					<div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">

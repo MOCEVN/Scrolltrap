@@ -1,30 +1,18 @@
 'use client';
 
-import Header from '@/components/header';
+import HeaderSimple from '@/components/header-simple';
 import Sidebar from '@/components/sidebar';
 import { useFriends } from '@/hooks/use-friends';
-import { useLikedImages } from '@/hooks/use-liked-images';
-import { useState } from 'react';
 
 export default function FriendsPage() {
   const { suggestions, addedFriends, addFriend, clearFriends, isFriendAdded } = useFriends();
-  const { likedCount } = useLikedImages();
-  const [showLikedOnly, setShowLikedOnly] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-900">
       <Sidebar />
 
       <div className="flex flex-1 flex-col">
-        <Header
-          showLikedOnly={showLikedOnly}
-          likedCount={likedCount}
-          onToggleShowLiked={() => setShowLikedOnly((prev) => !prev)}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={() => {}}
-        />
+        <HeaderSimple />
 
         <main className="flex-1 overflow-y-auto p-6" data-scroll-container>
           <div className="mx-auto w-full max-w-4xl">

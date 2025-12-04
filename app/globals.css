@@ -198,6 +198,42 @@ form.user-details input {
   }
 }
 
+.post a {
+  @apply bg-primary border rounded-full px-3 py-1.5 text-xs font-medium transition-colors border-primary text-white
+  hover:border-primary hover:text-primary hover:bg-white;
+}
+
+dialog {
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 40rem;
+  max-width: 90%;
+  margin: auto;
+
+  h2 {
+    color: var(--primary);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-block: 1rem;
+  }
+
+  p {
+    margin-block: 1rem 1.5rem;
+    line-height: 1.5;
+  }
+
+  button {
+  @apply bg-primary border rounded-lg px-5 py-1.5 text-xl font-medium transition-colors border-primary text-white cursor-pointer
+  hover:border-primary hover:text-primary hover:bg-white;
+  }
+}
+
+::backdrop {
+  background-color: var(--background);
+  opacity: 0.75;
+}
+
 /* .introPopup {
   position: fixed;
   top: 50%;
@@ -240,3 +276,6 @@ form.user-details input {
   }
 } */
 
+.post {
+
+}

@@ -488,12 +488,10 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 									return (
 										<article
 											key={image.id}
-											className="group relative overflow-hidden rounded-3xl bg-white shadow-sm transition-shadow hover:shadow-xl"
+											className="post group shadow-xl relative overflow-hidden rounded-3xl bg-white shadow-sm transition-shadow hover:shadow-xl"
 										>
-											<div
-												className="relative w-full"
-												style={{ paddingBottom: `${aspectRatio}%` }}
-											>
+
+											<div className="imageContainer relative" style={{ paddingBottom: `${aspectRatio}%` }}>
 												<Image
 													src={image.url}
 													alt={`${image.topic} ${image.id}`}
@@ -503,6 +501,14 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 													priority={priority}
 												/>
 											</div>
+
+											<div className="contentContainer p-4">
+												<h3 className="text-xl font-bold capitalize text-primary">{image.topic}</h3>
+												<hr className="border-gray-200" />
+												<p className="mb-3 mt-3 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eget sem ut leo tempor placerat varius aliquet nunc.</p>
+												<a href="#" onClick={() => { const dialog = document.getElementById(`${image.topic} ${image.id}`) as HTMLDialogElement | null; dialog?.showModal(); }}>Read more</a>
+											</div>
+
 
 											<div className="absolute left-4 top-4">
 												<div className="rounded-full border border-white/60 bg-white/90 px-3 py-1 text-xs font-semibold capitalize text-slate-700 shadow">
@@ -522,11 +528,21 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 												>
 													{liked ? "❤️" : "🤍"}
 												</button>
-											<DreamShare
-														imageUrl={image.url}
-														imageTitle={`${image.topic} image`}
-													/>
+												<DreamShare
+													imageUrl={image.url}
+													imageTitle={`${image.topic} image`}
+												/>
 											</div>
+
+
+											<dialog id={`${image.topic} ${image.id}`}>
+												<img src={image.url} alt={`${image.topic} ${image.id}`} className="rounded-xl" width="600" height="338" />
+												<h2 className="capitalize">{image.topic}</h2>
+												<div className="flex justify-between"><span className="text-sm">John Doe</span><i className="text-sm">01-01-2025</i></div>
+												<hr className="border-gray-200" />
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eget sem ut leo tempor placerat varius aliquet nunc. Sed euismod, nisl vel tincidunt lacinia, nunc est aliquam nunc, eget aliquam nisl nunc euismod nunc. Donec euismod, nisl vel tincidunt lacinia, nunc est aliquam nunc, eget aliquam nisl nunc euismod nunc.</p>
+												<button type="button" autoFocus onClick={() => { const dialog = document.getElementById(`${image.topic} ${image.id}`) as HTMLDialogElement | null; dialog?.close(); }}>Close</button>
+											</dialog>
 										</article>
 									);
 								})}

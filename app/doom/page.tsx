@@ -6,6 +6,7 @@ import { DoomShare } from "@/components/share/doom-share";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { DoomNotification } from "@/components/ui/doom-notif";
+import { SignupNotification } from "@/components/ui/signup-notif";
 import { Heart, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -52,6 +53,7 @@ export default function Doom() {
 	const [liked, setLiked] = useState<Set<string>>(new Set());
 	const [unmuted, setUnmuted] = useState<Set<string>>(new Set());
 	const [showDoomWarning, setShowDoomWarning] = useState(false);
+	const [showSignup, setShowSignup] = useState(false);
 	const [showIntro, setShowIntro] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +71,18 @@ export default function Doom() {
 
 	useEffect(() => {
 		const timer = setTimeout(() => setShowDoomWarning(true), 30_000);
+		return () => clearTimeout(timer);
+	}, []);
+
+	useEffect(() => {
+		const hasSeen = sessionStorage.getItem("signup_seen");
+		if (hasSeen) return;
+
+		const timer = setTimeout(() => {
+			setShowSignup(true);
+			sessionStorage.setItem("signup_seen", "true");
+		}, 5000);
+
 		return () => clearTimeout(timer);
 	}, []);
 
@@ -137,6 +151,11 @@ export default function Doom() {
 				<DoomNotification
 					visible={showDoomWarning}
 					onClose={() => setShowDoomWarning(false)}
+				/>
+
+				<SignupNotification
+					visible={showSignup}
+					onClose={() => setShowSignup(false)}
 				/>
 
 				<div

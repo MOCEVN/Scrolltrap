@@ -6,34 +6,77 @@ import { DoomShare } from "@/components/share/doom-share";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { DoomNotification } from "@/components/ui/doom-notif";
+import { RevenueNotification } from "@/components/ui/rev-notif";
+import { SignupNotification } from "@/components/ui/signup-notif";
 import { Heart, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface Short {
 	id: string;
 	title: string;
+	caption?: string;
+	type?: "short" | "ad";
+	video?: string;
 }
 
 const demoShorts: Short[] = [
 	{ id: "dQw4w9WgXcQ", title: "Rick Astley – Never Gonna Give You Up" },
+	{ id: "keOaQm6RpBg", title: "Heinz Add" },
 	{ id: "LPChtaKsVgU", title: "Funny Cat Chase Fail" },
 	{ id: "4DPFfsYF9yM", title: "Cat vs Laser" },
+	{
+		id: "ad-1",
+		title: "Sponsored: DoomScroll Premium",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+	},
+
 	{ id: "I5z1eYo8SLw", title: "DIY Life Hack Gone Wrong" },
 	{ id: "Cd5v14yJC4k", title: "Quick Street Food Recipe" },
 	{ id: "RfH9uQRzO8I", title: "Epic Skateboard Trick" },
 	{ id: "lFibEYEv3nM", title: "Viral Dance Challenge 2024" },
+	{
+		id: "ad-2",
+		title: "Sponsored: Limited Time Offer!",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+	},
+
 	{ id: "G3GIh42weTo", title: "Dance Challenge" },
 	{ id: "s_3qEGBo-FA", title: "Hidden iPhone Features" },
 	{ id: "Z7UKBN0TwjQ", title: "Random Animal Facts" },
 	{ id: "w4-TTbZ8zC0", title: "Budget Travel Tips" },
+	{
+		id: "ad-3",
+		title: "Sponsored: Get 50% Off Now!",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+	},
 	{ id: "WMfOaOSz0R4", title: "ASMR Whisper Challenge" },
 	{ id: "1sTWZ2ViKAs", title: "Ivete Sangalo Live" },
 	{ id: "VCcmLaApMCo", title: "Universidad Meme" },
 	{ id: "DmbnuVHQ96U", title: "Campus Life" },
+	{
+		id: "ad-4",
+		title: "Sponsored: Try Our New App!",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+	},
 	{ id: "jyIDhIXKsW8", title: "Quick Guitar Lesson" },
 	{ id: "BdpdKqm1G6w", title: "Guitar Cover" },
 	{ id: "9Gqz6nYA4Ls", title: "Urban Photography Tips" },
 	{ id: "dzq7zgXwWeY", title: "Funny Pet Reactions" },
+	{
+		id: "ad-5",
+		title: "Sponsored: Subscribe Today!",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+	},
 	{ id: "ybQ53LrxUJE", title: "Easy Vegan Snack Ideas" },
 	{ id: "oDh58oNhJLs", title: "Retro Game Speedrun" },
 	{ id: "48kPGspthjQ", title: "Book Review in 60 Seconds" },
@@ -52,14 +95,14 @@ export default function Doom() {
 	const [liked, setLiked] = useState<Set<string>>(new Set());
 	const [unmuted, setUnmuted] = useState<Set<string>>(new Set());
 	const [showDoomWarning, setShowDoomWarning] = useState(false);
+	const [showSignup, setShowSignup] = useState(false);
 	const [showIntro, setShowIntro] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [showRevenue, setShowRevenue] = useState(false);
 
 	useEffect(() => {
 		const hasSeen = sessionStorage.getItem("intro_seen");
-		if (!hasSeen) {
-			setShowIntro(true);
-		}
+		if (!hasSeen) setShowIntro(true);
 	}, []);
 
 	const closeIntro = () => {
@@ -68,10 +111,33 @@ export default function Doom() {
 	};
 
 	useEffect(() => {
-		const timer = setTimeout(() => setShowDoomWarning(true), 30_000);
+		const interval = setInterval(() => {
+			setShowRevenue(true);
+		}, 10000);
+
+		return () => clearInterval(interval);
+	}, []);
+
+	// Doom popup timer
+	useEffect(() => {
+		const timer = setTimeout(() => setShowDoomWarning(true), 30000);
 		return () => clearTimeout(timer);
 	}, []);
 
+	// Signup popup timer
+	useEffect(() => {
+		const hasSeen = sessionStorage.getItem("signup_seen");
+		if (hasSeen) return;
+
+		const timer = setTimeout(() => {
+			setShowSignup(true);
+			sessionStorage.setItem("signup_seen", "true");
+		}, 5000);
+
+		return () => clearTimeout(timer);
+	}, []);
+
+	// Scroll snapping logic
 	useEffect(() => {
 		const container = containerRef.current;
 		if (!container) return;
@@ -90,6 +156,7 @@ export default function Doom() {
 				} else if (percent < 0.3 && currentIndex > 0) {
 					setCurrentIndex((i) => i - 1);
 				}
+
 				isScrolling = false;
 			});
 		};
@@ -98,12 +165,15 @@ export default function Doom() {
 		return () => container.removeEventListener("scroll", handleScroll);
 	}, [currentIndex]);
 
+	// Scroll to active short
 	useEffect(() => {
 		const container = containerRef.current;
 		if (!container) return;
+
 		const active = container.querySelector(
 			`[data-index="${currentIndex}"]`,
 		) as HTMLElement;
+
 		if (active) {
 			container.scrollTo({ top: active.offsetTop - 20, behavior: "smooth" });
 		}
@@ -126,7 +196,7 @@ export default function Doom() {
 	};
 
 	return (
-		<div className="flex min-h-screen bg-slate-950 text-slate-100">
+		<div className="flex min-h-screen bg-black text-white">
 			{showIntro && <IntroPopup onClose={closeIntro} />}
 
 			<Sidebar />
@@ -139,11 +209,21 @@ export default function Doom() {
 					onClose={() => setShowDoomWarning(false)}
 				/>
 
+				<SignupNotification
+					visible={showSignup}
+					onClose={() => setShowSignup(false)}
+				/>
+
+				<RevenueNotification
+					visible={showRevenue}
+					onClose={() => setShowRevenue(false)}
+				/>
+
 				<div
 					ref={containerRef}
-					className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide px-4 py-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"
+					className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide bg-black px-0 py-4"
 				>
-					<div className="max-w-sm mx-auto space-y-6">
+					<div className="max-w-[420px] mx-auto space-y-10">
 						{demoShorts.map((short, idx) => {
 							const isMuted = !unmuted.has(short.id);
 
@@ -151,51 +231,75 @@ export default function Doom() {
 								<div
 									key={short.id}
 									data-index={idx}
-									className="snap-start bg-slate-900 border border-red-500/20 rounded-2xl overflow-hidden shadow-lg shadow-red-500/10 hover:shadow-red-500/20 transition-shadow"
+									className="snap-center relative w-full h-[90vh] bg-black rounded-xl overflow-hidden shadow-xl border border-white/10"
 								>
-									<div className="relative aspect-[9/16] bg-black">
-										<iframe
-											className="w-full h-full"
-											src={`https://www.youtube.com/embed/${short.id}?autoplay=1&mute=${isMuted ? 1 : 0}&start=0&end=15&loop=1&playlist=${short.id}&controls=0&modestbranding=1&rel=0&fs=0`}
-											title={short.title}
-											allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-											allowFullScreen
-											loading="lazy"
+									{/* Video container more full-screen */}
+
+									{/* SPONSOR BADGE */}
+									{short.type === "ad" && (
+										<div className="absolute top-4 left-4 z-30 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold shadow">
+											SPONSORED
+										</div>
+									)}
+									<div className="absolute inset-0">
+										{short.type === "ad" && short.video ? (
+											<video
+												src={short.video}
+												autoPlay
+												muted={isMuted}
+												loop
+												playsInline
+												className="w-full h-full object-cover"
+											/>
+										) : (
+											<iframe
+												className="w-full h-full object-cover"
+												src={`https://www.youtube.com/embed/${short.id}?autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${short.id}`}
+												title={short.title}
+												allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+												allowFullScreen
+											/>
+										)}
+									</div>
+
+									{/* Right-side TikTok-style buttons */}
+									<div className="absolute right-4 bottom-24 flex flex-col items-center gap-4">
+										<Button
+											variant="ghost"
+											size="icon"
+											onClick={() => toggleLike(short.id)}
+											className="bg-black/40 backdrop-blur-md hover:bg-black/60 p-3 rounded-full"
+										>
+											<Heart
+												className={`w-7 h-7 ${liked.has(short.id) ? "text-red-500 fill-red-500" : "text-white"}`}
+											/>
+										</Button>
+
+										<DoomShare
+											imageUrl={`https://img.youtube.com/vi/${short.id}/0.jpg`}
+											imageTitle={short.title}
 										/>
 
 										<Button
-											onClick={() => toggleSound(short.id)}
-											className="absolute bottom-4 right-4 bg-slate-900/90 hover:bg-slate-800 text-red-400 p-3 rounded-full shadow-lg border border-red-500/30"
+											variant="ghost"
 											size="icon"
+											onClick={() => toggleSound(short.id)}
+											className="bg-black/40 backdrop-blur-md hover:bg-black/60 p-3 rounded-full"
 										>
 											{isMuted ? (
-												<VolumeX className="w-6 h-6" />
+												<VolumeX className="w-7 h-7" />
 											) : (
-												<Volume2 className="w-6 h-6" />
+												<Volume2 className="w-7 h-7" />
 											)}
 										</Button>
 									</div>
 
-									<div className="p-4 flex items-center justify-between gap-3 bg-slate-900/50">
-										<h3 className="text-sm font-semibold text-slate-200 truncate flex-1">
-											{short.title}
-										</h3>
-										<div className="flex items-center gap-2">
-											<DoomShare
-												imageUrl={`https://img.youtube.com/vi/${short.id}/0.jpg`}
-												imageTitle={short.title}
-											/>
-											<Button
-												variant="ghost"
-												size="icon"
-												className="p-2 hover:bg-red-500/20 rounded-full"
-												onClick={() => toggleLike(short.id)}
-											>
-												<Heart
-													className={`w-6 h-6 ${liked.has(short.id) ? "text-red-500 fill-red-500" : "text-slate-400"}`}
-												/>
-											</Button>
-										</div>
+									{/* Title + Caption overlay */}
+									<div className="absolute bottom-6 left-4 right-20 text-white drop-shadow-lg">
+										<h3 className="text-lg font-bold">{short.title}</h3>
+										{short.caption && (
+											<p className="text-sm opacity-90 mt-1">{short.caption}</p>
+										)}
 									</div>
 								</div>
 							);

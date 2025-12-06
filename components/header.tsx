@@ -1,24 +1,27 @@
 "use client";
 
+import { ScenarioToggle } from "@/components/scenario-toggle";
+import { useScenarioMode } from "@/hooks/use-scenario-mode";
 import { LogIn, UserRoundPlus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 interface HeaderProps {
-	showLikedOnly: boolean;
-	likedCount: number;
-	onToggleShowLiked: () => void;
-	searchQuery: string;
-	setSearchQuery: (query: string) => void;
-	handleSearch: () => void;
+	showLikedOnly?: boolean;
+	likedCount?: number;
+	onToggleShowLiked?: () => void;
+	searchQuery?: string;
+	setSearchQuery?: (query: string) => void;
+	handleSearch?: () => void;
 }
 
 export default function Header({
-	showLikedOnly,
-	likedCount,
+	showLikedOnly = false,
+	likedCount = 0,
 	onToggleShowLiked,
 }: HeaderProps) {
+	const { isDoom } = useScenarioMode();
 	const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 
 	useEffect(() => {
@@ -44,12 +47,20 @@ export default function Header({
 	};
 
 	return (
-		<header className="border-b border-emerald-100 bg-gradient-to-r from-emerald-50/80 via-slate-50 to-indigo-50/80 px-4 py-3 shadow-sm backdrop-blur sm:px-6">
+		<header className={`
+			border-b px-4 py-3 shadow-sm backdrop-blur sm:px-6 transition-colors duration-300
+			${isDoom 
+				? "border-red-900/30 bg-gradient-to-r from-slate-900 via-red-950/20 to-slate-900" 
+				: "border-emerald-100 bg-gradient-to-r from-emerald-50/80 via-slate-50 to-indigo-50/80"
+			}
+		`}>
 			<div className="flex w-full items-center justify-between gap-3">
-				<div className="flex items-center flex-1"></div>
+				<div className="flex items-center gap-2">
+					<ScenarioToggle />
+				</div>
 
 				<div className="flex items-center gap-3">
-					{likedCount > 0 && loggedIn === true && (
+					{!isDoom && likedCount > 0 && onToggleShowLiked && (
 						<Button
 							type="button"
 							onClick={onToggleShowLiked}
@@ -69,7 +80,13 @@ export default function Header({
 							<Link href="/login">
 								<Button
 									variant="ghost"
-									className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100/50 text-emerald-700 transition hover:bg-emerald-100 hover:text-emerald-800 rounded-xl text-sm"
+									className={`
+										flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm transition
+										${isDoom 
+											? "bg-red-500/20 text-red-200 hover:bg-red-500/30 hover:text-white border border-red-500/30" 
+											: "bg-emerald-100/50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800"
+										}
+									`}
 								>
 									<LogIn size={18} className="transition" />
 									Login
@@ -79,7 +96,13 @@ export default function Header({
 							<Link href="/register">
 								<Button
 									variant="ghost"
-									className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100/50 text-emerald-700 transition hover:bg-emerald-100 hover:text-emerald-800 rounded-xl text-sm"
+									className={`
+										flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm transition
+										${isDoom 
+											? "bg-red-500/20 text-red-200 hover:bg-red-500/30 hover:text-white border border-red-500/30" 
+											: "bg-emerald-100/50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800"
+										}
+									`}
 								>
 									<UserRoundPlus size={18} className="transition" />
 									Register
@@ -92,7 +115,13 @@ export default function Header({
 						<Button
 							variant="ghost"
 							onClick={handleLogout}
-							className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100/50 text-emerald-700 transition hover:bg-emerald-100 hover:text-emerald-800 rounded-xl text-sm"
+							className={`
+								flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm transition
+								${isDoom 
+									? "bg-red-500/20 text-red-200 hover:bg-red-500/30 hover:text-white border border-red-500/30" 
+									: "bg-emerald-100/50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800"
+								}
+							`}
 						>
 							Logout
 						</Button>

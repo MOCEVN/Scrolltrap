@@ -9,6 +9,7 @@ import MasonryGrid from '@/components/masonry-grid';
 import Sidebar from '@/components/sidebar';
 import { useInterests } from '@/hooks/use-interests';
 import { useLikedImages } from '@/hooks/use-liked-images';
+import { useScenarioMode } from '@/hooks/use-scenario-mode';
 
 const Home = () => {
   const [showIntro, setShowIntro] = useState(false);
@@ -65,8 +66,12 @@ const Home = () => {
 
   const activeInterests = interests;
 
+  const { isDoom } = useScenarioMode();
+
   return (
-    <div className="flex min-h-screen bg-slate-100 text-slate-900">
+    <div className={`flex min-h-screen transition-colors duration-300 ${
+      isDoom ? "bg-slate-950 text-slate-100" : "bg-slate-100 text-slate-900"
+    }`}>
       {showIntro && (
         <IntroPopup onClose={closeIntro} />
       )}

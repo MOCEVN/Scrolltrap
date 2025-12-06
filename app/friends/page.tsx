@@ -1,18 +1,23 @@
 'use client';
 
-import HeaderSimple from '@/components/header-simple';
+import Header from '@/components/header';
 import Sidebar from '@/components/sidebar';
 import { useFriends } from '@/hooks/use-friends';
+import { useScenarioMode } from '@/hooks/use-scenario-mode';
 
 export default function FriendsPage() {
   const { suggestions, addedFriends, addFriend, clearFriends, isFriendAdded } = useFriends();
 
+  const { isDoom } = useScenarioMode();
+
   return (
-    <div className="flex min-h-screen bg-slate-100 text-slate-900">
+    <div className={`flex min-h-screen transition-colors duration-300 ${
+      isDoom ? "bg-slate-950 text-slate-100" : "bg-slate-100 text-slate-900"
+    }`}>
       <Sidebar />
 
       <div className="flex flex-1 flex-col">
-        <HeaderSimple />
+        <Header />
 
         <main className="flex-1 overflow-y-auto p-6" data-scroll-container>
           <div className="mx-auto w-full max-w-4xl">
@@ -25,7 +30,11 @@ export default function FriendsPage() {
                   {addedFriends.map((friend) => (
                     <div
                       key={friend.id}
-                      className="flex flex-col items-center rounded-xl bg-white p-3 shadow-sm transition hover:shadow-md"
+                      className={`flex flex-col items-center rounded-xl p-3 shadow-sm transition hover:shadow-md ${
+                        isDoom 
+                          ? "bg-slate-800 border border-red-900/30" 
+                          : "bg-white"
+                      }`}
                     >
                       <div className="mb-2 h-12 w-12 overflow-hidden rounded-full bg-gray-200">
                         <img
@@ -47,7 +56,9 @@ export default function FriendsPage() {
                 </button>
               </section>
             ) : (
-              <p className="mb-8 text-sm text-gray-500">
+              <p className={`mb-8 text-sm transition-colors duration-300 ${
+                isDoom ? "text-slate-400" : "text-gray-500"
+              }`}>
                 You haven&apos;t added any friends yet. Start adding some!
               </p>
             )}
@@ -61,9 +72,15 @@ export default function FriendsPage() {
                   return (
                     <div
                       key={friend.id}
-                      className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md"
+                      className={`flex items-center gap-4 rounded-xl border p-4 shadow-sm transition hover:shadow-md ${
+                        isDoom 
+                          ? "border-red-900/30 bg-slate-800" 
+                          : "border-slate-200 bg-white"
+                      }`}
                     >
-                      <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
+                      <div className={`h-12 w-12 flex-shrink-0 overflow-hidden rounded-full ${
+                        isDoom ? "bg-slate-700" : "bg-gray-200"
+                      }`}>
                         <img
                           src={friend.avatar}
                           alt={friend.name}
@@ -73,7 +90,9 @@ export default function FriendsPage() {
 
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-medium">{friend.name}</p>
-                        <p className="text-sm text-gray-500">{friend.mutual} mutual friends</p>
+                        <p className={`text-sm transition-colors duration-300 ${
+                          isDoom ? "text-slate-400" : "text-gray-500"
+                        }`}>{friend.mutual} mutual friends</p>
                       </div>
 
                       <button
@@ -83,7 +102,9 @@ export default function FriendsPage() {
                         className={`rounded px-3 py-1.5 text-sm font-medium text-white transition ${
                           isAdded
                             ? 'cursor-not-allowed bg-gray-400'
-                            : 'bg-blue-500 hover:bg-blue-600'
+                            : isDoom 
+                              ? 'bg-red-600 hover:bg-red-500' 
+                              : 'bg-emerald-500 hover:bg-emerald-600'
                         }`}
                       >
                         {isAdded ? 'Added' : 'Add'}

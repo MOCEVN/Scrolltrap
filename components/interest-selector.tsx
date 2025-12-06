@@ -1,5 +1,6 @@
 'use client';
 
+import { useScenarioMode } from '@/hooks/use-scenario-mode';
 import type React from 'react';
 
 interface InterestSelectorProps {
@@ -22,6 +23,8 @@ export const InterestSelector: React.FC<InterestSelectorProps> = ({
   interests,
   onInterestsUpdate,
 }) => {
+  const { isDoom } = useScenarioMode();
+
   const toggleInterest = (interest: string) => {
     const includes = interests.includes(interest);
     const next = includes
@@ -32,15 +35,25 @@ export const InterestSelector: React.FC<InterestSelectorProps> = ({
   };
 
   return (
-    <section className="mx-auto mb-6 w-full max-w-5xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className={`mx-auto mb-6 w-full max-w-5xl rounded-2xl border p-6 shadow-sm transition-colors duration-300 ${
+      isDoom 
+        ? "border-red-900/30 bg-slate-800" 
+        : "border-slate-200 bg-white"
+    }`}>
       <header className="mb-4">
-        <p className="text-sm font-semibold text-slate-800">Your Interests</p>
+        <p className={`text-sm font-semibold transition-colors duration-300 ${
+          isDoom ? "text-slate-200" : "text-slate-800"
+        }`}>Your Interests</p>
         {interests.length > 0 ? (
-          <p className="text-xs text-slate-500">
+          <p className={`text-xs transition-colors duration-300 ${
+            isDoom ? "text-slate-400" : "text-slate-500"
+          }`}>
             {interests.length} {interests.length === 1 ? 'topic' : 'topics'} selected
           </p>
         ) : (
-          <p className="text-xs font-medium text-indigo-600">
+          <p className={`text-xs font-medium transition-colors duration-300 ${
+            isDoom ? "text-red-400" : "text-emerald-600"
+          }`}>
             👋 Select topics to get started
           </p>
         )}
@@ -55,7 +68,15 @@ export const InterestSelector: React.FC<InterestSelectorProps> = ({
               key={interest}
               type="button"
               onClick={() => toggleInterest(interest)}
-              className={`interestButton ${isActive ? 'active' : ''}`}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                isActive
+                  ? isDoom
+                    ? "border-red-500 bg-red-950 text-red-300"
+                    : "border-emerald-400 bg-emerald-100 text-emerald-700"
+                  : isDoom
+                    ? "border-slate-600 bg-slate-700 text-slate-300 hover:border-red-500/50 hover:text-red-300"
+                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-emerald-300 hover:text-emerald-600"
+              }`}
               aria-pressed={isActive}
             >
               {interest}
@@ -63,7 +84,9 @@ export const InterestSelector: React.FC<InterestSelectorProps> = ({
           );
         })}
       </div>
-      <p className="mt-3 text-xs leading-5 text-slate-500">
+      <p className={`mt-3 text-xs leading-5 transition-colors duration-300 ${
+        isDoom ? "text-slate-400" : "text-slate-500"
+      }`}>
         Tap a chip to select or deselect the topics you want to explore.
       </p>
     </section>

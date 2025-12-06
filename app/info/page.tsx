@@ -2,6 +2,7 @@
 
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
+import { useScenarioMode } from "@/hooks/use-scenario-mode";
 
 interface DarkPattern {
   title: string;
@@ -34,44 +35,57 @@ export default function Create() {
     },
   ];
 
+  const { isDoom } = useScenarioMode();
+
   return (
-    <div className="flex min-h-screen bg-background text-slate-900">
+    <div className={`flex min-h-screen transition-colors duration-300 ${
+      isDoom ? "bg-slate-950 text-slate-100" : "bg-background text-slate-900"
+    }`}>
      
       <Sidebar />
 
      
       <div className="flex-1 flex flex-col">
-        <Header
-          showLikedOnly={false}
-          likedCount={0}
-          onToggleShowLiked={() => {}}
-          searchQuery=""
-          setSearchQuery={() => {}}
-          handleSearch={() => {}}
-        />
+        <Header />
 
         <main className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-            <h1 className="text-3xl font-bold mb-6 text-center text-black dark:text-white">
+            <h1 className={`text-3xl font-bold mb-6 text-center transition-colors duration-300 ${
+              isDoom ? "text-slate-100" : "text-slate-900"
+            }`}>
               Dark Pattern vs. Our Approach
             </h1>
 
             {darkPatterns.map((pattern) => (
               <div key={pattern.title} className="mb-6">
-                <h2 className="text-lg font-semibold mb-2 text-black dark:text-white">
+                <h2 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
+                  isDoom ? "text-slate-100" : "text-slate-900"
+                }`}>
                   {pattern.title}
                 </h2>
 
           
-                <div className="bg-red-50 border-l-4 border-red-400 p-3 mb-2 rounded-md">
-                  <p className="text-red-800 text-sm">
+                <div className={`border-l-4 p-3 mb-2 rounded-md transition-colors duration-300 ${
+                  isDoom 
+                    ? "bg-red-950/50 border-red-500" 
+                    : "bg-red-50 border-red-400"
+                }`}>
+                  <p className={`text-sm transition-colors duration-300 ${
+                    isDoom ? "text-red-300" : "text-red-800"
+                  }`}>
                     ❌ <strong>Dark Pattern:</strong> {pattern.dark}
                   </p>
                 </div>
 
         
-                <div className="bg-green-50 border-l-4 border-green-400 p-3 rounded-md">
-                  <p className="text-green-800 text-sm">
+                <div className={`border-l-4 p-3 rounded-md transition-colors duration-300 ${
+                  isDoom 
+                    ? "bg-emerald-950/50 border-emerald-500" 
+                    : "bg-green-50 border-green-400"
+                }`}>
+                  <p className={`text-sm transition-colors duration-300 ${
+                    isDoom ? "text-emerald-300" : "text-green-800"
+                  }`}>
                     ✅ <strong>Our Approach:</strong> {pattern.light}
                   </p>
                 </div>

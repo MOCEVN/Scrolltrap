@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 
 import FriendNotifications from "@/components/friend-notifications";
+import { ScenarioModeProvider } from "@/components/scenario-mode-provider";
 import { useFriends } from "@/hooks/use-friends";
 
 const NotificationsWrapper = ({ children }: { children: ReactNode }) => {
@@ -19,10 +20,10 @@ const NotificationsWrapper = ({ children }: { children: ReactNode }) => {
 
 const Providers = ({ children }: { children: ReactNode }) => {
 	return (
-		<>
+		<ScenarioModeProvider>
 			<Toaster position="top-right" />
 			<NotificationsWrapper>{children}</NotificationsWrapper>
-		</>
+		</ScenarioModeProvider>
 	);
 };
 

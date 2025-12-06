@@ -4,12 +4,12 @@ import type { ImageItem } from "@/types/image";
 import Image from "next/image";
 import type React from "react";
 import {
-	startTransition,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
+    startTransition,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import { DreamShare } from "./share/dream-share";
 import { DreamNotification } from "./ui/dream-notif";
@@ -371,7 +371,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 	if (loading) {
 		return (
 			<section className="flex min-h-[60vh] items-center justify-center bg-slate-50">
-				<div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+				<div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
 			</section>
 		);
 	}
@@ -393,7 +393,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 					<button
 						type="button"
 						onClick={onToggleShowLiked}
-						className="mb-6 inline-flex items-center justify-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-sm transition-colors hover:bg-indigo-50"
+						className="mb-6 inline-flex items-center justify-center gap-2 rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-600 shadow-sm transition-colors hover:bg-emerald-50"
 					>
 						← Back to all images
 					</button>
@@ -554,7 +554,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 
 					{loadingMore && (
 						<div className="flex justify-center py-6">
-							<div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+							<div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
 						</div>
 					)}
 
@@ -570,7 +570,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
 							<button
 								type="button"
 								onClick={loadMoreImages}
-								className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 hover:shadow-md"
+								className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-6 py-3 text-sm font-semibold text-emerald-600 shadow-sm transition-all hover:bg-emerald-50 hover:shadow-md"
 							>
 								<span>Load 10 more</span>
 								<span className="text-xs text-slate-400">→</span>

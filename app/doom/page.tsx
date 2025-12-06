@@ -1,6 +1,6 @@
 "use client";
 
-import HeaderDoom from "@/components/header-doom";
+import Header from "@/components/header";
 import IntroPopup from "@/components/intro-popup";
 import { DoomShare } from "@/components/share/doom-share";
 import Sidebar from "@/components/sidebar";
@@ -132,7 +132,7 @@ export default function Doom() {
 			<Sidebar />
 
 			<div className="flex-1 flex flex-col">
-				<HeaderDoom />
+				<Header />
 
 				<DoomNotification
 					visible={showDoomWarning}

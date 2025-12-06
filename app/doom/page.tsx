@@ -6,6 +6,7 @@ import { DoomShare } from "@/components/share/doom-share";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { DoomNotification } from "@/components/ui/doom-notif";
+import { RevenueNotification } from "@/components/ui/rev-notif";
 import { SignupNotification } from "@/components/ui/signup-notif";
 import { Heart, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -23,8 +24,6 @@ const demoShorts: Short[] = [
 	{ id: "keOaQm6RpBg", title: "Heinz Add" },
 	{ id: "LPChtaKsVgU", title: "Funny Cat Chase Fail" },
 	{ id: "4DPFfsYF9yM", title: "Cat vs Laser" },
-
-	// ⭐ AD #1 - Insert after every 4-5 videos
 	{
 		id: "ad-1",
 		title: "Sponsored: DoomScroll Premium",
@@ -37,8 +36,6 @@ const demoShorts: Short[] = [
 	{ id: "Cd5v14yJC4k", title: "Quick Street Food Recipe" },
 	{ id: "RfH9uQRzO8I", title: "Epic Skateboard Trick" },
 	{ id: "lFibEYEv3nM", title: "Viral Dance Challenge 2024" },
-
-	// ⭐ AD #2
 	{
 		id: "ad-2",
 		title: "Sponsored: Limited Time Offer!",
@@ -51,8 +48,6 @@ const demoShorts: Short[] = [
 	{ id: "s_3qEGBo-FA", title: "Hidden iPhone Features" },
 	{ id: "Z7UKBN0TwjQ", title: "Random Animal Facts" },
 	{ id: "w4-TTbZ8zC0", title: "Budget Travel Tips" },
-
-	// ⭐ AD #3
 	{
 		id: "ad-3",
 		title: "Sponsored: Get 50% Off Now!",
@@ -103,6 +98,7 @@ export default function Doom() {
 	const [showSignup, setShowSignup] = useState(false);
 	const [showIntro, setShowIntro] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [showRevenue, setShowRevenue] = useState(false);
 
 	useEffect(() => {
 		const hasSeen = sessionStorage.getItem("intro_seen");
@@ -113,6 +109,14 @@ export default function Doom() {
 		sessionStorage.setItem("intro_seen", "true");
 		setShowIntro(false);
 	};
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setShowRevenue(true);
+		}, 10000);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	// Doom popup timer
 	useEffect(() => {
@@ -208,6 +212,11 @@ export default function Doom() {
 				<SignupNotification
 					visible={showSignup}
 					onClose={() => setShowSignup(false)}
+				/>
+
+				<RevenueNotification
+					visible={showRevenue}
+					onClose={() => setShowRevenue(false)}
 				/>
 
 				<div

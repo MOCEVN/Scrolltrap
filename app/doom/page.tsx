@@ -7,145 +7,93 @@ import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { DoomNotification } from "@/components/ui/doom-notif";
 import { SignupNotification } from "@/components/ui/signup-notif";
-import { Bookmark, Heart, MessageCircle, Volume2, VolumeX } from "lucide-react";
+import { Heart, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface Short {
 	id: string;
 	title: string;
+	caption?: string;
 	type?: "short" | "ad";
 	video?: string;
-	creator?: string;
-	caption?: string;
-	likes?: number;
-	comments?: number;
-	shares?: number;
 }
 
 const demoShorts: Short[] = [
-	{
-		id: "dQw4w9WgXcQ",
-		title: "Rick Astley – Never Gonna Give You Up",
-		creator: "@rickastley",
-		caption: "Never gonna give you up, never gonna let you down 🎵",
-		likes: 1234567,
-		comments: 45623,
-		shares: 23456,
-	},
-	{
-		id: "LPChtaKsVgU",
-		title: "Funny Cat Chase Fail",
-		creator: "@catvideos",
-		caption: "He really thought he could make that jump 😹",
-		likes: 567890,
-		comments: 23456,
-		shares: 12345,
-	},
-	{
-		id: "4DPFfsYF9yM",
-		title: "Cat vs Laser",
-		creator: "@petfails",
-		caption: "The eternal battle continues... 🔴",
-		likes: 445678,
-		comments: 15623,
-		shares: 9876,
-	},
-	{
-		id: "I5z1eYo8SLw",
-		title: "DIY Life Hack Gone Wrong",
-		creator: "@lifehacks",
-		caption: "Maybe I should've read the instructions first... 😅",
-		likes: 789012,
-		comments: 34567,
-		shares: 15678,
-	},
+	{ id: "dQw4w9WgXcQ", title: "Rick Astley – Never Gonna Give You Up" },
+	{ id: "keOaQm6RpBg", title: "Heinz Add" },
+	{ id: "LPChtaKsVgU", title: "Funny Cat Chase Fail" },
+	{ id: "4DPFfsYF9yM", title: "Cat vs Laser" },
 
-	// AD #1
+	// ⭐ AD #1 - Insert after every 4-5 videos
 	{
 		id: "ad-1",
 		title: "Sponsored: DoomScroll Premium",
 		type: "ad",
 		video:
 			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-		creator: "@doomscroll",
-		caption: "Upgrade to Premium for ad-free scrolling! 🚀",
-		likes: 234567,
-		comments: 8934,
-		shares: 5678,
 	},
 
-	{
-		id: "Cd5v14yJC4k",
-		title: "Quick Street Food Recipe",
-		creator: "@streetfood",
-		caption: "This is how they make it in Thailand 🇹🇭",
-		likes: 923456,
-		comments: 28901,
-		shares: 18234,
-	},
-	{
-		id: "RfH9uQRzO8I",
-		title: "Epic Skateboard Trick",
-		creator: "@skatelife",
-		caption: "Only took me 47 tries to land this 🛹",
-		likes: 345678,
-		comments: 12345,
-		shares: 7890,
-	},
-	{
-		id: "lFibEYEv3nM",
-		title: "Viral Dance Challenge 2024",
-		creator: "@dancemoves",
-		caption: "Try this challenge and tag me! 💃",
-		likes: 1567890,
-		comments: 67890,
-		shares: 34567,
-	},
+	{ id: "I5z1eYo8SLw", title: "DIY Life Hack Gone Wrong" },
+	{ id: "Cd5v14yJC4k", title: "Quick Street Food Recipe" },
+	{ id: "RfH9uQRzO8I", title: "Epic Skateboard Trick" },
+	{ id: "lFibEYEv3nM", title: "Viral Dance Challenge 2024" },
 
-	// AD #2
+	// ⭐ AD #2
 	{
 		id: "ad-2",
 		title: "Sponsored: Limited Time Offer!",
 		type: "ad",
 		video:
 			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-		creator: "@sponsor",
-		caption: "Get 50% off now! Link in bio 🎁",
-		likes: 156789,
-		comments: 4567,
-		shares: 3456,
 	},
 
+	{ id: "G3GIh42weTo", title: "Dance Challenge" },
+	{ id: "s_3qEGBo-FA", title: "Hidden iPhone Features" },
+	{ id: "Z7UKBN0TwjQ", title: "Random Animal Facts" },
+	{ id: "w4-TTbZ8zC0", title: "Budget Travel Tips" },
+
+	// ⭐ AD #3
 	{
-		id: "G3GIh42weTo",
-		title: "Dance Challenge",
-		creator: "@viraltrends",
-		caption: "This song is stuck in my head 24/7 🎶",
-		likes: 678901,
-		comments: 23456,
-		shares: 12345,
+		id: "ad-3",
+		title: "Sponsored: Get 50% Off Now!",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
 	},
+	{ id: "WMfOaOSz0R4", title: "ASMR Whisper Challenge" },
+	{ id: "1sTWZ2ViKAs", title: "Ivete Sangalo Live" },
+	{ id: "VCcmLaApMCo", title: "Universidad Meme" },
+	{ id: "DmbnuVHQ96U", title: "Campus Life" },
 	{
-		id: "s_3qEGBo-FA",
-		title: "Hidden iPhone Features",
-		creator: "@techtriks",
-		caption: "iPhone trick you didn't know about 📱",
-		likes: 1123456,
-		comments: 45678,
-		shares: 23456,
+		id: "ad-4",
+		title: "Sponsored: Try Our New App!",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
 	},
+	{ id: "jyIDhIXKsW8", title: "Quick Guitar Lesson" },
+	{ id: "BdpdKqm1G6w", title: "Guitar Cover" },
+	{ id: "9Gqz6nYA4Ls", title: "Urban Photography Tips" },
+	{ id: "dzq7zgXwWeY", title: "Funny Pet Reactions" },
+	{
+		id: "ad-5",
+		title: "Sponsored: Subscribe Today!",
+		type: "ad",
+		video:
+			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+	},
+	{ id: "ybQ53LrxUJE", title: "Easy Vegan Snack Ideas" },
+	{ id: "oDh58oNhJLs", title: "Retro Game Speedrun" },
+	{ id: "48kPGspthjQ", title: "Book Review in 60 Seconds" },
+	{ id: "LUwlemQNUL0", title: "Home Workout for Abs" },
+	{ id: "oDTWnzFM-bw", title: "AI Art Tutorial" },
+	{ id: "nvkB_gsAK0k", title: "Street Magic Illusion" },
+	{ id: "31max-5gvcA", title: "Sustainable Fashion Haul" },
+	{ id: "7oy1PyaewmU", title: "Coding Tip for Noobs" },
+	{ id: "XKYMGepj7Y8", title: "Code Snippet" },
+	{ id: "0JqslJv4ktk", title: "Vintage Car Restoration" },
+	{ id: "6C_xFde9_lc", title: "Beach Cleanup Challenge" },
 ];
-
-// Helper function to format numbers
-const formatCount = (num: number): string => {
-	if (num >= 1000000) {
-		return (num / 1000000).toFixed(1) + "M";
-	}
-	if (num >= 1000) {
-		return (num / 1000).toFixed(1) + "K";
-	}
-	return num.toString();
-};
 
 export default function Doom() {
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -158,9 +106,7 @@ export default function Doom() {
 
 	useEffect(() => {
 		const hasSeen = sessionStorage.getItem("intro_seen");
-		if (!hasSeen) {
-			setShowIntro(true);
-		}
+		if (!hasSeen) setShowIntro(true);
 	}, []);
 
 	const closeIntro = () => {
@@ -168,11 +114,13 @@ export default function Doom() {
 		setShowIntro(false);
 	};
 
+	// Doom popup timer
 	useEffect(() => {
-		const timer = setTimeout(() => setShowDoomWarning(true), 30_000);
+		const timer = setTimeout(() => setShowDoomWarning(true), 30000);
 		return () => clearTimeout(timer);
 	}, []);
 
+	// Signup popup timer
 	useEffect(() => {
 		const hasSeen = sessionStorage.getItem("signup_seen");
 		if (hasSeen) return;
@@ -185,6 +133,7 @@ export default function Doom() {
 		return () => clearTimeout(timer);
 	}, []);
 
+	// Scroll snapping logic
 	useEffect(() => {
 		const container = containerRef.current;
 		if (!container) return;
@@ -203,6 +152,7 @@ export default function Doom() {
 				} else if (percent < 0.3 && currentIndex > 0) {
 					setCurrentIndex((i) => i - 1);
 				}
+
 				isScrolling = false;
 			});
 		};
@@ -211,14 +161,17 @@ export default function Doom() {
 		return () => container.removeEventListener("scroll", handleScroll);
 	}, [currentIndex]);
 
+	// Scroll to active short
 	useEffect(() => {
 		const container = containerRef.current;
 		if (!container) return;
+
 		const active = container.querySelector(
 			`[data-index="${currentIndex}"]`,
 		) as HTMLElement;
+
 		if (active) {
-			container.scrollTo({ top: active.offsetTop, behavior: "smooth" });
+			container.scrollTo({ top: active.offsetTop - 20, behavior: "smooth" });
 		}
 	}, [currentIndex]);
 
@@ -241,13 +194,17 @@ export default function Doom() {
 	return (
 		<div className="flex min-h-screen bg-black text-white">
 			{showIntro && <IntroPopup onClose={closeIntro} />}
+
 			<Sidebar />
+
 			<div className="flex-1 flex flex-col">
 				<HeaderDoom />
+
 				<DoomNotification
 					visible={showDoomWarning}
 					onClose={() => setShowDoomWarning(false)}
 				/>
+
 				<SignupNotification
 					visible={showSignup}
 					onClose={() => setShowSignup(false)}
@@ -255,23 +212,28 @@ export default function Doom() {
 
 				<div
 					ref={containerRef}
-					className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide bg-black flex items-center justify-center"
+					className="flex-1 overflow-y-auto snap-y snap-mandatory scrollbar-hide bg-black px-0 py-4"
 				>
-					<div className="w-full max-w-[500px] h-full">
+					<div className="max-w-[420px] mx-auto space-y-10">
 						{demoShorts.map((short, idx) => {
 							const isMuted = !unmuted.has(short.id);
-							const isLiked = liked.has(short.id);
 
 							return (
 								<div
 									key={short.id}
 									data-index={idx}
-									className="snap-start relative w-full h-screen bg-black"
+									className="snap-center relative w-full h-[90vh] bg-black rounded-xl overflow-hidden shadow-xl border border-white/10"
 								>
-									{/* VIDEO - FULL SCREEN */}
+									{/* Video container more full-screen */}
+
+									{/* SPONSOR BADGE */}
+									{short.type === "ad" && (
+										<div className="absolute top-4 left-4 z-30 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold shadow">
+											SPONSORED
+										</div>
+									)}
 									<div className="absolute inset-0">
-										{/* AD VIDEO */}
-										{short.type === "ad" && short.video && (
+										{short.type === "ad" && short.video ? (
 											<video
 												src={short.video}
 												autoPlay
@@ -280,13 +242,10 @@ export default function Doom() {
 												playsInline
 												className="w-full h-full object-cover"
 											/>
-										)}
-
-										{/* YOUTUBE SHORT */}
-										{short.type !== "ad" && (
+										) : (
 											<iframe
-												className="w-full h-full"
-												src={`https://www.youtube.com/embed/${short.id}?autoplay=1&mute=${isMuted ? 1 : 0}&start=0&end=15&loop=1&playlist=${short.id}&controls=0&modestbranding=1&rel=0&fs=0`}
+												className="w-full h-full object-cover"
+												src={`https://www.youtube.com/embed/${short.id}?autoplay=1&mute=${isMuted ? 1 : 0}&controls=0&modestbranding=1&playsinline=1&loop=1&playlist=${short.id}`}
 												title={short.title}
 												allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 												allowFullScreen
@@ -294,121 +253,44 @@ export default function Doom() {
 										)}
 									</div>
 
-									<DoomShare
-										imageUrl={`https://img.youtube.com/vi/${short.id}/0.jpg`}
-										imageTitle={short.title}
-									/>
-
-									{/* GRADIENT OVERLAY */}
-									<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
-
-									{/* TOP RIGHT - SOUND BUTTON */}
-									<div className="absolute top-4 right-4 z-20">
+									{/* Right-side TikTok-style buttons */}
+									<div className="absolute right-4 bottom-24 flex flex-col items-center gap-4">
 										<Button
-											onClick={() => toggleSound(short.id)}
-											className="bg-black/40 backdrop-blur-sm hover:bg-black/60 text-white p-3 rounded-full border border-white/20"
+											variant="ghost"
 											size="icon"
+											onClick={() => toggleLike(short.id)}
+											className="bg-black/40 backdrop-blur-md hover:bg-black/60 p-3 rounded-full"
+										>
+											<Heart
+												className={`w-7 h-7 ${liked.has(short.id) ? "text-red-500 fill-red-500" : "text-white"}`}
+											/>
+										</Button>
+
+										<DoomShare
+											imageUrl={`https://img.youtube.com/vi/${short.id}/0.jpg`}
+											imageTitle={short.title}
+										/>
+
+										<Button
+											variant="ghost"
+											size="icon"
+											onClick={() => toggleSound(short.id)}
+											className="bg-black/40 backdrop-blur-md hover:bg-black/60 p-3 rounded-full"
 										>
 											{isMuted ? (
-												<VolumeX className="w-5 h-5" />
+												<VolumeX className="w-7 h-7" />
 											) : (
-												<Volume2 className="w-5 h-5" />
+												<Volume2 className="w-7 h-7" />
 											)}
 										</Button>
 									</div>
 
-									{/* SPONSORED BADGE */}
-									{short.type === "ad" && (
-										<div className="absolute top-4 left-4 z-20">
-											<div className="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold">
-												SPONSORED
-											</div>
-										</div>
-									)}
-
-									{/* RIGHT SIDEBAR - ACTIONS */}
-									<div className="absolute right-4 bottom-24 z-20 flex flex-col items-center gap-6">
-										{/* LIKE */}
-										<div className="flex flex-col items-center gap-1">
-											<Button
-												onClick={() => toggleLike(short.id)}
-												className="bg-transparent hover:bg-white/10 p-3 rounded-full"
-												size="icon"
-											>
-												<Heart
-													className={`w-8 h-8 transition-all ${
-														isLiked ? "fill-red-500 text-red-500" : "text-white"
-													}`}
-												/>
-											</Button>
-											<span className="text-white text-xs font-semibold">
-												{formatCount(
-													(short.likes || 323000) + (isLiked ? 1 : 0),
-												)}
-											</span>
-										</div>
-
-										{/* COMMENT */}
-										<div className="flex flex-col items-center gap-1">
-											<Button
-												className="bg-transparent hover:bg-white/10 p-3 rounded-full"
-												size="icon"
-											>
-												<MessageCircle className="w-8 h-8 text-white" />
-											</Button>
-											<span className="text-white text-xs font-semibold">
-												{formatCount(short.comments || 1200)}
-											</span>
-										</div>
-
-										{/* SHARE */}
-										<div className="flex flex-col items-center gap-1">
-											<DoomShare
-												imageUrl={`https://img.youtube.com/vi/${short.id}/0.jpg`}
-												imageTitle={short.title}
-											/>
-											<span className="text-white text-xs font-semibold">
-												{formatCount(short.shares || 500)}
-											</span>
-										</div>
-
-										{/* BOOKMARK */}
-										<div className="flex flex-col items-center gap-1">
-											<Button
-												className="bg-transparent hover:bg-white/10 p-3 rounded-full"
-												size="icon"
-											>
-												<Bookmark className="w-8 h-8 text-white" />
-											</Button>
-										</div>
-									</div>
-
-									{/* BOTTOM LEFT - INFO */}
-									<div className="absolute bottom-6 left-4 right-20 z-20 text-white">
-										{/* CREATOR */}
-										<div className="flex items-center gap-2 mb-3">
-											<div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center font-bold">
-												{short.creator?.[1]?.toUpperCase() || "?"}
-											</div>
-											<span className="font-semibold text-base">
-												{short.creator}
-											</span>
-											<Button className="bg-transparent border border-white text-white hover:bg-white hover:text-black px-4 py-1 h-auto text-xs font-bold rounded-md">
-												Follow
-											</Button>
-										</div>
-
-										{/* CAPTION */}
-										<p className="text-sm leading-relaxed mb-2">
-											{short.caption || short.title}
-										</p>
-
-										{/* HASHTAGS */}
-										<div className="flex flex-wrap gap-1 text-xs">
-											<span className="text-blue-400">#doomscroll</span>
-											<span className="text-blue-400">#viral</span>
-											<span className="text-blue-400">#fyp</span>
-										</div>
+									{/* Title + Caption overlay */}
+									<div className="absolute bottom-6 left-4 right-20 text-white drop-shadow-lg">
+										<h3 className="text-lg font-bold">{short.title}</h3>
+										{short.caption && (
+											<p className="text-sm opacity-90 mt-1">{short.caption}</p>
+										)}
 									</div>
 								</div>
 							);

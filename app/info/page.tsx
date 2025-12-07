@@ -56,7 +56,7 @@ export default function Create() {
         <main className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
             <h1 className={`text-3xl font-bold mb-6 text-center transition-colors duration-300 ${
-              isDoom ? "text-slate-100" : "text-slate-900"
+              isDoom ? "text-slate-100" : "text-white"
             }`}>
               Dark Pattern vs. Our Approach
             </h1>
@@ -64,7 +64,7 @@ export default function Create() {
             {darkPatterns.map((pattern) => (
               <div key={pattern.title} className="mb-6">
                 <h2 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  isDoom ? "text-slate-100" : "text-slate-900"
+                  isDoom ? "text-slate-100" : "text-white"
                 }`}>
                   {pattern.title}
                 </h2>

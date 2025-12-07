@@ -186,23 +186,24 @@ export default function ProfilePage() {
 									</a>
 								</div>
 							)}
-
 							{user && (
-								<div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ">
+								<div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 									<button
-										type="button"
-										onClick={handleDeleteAccount}
-										className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
-											isDoom 
-												? "border-red-900/50 text-red-400 hover:border-red-700 hover:text-red-300" 
-												: "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800"
-										}`}
+									type="button"
+									onClick={handleDeleteAccount}
+									disabled={isDoom}
+									className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200 group ${
+										isDoom
+										? "border-red-900/50 bg-red-900/20 text-red-400 cursor-not-allowed opacity-60 hover:bg-red-900/30"
+										: "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800 hover:bg-slate-50"
+									}`}
 									>
+									<span className="group-disabled:line-through">
 										Remove my account
+									</span>
 									</button>
 								</div>
-							)}
-							
+								)}
 						</div>
 
 						{/* Restored editable profile fields */}

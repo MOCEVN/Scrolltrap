@@ -33,6 +33,11 @@ export default function Create() {
       dark: "FOMO tactics, streaks, and urgent notifications",
       light: "Gentle time awareness and encouragement to take breaks",
     },
+    {
+      title: "Deleting your account",
+      dark: "You can enjoy a long conversation with our customerservice 020-12345678910",
+      light: "You have the power to do anything with your information",
+    },
   ];
 
   const { isDoom } = useScenarioMode();

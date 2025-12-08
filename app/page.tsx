@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Header from '@/components/header';
 import InterestSelector from '@/components/interest-selector';
 import IntroPopup from '@/components/intro-popup';
-import MasonryGrid from '@/components/masonry-grid';
 import Sidebar from '@/components/sidebar';
+import VerticalSlideGrid from "@/components/vertical-slide-grid";
 import { useInterests } from '@/hooks/use-interests';
 import { useLikedImages } from '@/hooks/use-liked-images';
 import { useScenarioMode } from '@/hooks/use-scenario-mode';
@@ -104,7 +104,7 @@ const Home = () => {
                 <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
               </section>
             ) : (
-              <MasonryGrid
+              <VerticalSlideGrid
                 numColumns={gridColumns}
                 spacing={gridSpacing}
                 userInterests={activeInterests}

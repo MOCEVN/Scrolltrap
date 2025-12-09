@@ -113,7 +113,7 @@ export default function Doom() {
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setShowRevenue(true);
-		}, 10000);
+		}, 60000);
 
 		return () => clearInterval(interval);
 	}, []);

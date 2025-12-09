@@ -237,7 +237,7 @@ export default function Doom() {
 
 									{/* SPONSOR BADGE */}
 									{short.type === "ad" && (
-										<div className="absolute top-4 left-4 z-30 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold shadow">
+										<div className="absolute top-4 left-4 z-30 bg-yellow-400 text-black px-4 py-2 rounded-full text-xs font-bold shadow">
 											SPONSORED
 										</div>
 									)}

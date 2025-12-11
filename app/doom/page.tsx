@@ -20,16 +20,19 @@ interface Short {
 }
 
 const demoShorts: Short[] = [
+	{
+		id: "6xS1EZG0fwg",
+		title: "Sponsored: DoomScroll Premium",
+		type: "ad",
+	},
 	{ id: "dQw4w9WgXcQ", title: "Rick Astley – Never Gonna Give You Up" },
 	{ id: "keOaQm6RpBg", title: "Heinz Add" },
 	{ id: "LPChtaKsVgU", title: "Funny Cat Chase Fail" },
 	{ id: "4DPFfsYF9yM", title: "Cat vs Laser" },
 	{
-		id: "ad-1",
+		id: "t1cJfe0C-z4",
 		title: "Sponsored: DoomScroll Premium",
 		type: "ad",
-		video:
-			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
 	},
 
 	{ id: "I5z1eYo8SLw", title: "DIY Life Hack Gone Wrong" },
@@ -37,11 +40,9 @@ const demoShorts: Short[] = [
 	{ id: "RfH9uQRzO8I", title: "Epic Skateboard Trick" },
 	{ id: "lFibEYEv3nM", title: "Viral Dance Challenge 2024" },
 	{
-		id: "ad-2",
+		id: "GH0jISu4tr8",
 		title: "Sponsored: Limited Time Offer!",
 		type: "ad",
-		video:
-			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
 	},
 
 	{ id: "G3GIh42weTo", title: "Dance Challenge" },
@@ -49,45 +50,72 @@ const demoShorts: Short[] = [
 	{ id: "Z7UKBN0TwjQ", title: "Random Animal Facts" },
 	{ id: "w4-TTbZ8zC0", title: "Budget Travel Tips" },
 	{
-		id: "ad-3",
+		id: "OFW_1mQMG_A",
 		title: "Sponsored: Get 50% Off Now!",
 		type: "ad",
-		video:
-			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
 	},
 	{ id: "WMfOaOSz0R4", title: "ASMR Whisper Challenge" },
 	{ id: "1sTWZ2ViKAs", title: "Ivete Sangalo Live" },
 	{ id: "VCcmLaApMCo", title: "Universidad Meme" },
 	{ id: "DmbnuVHQ96U", title: "Campus Life" },
 	{
-		id: "ad-4",
+		id: "8P2NW35HZDo",
 		title: "Sponsored: Try Our New App!",
 		type: "ad",
-		video:
-			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
 	},
 	{ id: "jyIDhIXKsW8", title: "Quick Guitar Lesson" },
 	{ id: "BdpdKqm1G6w", title: "Guitar Cover" },
 	{ id: "9Gqz6nYA4Ls", title: "Urban Photography Tips" },
 	{ id: "dzq7zgXwWeY", title: "Funny Pet Reactions" },
 	{
-		id: "ad-5",
+		id: "mSRikeS0ChU",
 		title: "Sponsored: Subscribe Today!",
 		type: "ad",
-		video:
-			"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
 	},
 	{ id: "ybQ53LrxUJE", title: "Easy Vegan Snack Ideas" },
 	{ id: "oDh58oNhJLs", title: "Retro Game Speedrun" },
 	{ id: "48kPGspthjQ", title: "Book Review in 60 Seconds" },
 	{ id: "LUwlemQNUL0", title: "Home Workout for Abs" },
+	{
+		id: "d51cpyc5exw",
+		title: "Sponsored: Shop Now & Save Big!",
+		type: "ad",
+	},
 	{ id: "oDTWnzFM-bw", title: "AI Art Tutorial" },
 	{ id: "nvkB_gsAK0k", title: "Street Magic Illusion" },
 	{ id: "31max-5gvcA", title: "Sustainable Fashion Haul" },
 	{ id: "7oy1PyaewmU", title: "Coding Tip for Noobs" },
 	{ id: "XKYMGepj7Y8", title: "Code Snippet" },
+	{
+		id: "WZ-GZCNEuPw",
+		title: "Sponsored: Download Free Today",
+		type: "ad",
+	},
+	{
+		id: "TK73GsEJXVM",
+		title: "Sponsored: New Collection Drop",
+		type: "ad",
+	},
 	{ id: "0JqslJv4ktk", title: "Vintage Car Restoration" },
 	{ id: "6C_xFde9_lc", title: "Beach Cleanup Challenge" },
+	{
+		id: "IP5xf2nU81s",
+		title: "Sponsored: Join 1M+ Users",
+		type: "ad",
+	},
+	{
+		id: "aQG8KodNMwo",
+		title: "Sponsored: Upgrade Your Life",
+		type: "ad",
+	},
+	{ id: "7D3aZQiDudA", title: "Vintage Car Restoration" },
+	{ id: "8fI_Olyw3tE", title: "Beach Cleanup Challenge" },
+	{ id: "YgJoiA2D4Jo", title: "Vintage Car Restoration" },
+	{ id: "wTYUwuiwc2Q", title: "Beach Cleanup Challenge" },
+	{ id: "kE_ALbCi7pE", title: "Vintage Car Restoration" },
+	{ id: "WnvWbj9cTO8", title: "Beach Cleanup Challenge" },
+	{ id: "9BySXemFBPg", title: "Vintage Car Restoration" },
+	{ id: "uvxhT6yrUv4", title: "Beach Cleanup Challenge" },
 ];
 
 export default function Doom() {
@@ -237,7 +265,7 @@ export default function Doom() {
 
 									{/* SPONSOR BADGE */}
 									{short.type === "ad" && (
-										<div className="absolute top-4 left-4 z-30 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold shadow">
+										<div className="absolute top-4 left-4 z-30 bg-yellow-400 text-black px-4 py-2 rounded-full text-xs font-bold shadow">
 											SPONSORED
 										</div>
 									)}

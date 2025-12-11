@@ -1,14 +1,16 @@
 "use client";
 
+import Header from "@/components/header";
+import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { useScenarioMode } from "@/hooks/use-scenario-mode";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import {
-    HiOutlineEnvelope,
-    HiOutlineLockClosed,
-    HiOutlineUser,
+	HiOutlineEnvelope,
+	HiOutlineLockClosed,
+	HiOutlineUser,
 } from "react-icons/hi2";
 
 export default function DarkRegister() {
@@ -70,138 +72,128 @@ export default function DarkRegister() {
 	};
 
 	return (
-		<div className={`relative min-h-screen flex items-center justify-center px-4 transition-colors duration-300 ${
-			isDoom ? "bg-slate-950" : "bg-slate-100"
-		}`}>
-			{/* Register card */}
-			<div className={`w-full max-w-md rounded-2xl p-8 shadow-xl transition-colors duration-300 ${
-				isDoom ? "bg-slate-800" : "bg-white"
+		<div className={`relative min-h-screen flex justify-center transition-colors duration-300 ${isDoom ? "bg-slate-950" : "bg-slate-100"
 			}`}>
-				<h1 className={`text-4xl font-bold text-center mb-6 transition-colors duration-300 ${
-					isDoom ? "text-white" : "text-slate-900"
-				}`}>
-					Register
-				</h1>
 
-				<p className={`text-center mb-8 transition-colors duration-300 ${
-					isDoom ? "text-slate-400" : "text-slate-600"
-				}`}>
-					Create your account to get started.
-				</p>
+			{/* Sidebar links */}
+			<Sidebar />
 
-				<form onSubmit={handleRegister} className="space-y-5">
-					{/* Username */}
-					<div>
-						<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
-							isDoom ? "bg-slate-700" : "bg-slate-100"
+			{/* Rechterkant met Header + content */}
+			<div className="flex flex-1 flex-col">
+				<Header />
+
+				{/* Register card */}
+				<div className={`w-full max-w-md mx-auto rounded-2xl mt-10 p-8 shadow-xl transition-colors duration-300 ${isDoom ? "bg-slate-800" : "bg-white"
+					}`}>
+					<h1 className={`text-4xl font-bold text-center mb-6 transition-colors duration-300 ${isDoom ? "text-white" : "text-slate-900"
 						}`}>
-							<HiOutlineUser className={`transition-colors duration-300 ${
-								isDoom ? "text-slate-400" : "text-slate-500"
-							}`} size={20} />
-							<input
-								type="text"
-								placeholder="Username"
-								className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
-									isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
-								}`}
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
-								autoComplete="username"
-								minLength={3}
-								maxLength={30}
-							/>
-						</div>
-					</div>
+						Register
+					</h1>
 
-					{/* Email */}
-					<div>
-						<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
-							isDoom ? "bg-slate-700" : "bg-slate-100"
+					<p className={`text-center mb-8 transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-600"
 						}`}>
-							<HiOutlineEnvelope className={`transition-colors duration-300 ${
-								isDoom ? "text-slate-400" : "text-slate-500"
-							}`} size={20} />
-							<input
-								type="email"
-								placeholder="Email"
-								className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
-									isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
-								}`}
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								autoComplete="email"
-							/>
-						</div>
-					</div>
+						Create your account to get started.
+					</p>
 
-					{/* Password */}
-					<div>
-						<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
-							isDoom ? "bg-slate-700" : "bg-slate-100"
+					<form onSubmit={handleRegister} className="space-y-5">
+						{/* Username */}
+						<div>
+							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
+								}`}>
+								<HiOutlineUser className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
+									}`} size={20} />
+								<input
+									type="text"
+									placeholder="Username"
+									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
+										}`}
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
+									autoComplete="username"
+									minLength={3}
+									maxLength={30}
+								/>
+							</div>
+						</div>
+
+						{/* Email */}
+						<div>
+							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
+								}`}>
+								<HiOutlineEnvelope className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
+									}`} size={20} />
+								<input
+									type="email"
+									placeholder="Email"
+									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
+										}`}
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									autoComplete="email"
+								/>
+							</div>
+						</div>
+
+						{/* Password */}
+						<div>
+							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
+								}`}>
+								<HiOutlineLockClosed className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
+									}`} size={20} />
+								<input
+									type="password"
+									placeholder="Password"
+									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
+										}`}
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									autoComplete="new-password"
+								/>
+							</div>
+						</div>
+
+						{/* Confirm Password */}
+						<div>
+							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
+								}`}>
+								<HiOutlineLockClosed className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
+									}`} size={20} />
+								<input
+									type="password"
+									placeholder="Confirm Password"
+									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
+										}`}
+									value={confirm}
+									onChange={(e) => setConfirm(e.target.value)}
+									autoComplete="new-password"
+								/>
+							</div>
+						</div>
+
+						{/* Register button */}
+						<Button
+							type="submit"
+							disabled={isSubmitting}
+							className={`w-full py-3 disabled:opacity-70 text-white font-semibold rounded-xl flex items-center justify-center transition ${isDoom ? "bg-red-600 hover:bg-red-500" : "bg-emerald-500 hover:bg-emerald-600"
+								}`}
+						>
+							{isSubmitting ? "Creating account..." : "Create Account"}
+						</Button>
+					</form>
+
+					{/* Extra tekst */}
+					<div className={`mt-6 text-center transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-600"
 						}`}>
-							<HiOutlineLockClosed className={`transition-colors duration-300 ${
-								isDoom ? "text-slate-400" : "text-slate-500"
-							}`} size={20} />
-							<input
-								type="password"
-								placeholder="Password"
-								className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
-									isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
+						<span>Already have an account?</span>
+						<Button
+							onClick={() => router.push("/login")}
+							className={`font-semibold ml-1 ${isDoom ? "text-red-400" : "text-emerald-600"
 								}`}
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								autoComplete="new-password"
-							/>
-						</div>
+							variant="ghost"
+						>
+							Login
+						</Button>
 					</div>
-
-					{/* Confirm Password */}
-					<div>
-						<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
-							isDoom ? "bg-slate-700" : "bg-slate-100"
-						}`}>
-							<HiOutlineLockClosed className={`transition-colors duration-300 ${
-								isDoom ? "text-slate-400" : "text-slate-500"
-							}`} size={20} />
-							<input
-								type="password"
-								placeholder="Confirm Password"
-								className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
-									isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
-								}`}
-								value={confirm}
-								onChange={(e) => setConfirm(e.target.value)}
-								autoComplete="new-password"
-							/>
-						</div>
-					</div>
-
-					{/* Register button */}
-					<Button
-						type="submit"
-						disabled={isSubmitting}
-						className={`w-full py-3 disabled:opacity-70 text-white font-semibold rounded-xl flex items-center justify-center transition ${
-							isDoom ? "bg-red-600 hover:bg-red-500" : "bg-emerald-500 hover:bg-emerald-600"
-						}`}
-					>
-						{isSubmitting ? "Creating account..." : "Create Account"}
-					</Button>
-				</form>
-
-				{/* Extra tekst */}
-				<div className={`mt-6 text-center transition-colors duration-300 ${
-					isDoom ? "text-slate-400" : "text-slate-600"
-				}`}>
-					<span>Already have an account?</span>
-					<Button
-						onClick={() => router.push("/login")}
-						className={`font-semibold ml-1 ${
-							isDoom ? "text-red-400" : "text-emerald-600"
-						}`}
-						variant="ghost"
-					>
-						Login
-					</Button>
 				</div>
 			</div>
 		</div>

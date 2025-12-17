@@ -3,12 +3,12 @@
 import type { ImageItem } from "@/types/image";
 import Image from "next/image";
 import React, {
-    startTransition,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import { DreamShare } from "./share/dream-share";
 import { DreamNotification } from "./ui/dream-notif";
@@ -176,6 +176,23 @@ const [images, setImages] = useState<ImageItem[]>([]);
   
   const displayImages = showLikedOnly ? likedImages : images;
 
+  useEffect(() => {
+    setCurrentIndex(0);
+    setPostViewCounter(0);
+  }, [showLikedOnly]);
+
+  useEffect(() => {
+    if (showLikedOnly) {
+      setShowBreakPoint(false);
+      setIsOnBreak(false);
+      setTimeUntilBreak(null);
+      setBreakCompleted(false);
+      setBreakTimeRemaining(null);
+      stopCountdown();
+      stopBreakTimer();
+    }
+  }, [showLikedOnly, stopBreakTimer, stopCountdown]);
+
   const handlePrev = useCallback(() => {
   setCurrentIndex((prev) => Math.max(prev - 1, 0));
 }, []);
@@ -193,6 +210,14 @@ const handleNext = useCallback(() => {
     return nextIndex;
   });
 }, [displayImages.length]);
+
+  useEffect(() => {
+    if (showLikedOnly) return;
+    setCurrentIndex((prev) => {
+      const maxStart = Math.max(displayImages.length - 2, 0);
+      return Math.min(prev, maxStart);
+    });
+  }, [displayImages.length, showLikedOnly]);
 
   useEffect(() => {
     return () => {
@@ -254,6 +279,19 @@ const scheduleImageAppend = useCallback(
 );
 
   useEffect(() => {
+    if (showLikedOnly) {
+      clearScheduledTimeouts();
+      stopCountdown();
+      stopBreakTimer();
+      setTimeUntilBreak(null);
+      setIsOnBreak(false);
+      setShowBreakPoint(false);
+      setImagesViewedInSession(0);
+      setLoading(false);
+      setLoadingMore(false);
+      return;
+    }
+
     if (userInterests.length === 0) {
       clearScheduledTimeouts();
       resetBreakCooldown();
@@ -311,6 +349,7 @@ const scheduleImageAppend = useCallback(
     resetBreakCooldown,
     stopCountdown,
     stopBreakTimer,
+    showLikedOnly,
     userInterests,
   ]);
 
@@ -346,8 +385,8 @@ const scheduleImageAppend = useCallback(
   }, [resetBreakCooldown, stopBreakTimer]);
 
 const visibleImages = useMemo(
-  () => displayImages.slice(currentIndex, currentIndex + 2),
-  [displayImages, currentIndex],
+  () => (showLikedOnly ? displayImages : displayImages.slice(currentIndex, currentIndex + 2)),
+  [displayImages, currentIndex, showLikedOnly],
 ); 
 
   if (loading) {
@@ -435,14 +474,25 @@ const visibleImages = useMemo(
   return (
     <>
       <DreamNotification
-        visible={showBreakPoint}
+        visible={!showLikedOnly && showBreakPoint}
         imagesViewedInSession={imagesViewedInSession}
         onContinue={handleContinueScrolling}
         onTakeBreak={handleTakeBreak}
       />
       <section className="bg-slate-50">
         <div className="mx-auto max-w-6xl px-4 pb-12">
-          {timeUntilBreak !== null && !showBreakPoint && (
+          {showLikedOnly && onToggleShowLiked && (
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={onToggleShowLiked}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-sm transition-colors hover:bg-indigo-50"
+              >
+                ← Back to feed
+              </button>
+            </div>
+          )}
+          {timeUntilBreak !== null && !showBreakPoint && !showLikedOnly && (
             <div className="mb-4 flex justify-end gap-2">
   <button
     type="button"
@@ -577,7 +627,7 @@ const visibleImages = useMemo(
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
             </div>
           )}
-         {!loadingMore && !showBreakPoint && ( 
+         {!loadingMore && !showBreakPoint && !showLikedOnly && ( 
             <div className="flex flex-col items-center gap-3 py-8">
               <p className="text-sm text-slate-500">
                     You have viewed{" "}

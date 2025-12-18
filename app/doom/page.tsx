@@ -22,7 +22,7 @@ interface Short {
 const demoShorts: Short[] = [
 	{
 		id: "6xS1EZG0fwg",
-		title: "Sponsored: DoomScroll Premium",
+		title: "Thuishaven December 2025",
 		type: "ad",
 	},
 	{ id: "dQw4w9WgXcQ", title: "Rick Astley – Never Gonna Give You Up" },
@@ -31,7 +31,7 @@ const demoShorts: Short[] = [
 	{ id: "4DPFfsYF9yM", title: "Cat vs Laser" },
 	{
 		id: "t1cJfe0C-z4",
-		title: "Sponsored: DoomScroll Premium",
+		title: "DoomScroll Premium",
 		type: "ad",
 	},
 
@@ -41,7 +41,7 @@ const demoShorts: Short[] = [
 	{ id: "lFibEYEv3nM", title: "Viral Dance Challenge 2024" },
 	{
 		id: "GH0jISu4tr8",
-		title: "Sponsored: Limited Time Offer!",
+		title: "Limited Time Offer!",
 		type: "ad",
 	},
 
@@ -51,7 +51,7 @@ const demoShorts: Short[] = [
 	{ id: "w4-TTbZ8zC0", title: "Budget Travel Tips" },
 	{
 		id: "OFW_1mQMG_A",
-		title: "Sponsored: Get 50% Off Now!",
+		title: "Get 50% Off Now!",
 		type: "ad",
 	},
 	{ id: "WMfOaOSz0R4", title: "ASMR Whisper Challenge" },
@@ -60,7 +60,7 @@ const demoShorts: Short[] = [
 	{ id: "DmbnuVHQ96U", title: "Campus Life" },
 	{
 		id: "8P2NW35HZDo",
-		title: "Sponsored: Try Our New App!",
+		title: "Try AirUp Now!",
 		type: "ad",
 	},
 	{ id: "jyIDhIXKsW8", title: "Quick Guitar Lesson" },
@@ -69,7 +69,7 @@ const demoShorts: Short[] = [
 	{ id: "dzq7zgXwWeY", title: "Funny Pet Reactions" },
 	{
 		id: "mSRikeS0ChU",
-		title: "Sponsored: Subscribe Today!",
+		title: "Subscribe Today!",
 		type: "ad",
 	},
 	{ id: "ybQ53LrxUJE", title: "Easy Vegan Snack Ideas" },
@@ -78,7 +78,7 @@ const demoShorts: Short[] = [
 	{ id: "LUwlemQNUL0", title: "Home Workout for Abs" },
 	{
 		id: "d51cpyc5exw",
-		title: "Sponsored: Shop Now & Save Big!",
+		title: "Do you speak Oreo?",
 		type: "ad",
 	},
 	{ id: "oDTWnzFM-bw", title: "AI Art Tutorial" },
@@ -88,24 +88,24 @@ const demoShorts: Short[] = [
 	{ id: "XKYMGepj7Y8", title: "Code Snippet" },
 	{
 		id: "WZ-GZCNEuPw",
-		title: "Sponsored: Download Free Today",
+		title: "Download Free Today",
 		type: "ad",
 	},
 	{
 		id: "TK73GsEJXVM",
-		title: "Sponsored: New Collection Drop",
+		title: "New Collection Drop",
 		type: "ad",
 	},
 	{ id: "0JqslJv4ktk", title: "Vintage Car Restoration" },
 	{ id: "6C_xFde9_lc", title: "Beach Cleanup Challenge" },
 	{
 		id: "IP5xf2nU81s",
-		title: "Sponsored: Join 1M+ Users",
+		title: "Join 1M+ Users",
 		type: "ad",
 	},
 	{
 		id: "aQG8KodNMwo",
-		title: "Sponsored: Upgrade Your Life",
+		title: "Upgrade Your Life",
 		type: "ad",
 	},
 	{ id: "7D3aZQiDudA", title: "Vintage Car Restoration" },
@@ -148,7 +148,7 @@ export default function Doom() {
 
 	// Doom popup timer
 	useEffect(() => {
-		const timer = setTimeout(() => setShowDoomWarning(true), 30000);
+		const timer = setTimeout(() => setShowDoomWarning(true), 60000);
 		return () => clearTimeout(timer);
 	}, []);
 
@@ -160,7 +160,7 @@ export default function Doom() {
 		const timer = setTimeout(() => {
 			setShowSignup(true);
 			sessionStorage.setItem("signup_seen", "true");
-		}, 5000);
+		}, 10000);
 
 		return () => clearTimeout(timer);
 	}, []);

@@ -53,32 +53,56 @@ export default function ProfilePage() {
 		};
 	}, []);
 
-	/*
-	const handleLogout = async () => {
-		try {
-			const response = await fetch("/api/auth/logout", {
-				method: "POST",
-				credentials: "include",
-			});
+const handleDeleteAccount = async () => {
+  const confirmationsRequired = isDoom ? 5 : 1;
 
-			if (!response.ok) {
-				throw new Error("Logout failed");
-			}
-
-			setUser(null);
-			toast.success("You are logged out.");
-		} catch (error) {
-			console.error("Logout failed", error);
-			toast.error("Unable to log out, please try again.");
-		}
-	};
-	*/
-
-	const handleDeleteAccount = async () => {
-        const confirmationOnDelete = window.confirm(
-     	 "Are you sure you want to delete your account?"
-    );
-     if (!confirmationOnDelete) return;
+  for (let i = 1; i <= confirmationsRequired; i++) {
+    let confirmed;
+   
+    switch (i) {
+      case 1:
+        confirmed = window.confirm("Are you sure you want to delete your account?");
+        break;
+      
+      case 2:
+        confirmed = window.confirm("Wait... are you REALLY sure? This cannot be undone.");
+        break;
+      
+      case 3:
+        confirmed = window.confirm("Think about it... Maybe you want to stay? Click OK if you're sure.");
+        break;
+      
+      case 4:
+        confirmed = window.confirm(
+          "This is your LAST chance. Are you absolutely POSITIVE?"
+        );
+        break;
+      
+      case 5:
+        const response = prompt(
+          "FINAL WARNING: Type in 'Delete my account forever' as a camel to proceed:",
+        );
+        confirmed = response === "DELETE MY ACCOUNT FOREVER";
+        if (!confirmed) {
+          window.alert("Wrong confirmation text. Deletion cancelled. Try again if you're serious my friend.");
+          toast("Deletion cancelled. You are staying, welcome back my dearest walking money maker");
+          return;
+        }
+        break;
+      
+      default:
+        confirmed = window.confirm(`Confirmation ${i}/${confirmationsRequired}`);
+    }
+    
+     if (!confirmed) {
+      toast("Account deletion cancelled.");
+      return;
+    }
+    
+    if (i < confirmationsRequired) {
+      await new Promise(resolve => setTimeout(resolve, 800 + i * 200));
+    }
+  }
 
   const result = await fetch("/api/auth/delete", {
     method: "DELETE",
@@ -91,12 +115,14 @@ export default function ProfilePage() {
     toast.error(data.error || "Failed to delete account");
     return;
   }
-
+  
+  if(result.ok){
   toast.success("Your account has been successfully deleted");
-
-  window.location.href = "/";
-};
-
+  setTimeout(() => {
+    window.location.replace("/");
+  }, 1500);
+  }
+}
 	const { isDoom } = useScenarioMode();
 
 	return (
@@ -191,22 +217,18 @@ export default function ProfilePage() {
 									<button
 									type="button"
 									onClick={handleDeleteAccount}
-									disabled={isDoom}
 									className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200 group ${
 										isDoom
-										? "border-red-900/50 bg-red-900/20 text-red-400 cursor-not-allowed opacity-60 hover:bg-red-900/30"
+										? "border-red-400 bg-red-50/80 text-red-900 hover:border-red-500 hover:bg-red-100 hover:text-red-900 active:bg-red-200 shadow-sm focus-visible:ring-red-300 focus-visible:ring-offset-red-50"
 										: "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800 hover:bg-slate-50"
 									}`}
 									>
-									<span className="group-disabled:line-through">
 										Remove my account
-									</span>
 									</button>
 								</div>
 								)}
 						</div>
 
-						{/* Restored editable profile fields */}
 						{/* Restored editable profile fields */}
 						{user && (
 							<div className={`mt-8 rounded-2xl border p-6 shadow-sm transition-colors duration-300 ${

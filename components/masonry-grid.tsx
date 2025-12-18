@@ -1,412 +1,589 @@
-'use client';
+"use client";
 
-import type { ImageItem } from '@/types/image';
-import Image from 'next/image';
-import React, {
-  startTransition,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import type { ImageItem } from "@/types/image";
+import Image from "next/image";
+import type React from "react";
+import {
+    startTransition,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import { DreamShare } from "./share/dream-share";
+import { DreamNotification } from "./ui/dream-notif";
 
 type MasonryGridProps = {
-  numColumns: number;
-  spacing: number;
-  userInterests: string[];
-  likedImages: ImageItem[];
-  toggleLike: (imageId: string, imageData: ImageItem) => void;
-  isImageLiked: (imageId: string) => boolean;
-  showLikedOnly?: boolean;
-  onToggleShowLiked?: () => void;
+	numColumns: number;
+	spacing: number;
+	userInterests: string[];
+	likedImages: ImageItem[];
+	toggleLike: (imageId: string, imageData: ImageItem) => void;
+	isImageLiked: (imageId: string) => boolean;
+	showLikedOnly?: boolean;
+	onToggleShowLiked?: () => void;
 };
 
 const createKeyForInterests = (interests: string[]) =>
-  JSON.stringify([...interests].sort());
+	JSON.stringify([...interests].sort());
 
-const BREAK_IMAGE_THRESHOLD = 100;
-const BREAK_TIME_THRESHOLD = 3 * 60 * 1000;
+const BREAK_TIME_THRESHOLD = 5 * 60 * 1000; // 5 minutes
+const SUGGESTED_BREAK_DURATION = 90 * 1000; // 1.5 minutes
+
+const formatTime = (ms: number) => {
+	const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = totalSeconds % 60;
+	return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
 
 const MasonryGrid: React.FC<MasonryGridProps> = ({
-  numColumns,
-  spacing,
-  userInterests,
-  likedImages,
-  toggleLike,
-  isImageLiked,
-  showLikedOnly = false,
-  onToggleShowLiked,
+	numColumns,
+	spacing,
+	userInterests,
+	likedImages,
+	toggleLike,
+	isImageLiked,
+	showLikedOnly = false,
+	onToggleShowLiked,
 }) => {
-  const [images, setImages] = useState<ImageItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [showBreakPoint, setShowBreakPoint] = useState(false);
-  const [imagesViewedInSession, setImagesViewedInSession] = useState(0);
+	const [images, setImages] = useState<ImageItem[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [loadingMore, setLoadingMore] = useState(false);
+	const [showBreakPoint, setShowBreakPoint] = useState(false);
+	const [imagesViewedInSession, setImagesViewedInSession] = useState(0);
 
-  const lastInterestsKeyRef = useRef<string>('');
-  const imagesRef = useRef<ImageItem[]>([]);
-  const timeoutsRef = useRef<number[]>([]);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const lastBreakTimestampRef = useRef<number>(Date.now());
-  const imagesSinceLastBreakRef = useRef(0);
+	const [timeUntilBreak, setTimeUntilBreak] = useState<number | null>(null);
+	const [isOnBreak, setIsOnBreak] = useState(false);
+	const [breakTimeRemaining, setBreakTimeRemaining] = useState<number | null>(null);
+	const [breakCompleted, setBreakCompleted] = useState(false);
 
-  const registerTimeout = useCallback((timeoutId: number) => {
-    timeoutsRef.current.push(timeoutId);
-  }, []);
+	const countdownIntervalRef = useRef<number | null>(null);
+	const breakIntervalRef = useRef<number | null>(null);
+	const lastInterestsKeyRef = useRef<string>("");
+	const imagesRef = useRef<ImageItem[]>([]);
+	const timeoutsRef = useRef<number[]>([]);
+	const loadMoreRef = useRef<HTMLDivElement | null>(null);
+	const lastBreakTimestampRef = useRef<number>(0);
+	const imagesSinceLastBreakRef = useRef(0);
+	const breakEndsAtRef = useRef<number | null>(null);
 
-  const clearScheduledTimeouts = useCallback(() => {
-    timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
-    timeoutsRef.current = [];
-  }, []);
+	const breakCountdownDisplay =
+		breakTimeRemaining !== null && breakTimeRemaining > 0
+			? formatTime(breakTimeRemaining)
+			: null;
 
-  const resetBreakCooldown = useCallback(() => {
-    lastBreakTimestampRef.current = Date.now();
-    imagesSinceLastBreakRef.current = 0;
-  }, []);
+	const breakHeadline = breakCompleted
+		? "Nice work taking a breather"
+		: "Take a mindful pause";
 
-  useEffect(() => {
-    return () => {
-      clearScheduledTimeouts();
-    };
-  }, [clearScheduledTimeouts]);
+	const breakDescription = breakCompleted
+		? "Notice how you feel before you dive back in. Give yourself a moment to process what you just explored."
+		: "Step away from the feed for a moment.";
 
-  const generateImages = useCallback(
-    (count: number, startIndex = 0): ImageItem[] => {
-      if (userInterests.length === 0) {
-        return [];
-      }
+	const resumeButtonLabel = breakCompleted ? "Return to feed" : "Skip break";
 
-      return Array.from({ length: count }, (_, index) => {
-        const width = 640;
-        const height = 360;
-        const globalIndex = startIndex + index;
-        const topic = userInterests[globalIndex % userInterests.length];
+	const registerTimeout = useCallback((timeoutId: number) => {
+		timeoutsRef.current.push(timeoutId);
+	}, []);
 
-        return {
-          id: `${topic}-${globalIndex}`,
-          url: `https://static.photos/${topic}/${width}x${height}/${globalIndex}`,
-          width,
-          height,
-          topic,
-        } satisfies ImageItem;
-      });
-    },
-    [userInterests],
-  );
+	const clearScheduledTimeouts = useCallback(() => {
+		timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+		timeoutsRef.current = [];
+	}, []);
 
-  const scheduleImageAppend = useCallback(
-    (count: number) => {
-      setLoadingMore(true);
+	const resetBreakMetrics = useCallback(() => {
+		lastBreakTimestampRef.current = Date.now();
+		imagesSinceLastBreakRef.current = 0;
+	}, []);
 
-      const timeoutId = window.setTimeout(() => {
-        let shouldOpenBreak = false;
-        let viewedSinceLastBreak = imagesSinceLastBreakRef.current;
+	const stopBreakTimer = useCallback(() => {
+		if (breakIntervalRef.current !== null) {
+			window.clearInterval(breakIntervalRef.current);
+			breakIntervalRef.current = null;
+		}
+		breakEndsAtRef.current = null;
+	}, []);
 
-        setImages((prevImages) => {
-          const moreImages = generateImages(count, prevImages.length);
-          if (moreImages.length === 0) {
-            return prevImages;
-          }
+	const updateBreakRemaining = useCallback(() => {
+		if (breakEndsAtRef.current === null) {
+			setBreakTimeRemaining(null);
+			return;
+		}
 
-          const combined = [...prevImages, ...moreImages];
-          imagesRef.current = combined;
-          imagesSinceLastBreakRef.current += moreImages.length;
-          viewedSinceLastBreak = imagesSinceLastBreakRef.current;
+		const remaining = breakEndsAtRef.current - Date.now();
+		if (remaining <= 0) {
+			stopBreakTimer();
+			setBreakTimeRemaining(0);
+			setBreakCompleted(true);
+			return;
+		}
 
-          const timeSinceLastBreak = Date.now() - lastBreakTimestampRef.current;
-          if (
-            imagesSinceLastBreakRef.current >= BREAK_IMAGE_THRESHOLD &&
-            timeSinceLastBreak >= BREAK_TIME_THRESHOLD
-          ) {
-            shouldOpenBreak = true;
-          }
+		setBreakTimeRemaining(remaining);
+	}, [stopBreakTimer]);
 
-          return combined;
-        });
+	const startBreakTimer = useCallback(
+		(durationMs: number) => {
+			stopBreakTimer();
+			setBreakCompleted(false);
+			const endsAt = Date.now() + durationMs;
+			breakEndsAtRef.current = endsAt;
+			setBreakTimeRemaining(durationMs);
+			updateBreakRemaining();
+			breakIntervalRef.current = window.setInterval(() => {
+				updateBreakRemaining();
+			}, 500);
+		},
+		[stopBreakTimer, updateBreakRemaining],
+	);
 
-        setLoadingMore(false);
+	const stopCountdown = useCallback(() => {
+		if (countdownIntervalRef.current !== null) {
+			window.clearInterval(countdownIntervalRef.current);
+			countdownIntervalRef.current = null;
+		}
+	}, []);
 
-        if (shouldOpenBreak) {
-          setShowBreakPoint(true);
-          setImagesViewedInSession(viewedSinceLastBreak);
-        }
-      }, 300);
+	const updateTimeRemaining = useCallback(() => {
+		const elapsed = Date.now() - lastBreakTimestampRef.current;
+		const remaining = Math.max(BREAK_TIME_THRESHOLD - elapsed, 0);
+		setTimeUntilBreak(remaining);
 
-      registerTimeout(timeoutId);
-    },
-    [generateImages, registerTimeout],
-  );
+		if (remaining <= 0) {
+			stopCountdown();
+			setTimeUntilBreak(null);
+			if (!showBreakPoint) {
+				setShowBreakPoint(true);
+				setImagesViewedInSession(imagesSinceLastBreakRef.current);
+			}
+		}
+	}, [showBreakPoint, stopCountdown]);
 
-  useEffect(() => {
-    const interestsKey = createKeyForInterests(userInterests);
+	const startCountdown = useCallback(() => {
+		stopCountdown();
+		updateTimeRemaining();
 
-    if (userInterests.length === 0) {
-      clearScheduledTimeouts();
-      resetBreakCooldown();
-      startTransition(() => {
-        setImages([]);
-        setLoading(false);
-        setShowBreakPoint(false);
-        setImagesViewedInSession(0);
-      });
-      imagesRef.current = [];
-      lastInterestsKeyRef.current = interestsKey;
-      return;
-    }
+		countdownIntervalRef.current = window.setInterval(() => {
+			updateTimeRemaining();
+		}, 500);
+	}, [stopCountdown, updateTimeRemaining]);
 
-    if (interestsKey === lastInterestsKeyRef.current && imagesRef.current.length > 0) {
-      return;
-    }
+	const resetBreakCooldown = useCallback(() => {
+		resetBreakMetrics();
+		startCountdown();
+	}, [resetBreakMetrics, startCountdown]);
 
-    clearScheduledTimeouts();
-    startTransition(() => {
-      setLoading(true);
-    });
+	useEffect(() => {
+		return () => {
+			clearScheduledTimeouts();
+			stopCountdown();
+			stopBreakTimer();
+		};
+	}, [clearScheduledTimeouts, stopBreakTimer, stopCountdown]);
 
-    const timeoutId = window.setTimeout(() => {
-      const freshImages = generateImages(20);
-      imagesRef.current = freshImages;
-      resetBreakCooldown();
-      imagesSinceLastBreakRef.current = freshImages.length;
-      startTransition(() => {
-        setImages(freshImages);
-        setLoading(false);
-        setShowBreakPoint(false);
-        setImagesViewedInSession(freshImages.length);
-      });
-      lastInterestsKeyRef.current = interestsKey;
-    }, 400);
+	useEffect(() => {
+		if (lastBreakTimestampRef.current === 0) {
+			lastBreakTimestampRef.current = Date.now();
+			startCountdown();
+		}
+	}, [startCountdown]);
 
-    registerTimeout(timeoutId);
-  }, [
-    clearScheduledTimeouts,
-    generateImages,
-    registerTimeout,
-    resetBreakCooldown,
-    userInterests,
-  ]);
+	const generateImages = useCallback(
+		(count: number, startIndex = 0): ImageItem[] => {
+			if (userInterests.length === 0) {
+				return [];
+			}
 
-  useEffect(() => {
-    imagesRef.current = images;
-  }, [images]);
+			return Array.from({ length: count }, (_, index) => {
+				const width = 640;
+				const height = 360;
+				const globalIndex = startIndex + index;
+				const topic = userInterests[globalIndex % userInterests.length];
 
-  const loadMoreImages = useCallback(() => {
-    if (
-      loadingMore ||
-      showBreakPoint ||
-      showLikedOnly ||
-      userInterests.length === 0 ||
-      imagesRef.current.length === 0
-    ) {
-      return;
-    }
+				return {
+					id: `${topic}-${globalIndex}`,
+					url: `https://static.photos/${topic}/${width}x${height}/${globalIndex}`,
+					width,
+					height,
+					topic,
+				} satisfies ImageItem;
+			});
+		},
+		[userInterests],
+	);
 
-    scheduleImageAppend(10);
-  }, [
-    loadingMore,
-    scheduleImageAppend,
-    showBreakPoint,
-    showLikedOnly,
-    userInterests.length,
-  ]);
+	const scheduleImageAppend = useCallback(
+		(count: number) => {
+			setLoadingMore(true);
 
-  const handleContinueScrolling = useCallback(() => {
-    resetBreakCooldown();
-    setShowBreakPoint(false);
-    scheduleImageAppend(10);
-  }, [resetBreakCooldown, scheduleImageAppend]);
+			const timeoutId = window.setTimeout(() => {
+				setImages((prevImages) => {
+					const moreImages = generateImages(count, prevImages.length);
+					if (moreImages.length === 0) {
+						return prevImages;
+					}
 
-  const handleTakeBreak = useCallback(() => {
-    resetBreakCooldown();
-    setShowBreakPoint(false);
-    setImagesViewedInSession(0);
-  }, [resetBreakCooldown]);
+					const combined = [...prevImages, ...moreImages];
+					imagesRef.current = combined;
+					imagesSinceLastBreakRef.current += moreImages.length;
 
-  useEffect(() => {
-    const target = loadMoreRef.current;
-    if (!target || showBreakPoint || showLikedOnly) {
-      return;
-    }
+					return combined;
+				});
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            loadMoreImages();
-          }
-        });
-      },
-      { rootMargin: '280px' },
-    );
+				setLoadingMore(false);
+			}, 300);
 
-    observer.observe(target);
+			registerTimeout(timeoutId);
+		},
+		[generateImages, registerTimeout],
+	);
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [loadMoreImages, showBreakPoint, showLikedOnly]);
+	useEffect(() => {
+		const interestsKey = createKeyForInterests(userInterests);
 
-  const displayImages = showLikedOnly ? likedImages : images;
+		if (userInterests.length === 0) {
+			clearScheduledTimeouts();
+			resetBreakCooldown();
+			stopCountdown();
+			stopBreakTimer();
+			setTimeUntilBreak(null);
+			setIsOnBreak(false);
+			setBreakCompleted(false);
+			setBreakTimeRemaining(null);
+			startTransition(() => {
+				setImages([]);
+				setLoading(false);
+				setShowBreakPoint(false);
+				setImagesViewedInSession(0);
+			});
+			imagesRef.current = [];
+			lastInterestsKeyRef.current = interestsKey;
+			return;
+		}
 
-  const columns = useMemo(() => {
-    const buckets: Array<Array<{ item: ImageItem; priority: boolean }>> = Array.from(
-      { length: numColumns },
-      () => [],
-    );
+		if (
+			interestsKey === lastInterestsKeyRef.current &&
+			imagesRef.current.length > 0
+		) {
+			return;
+		}
 
-    displayImages.forEach((item, index) => {
-      const bucketIndex = index % numColumns;
-      buckets[bucketIndex].push({ item, priority: index < numColumns });
-    });
+		clearScheduledTimeouts();
+		startTransition(() => {
+			setLoading(true);
+		});
 
-    return buckets;
-  }, [displayImages, numColumns]);
+		const timeoutId = window.setTimeout(() => {
+			const freshImages = generateImages(20);
+			imagesRef.current = freshImages;
+			resetBreakCooldown();
+			imagesSinceLastBreakRef.current = freshImages.length;
+			startTransition(() => {
+				setImages(freshImages);
+				setLoading(false);
+				setImagesViewedInSession(freshImages.length);
+				setIsOnBreak(false);
+				setBreakCompleted(false);
+				setBreakTimeRemaining(null);
+			});
+			lastInterestsKeyRef.current = interestsKey;
+		}, 400);
 
-  if (loading) {
-    return (
-      <section className="flex min-h-[60vh] items-center justify-center bg-slate-50">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
-      </section>
-    );
-  }
+		registerTimeout(timeoutId);
+	}, [
+		clearScheduledTimeouts,
+		generateImages,
+		registerTimeout,
+		resetBreakCooldown,
+		stopCountdown,
+		stopBreakTimer,
+		userInterests,
+	]);
 
-  if (userInterests.length === 0) {
-    return (
-      <section className="flex min-h-[60vh] items-center justify-center bg-slate-50 px-6 text-center">
-        <p className="max-w-sm text-sm text-zinc-600">
-          Select a few interests to populate your feed with tailored images.
-        </p>
-      </section>
-    );
-  }
+	useEffect(() => {
+		imagesRef.current = images;
+	}, [images]);
 
-  if (showLikedOnly && likedImages.length === 0) {
-    return (
-      <section className="bg-slate-50">
-        <div className="mx-auto max-w-5xl px-4 py-8">
-          <button
-            type="button"
-            onClick={onToggleShowLiked}
-            className="mb-6 inline-flex items-center justify-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-sm transition-colors hover:bg-indigo-50"
-          >
-            ← Back to all images
-          </button>
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-zinc-300 bg-white/80 px-8 py-12 text-center">
-            <p className="text-lg font-semibold text-zinc-700">No liked images yet</p>
-            <p className="mt-2 text-sm text-zinc-500">
-              Tap the heart icon while exploring to save favourites here.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+	const loadMoreImages = useCallback(() => {
+		if (
+			loadingMore ||
+			showBreakPoint ||
+			isOnBreak ||
+			showLikedOnly ||
+			userInterests.length === 0 ||
+			imagesRef.current.length === 0
+		) {
+			return;
+		}
 
-  return (
-    <>
-      {showBreakPoint && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 px-6">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-            <p className="mb-4 text-center text-5xl">🌸</p>
-            <p className="mb-3 text-center text-2xl font-bold text-zinc-900">
-              Fancy a quick break?
-            </p>
-            <p className="mb-4 text-center text-base font-medium text-indigo-600">
-              You&apos;ve explored {imagesViewedInSession} images
-            </p>
-            <div className="flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={handleContinueScrolling}
-                className="rounded-xl bg-indigo-500 px-6 py-3 text-base font-bold text-white shadow-md transition-transform hover:translate-y-0.5 hover:bg-indigo-600"
-              >
-                Continue exploring
-              </button>
-              <button
-                type="button"
-                onClick={handleTakeBreak}
-                className="rounded-xl border border-slate-200 bg-slate-100 px-6 py-3 text-base font-semibold text-slate-700 transition-colors hover:bg-white"
-              >
-                Take a break
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+		scheduleImageAppend(10);
+	}, [
+		loadingMore,
+		scheduleImageAppend,
+		showBreakPoint,
+		isOnBreak,
+		showLikedOnly,
+		userInterests.length,
+	]);
 
-      <section className="bg-slate-50">
-        <div className="mx-auto max-w-6xl px-4 pb-12">
-          <div
-            className="flex flex-row gap-4"
-            style={{ marginLeft: -spacing / 2, marginRight: -spacing / 2 }}
-          >
-            {columns.map((column, columnIndex) => (
-              <div
-                key={columnIndex}
-                className="flex flex-1 flex-col"
-                style={{
-                  gap: spacing,
-                  paddingLeft: spacing / 2,
-                  paddingRight: spacing / 2,
-                }}
-              >
-                {column.map(({ item: image, priority }) => {
-                  const aspectRatio = (image.height / image.width) * 100;
-                  const liked = isImageLiked(image.id);
+	const handleContinueScrolling = useCallback(() => {
+		resetBreakCooldown();
+		setShowBreakPoint(false);
+		setImagesViewedInSession(0);
+		scheduleImageAppend(10);
+	}, [resetBreakCooldown, scheduleImageAppend]);
 
-                  return (
-                    <article
-                      key={image.id}
-                      className="group relative overflow-hidden rounded-3xl bg-white shadow-sm transition-shadow hover:shadow-xl"
-                    >
-                      <div
-                        className="relative w-full"
-                        style={{ paddingBottom: `${aspectRatio}%` }}
-                      >
-                        <Image
-                          src={image.url}
-                          alt={`${image.topic} ${image.id}`}
-                          fill
-                          sizes={`(max-width: 768px) 100vw, ${100 / numColumns}%`}
-                          className="object-cover"
-                          priority={priority}
-                        />
-                      </div>
+	const handleTakeBreak = useCallback(() => {
+		setShowBreakPoint(false);
+		setIsOnBreak(true);
+		setBreakCompleted(false);
+		setImagesViewedInSession(0);
+		setTimeUntilBreak(null);
+		stopCountdown();
+		clearScheduledTimeouts();
+		resetBreakMetrics();
+		startBreakTimer(SUGGESTED_BREAK_DURATION);
+	}, [clearScheduledTimeouts, resetBreakMetrics, startBreakTimer, stopCountdown]);
 
-                      <div className="absolute left-4 top-4">
-                        <div className="rounded-full border border-white/60 bg-white/90 px-3 py-1 text-xs font-semibold capitalize text-slate-700 shadow">
-                          {image.topic}
-                        </div>
-                      </div>
+	const handleResumeFromBreak = useCallback(() => {
+		stopBreakTimer();
+		setBreakTimeRemaining(null);
+		setBreakCompleted(false);
+		setIsOnBreak(false);
+		resetBreakCooldown();
+	}, [resetBreakCooldown, stopBreakTimer]);
 
-                      <button
-                        type="button"
-                        onClick={() => toggleLike(image.id, image)}
-                        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg shadow transition-transform hover:scale-105"
-                        aria-pressed={liked}
-                        aria-label={liked ? 'Remove from likes' : 'Add to likes'}
-                      >
-                        {liked ? '❤️' : '🤍'}
-                      </button>
-                    </article>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
+	const displayImages = showLikedOnly ? likedImages : images;
 
-          <div ref={loadMoreRef} className="h-12" aria-hidden />
+	const columns = useMemo(() => {
+		const buckets: Array<Array<{ item: ImageItem; priority: boolean }>> =
+			Array.from({ length: numColumns }, () => []);
 
-          {loadingMore && (
-            <div className="flex justify-center py-6">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
-            </div>
-          )}
-        </div>
-      </section>
-    </>
-  );
+		displayImages.forEach((item, index) => {
+			const bucketIndex = index % numColumns;
+			buckets[bucketIndex].push({ item, priority: index < numColumns });
+		});
+
+		return buckets;
+	}, [displayImages, numColumns]);
+
+	if (loading) {
+		return (
+			<section className="flex min-h-[60vh] items-center justify-center bg-slate-50">
+				<div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+			</section>
+		);
+	}
+
+	if (userInterests.length === 0) {
+		return (
+			<section className="flex min-h-[60vh] items-center justify-center bg-slate-50 px-6 text-center">
+				<p className="max-w-sm text-sm text-zinc-600">
+					Select a few interests to populate your feed with tailored images.
+				</p>
+			</section>
+		);
+	}
+
+	if (showLikedOnly && likedImages.length === 0) {
+		return (
+			<section className="bg-slate-50">
+				<div className="mx-auto max-w-5xl px-4 py-8">
+					<button
+						type="button"
+						onClick={onToggleShowLiked}
+						className="mb-6 inline-flex items-center justify-center gap-2 rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-600 shadow-sm transition-colors hover:bg-emerald-50"
+					>
+						← Back to all images
+					</button>
+					<div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-zinc-300 bg-white/80 px-8 py-12 text-center">
+						<p className="text-lg font-semibold text-zinc-700">
+							No liked images yet
+						</p>
+						<p className="mt-2 text-sm text-zinc-500">
+							Tap the heart icon while exploring to save favourites here.
+						</p>
+					</div>
+				</div>
+			</section>
+		);
+	}
+
+	if (isOnBreak) {
+		return (
+			<section className="flex min-h-[60vh] items-center justify-center bg-gradient-to-br from-emerald-50 via-slate-50 to-teal-50 px-6 py-16">
+				<div className="w-full max-w-xl rounded-3xl bg-white/90 p-8 shadow-2xl backdrop-blur border border-emerald-100">
+					<div className="flex flex-col items-center text-center">
+						<span className="mb-4 text-5xl" aria-hidden>
+							🧘
+						</span>
+						<h2 className="text-2xl font-bold text-emerald-800">
+							{breakHeadline}
+						</h2>
+						<p className="mt-3 max-w-md text-sm text-slate-600">
+							{breakDescription}
+						</p>
+						{breakCountdownDisplay && (
+							<div className="mt-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-100/80 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
+								<span className="text-xs font-medium uppercase tracking-wide text-emerald-500">
+									Breathe
+								</span>
+								<span>{breakCountdownDisplay} remaining</span>
+							</div>
+						)}
+						<button
+							type="button"
+							onClick={handleResumeFromBreak}
+							className="mt-8 inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:translate-y-0.5 hover:bg-emerald-600"
+						>
+							{resumeButtonLabel}
+						</button>
+						{!breakCompleted && (
+							<p className="mt-3 text-xs text-slate-400">
+								It is okay to step away for longer—your feed will be right where
+								you left it.
+							</p>
+						)}
+					</div>
+				</div>
+			</section>
+		);
+	}
+
+	return (
+		<>
+			<DreamNotification
+				visible={showBreakPoint}
+				imagesViewedInSession={imagesViewedInSession}
+				onContinue={handleContinueScrolling}
+				onTakeBreak={handleTakeBreak}
+			/>
+
+			<section className="bg-slate-50">
+				<div className="mx-auto max-w-6xl px-4 pb-12">
+					{timeUntilBreak !== null && !showBreakPoint && (
+						<div className="mb-4 flex justify-end">
+							<div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50/90 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm backdrop-blur">
+								<span className="text-emerald-500">🌿</span>
+								<span>Next mindful check-in in {formatTime(timeUntilBreak)}</span>
+							</div>
+						</div>
+					)}
+					<div className="flex flex-row gap-4">
+						{columns.map((column, columnIndex) => (
+							<div
+								key={columnIndex}
+								className="flex flex-1 flex-col"
+								style={{
+									gap: spacing,
+									paddingLeft: spacing / 2,
+									paddingRight: spacing / 2,
+								}}
+							>
+								{column.map(({ item: image, priority }) => {
+									const aspectRatio = (image.height / image.width) * 100;
+									const liked = isImageLiked(image.id);
+
+									return (
+										<article
+											key={image.id}
+											className="post group shadow-xl relative overflow-hidden rounded-3xl bg-white shadow-sm transition-shadow hover:shadow-xl"
+										>
+
+											<div className="imageContainer relative" style={{ paddingBottom: `${aspectRatio}%` }}>
+												<Image
+													src={image.url}
+													alt={`${image.topic} ${image.id}`}
+													fill
+													sizes={`(max-width: 768px) 100vw, ${100 / numColumns}%`}
+													className="object-cover"
+													priority={priority}
+												/>
+											</div>
+
+											<div className="contentContainer p-4">
+												<h3 className="text-xl font-bold capitalize text-primary">{image.topic}</h3>
+												<hr className="border-gray-200" />
+												<p className="mb-3 mt-3 text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eget sem ut leo tempor placerat varius aliquet nunc.</p>
+												<a href="#" onClick={() => { const dialog = document.getElementById(`${image.topic} ${image.id}`) as HTMLDialogElement | null; dialog?.showModal(); }}>Read more</a>
+											</div>
+
+
+											<div className="absolute left-4 top-4">
+												<div className="rounded-full border border-white/60 bg-white/90 px-3 py-1 text-xs font-semibold capitalize text-slate-700 shadow">
+													{image.topic}
+												</div>
+											</div>
+
+											<div className="absolute right-4 top-4 flex flex-col gap-2">
+												<button
+													type="button"
+													onClick={() => toggleLike(image.id, image)}
+													className="flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/90 text-lg shadow transition-transform hover:scale-105"
+													aria-pressed={liked}
+													aria-label={
+														liked ? "Remove from likes" : "Add to likes"
+													}
+												>
+													{liked ? "❤️" : "🤍"}
+												</button>
+												<DreamShare
+													imageUrl={image.url}
+													imageTitle={`${image.topic} image`}
+												/>
+											</div>
+
+
+											<dialog id={`${image.topic} ${image.id}`}>
+												<img src={image.url} alt={`${image.topic} ${image.id}`} className="rounded-xl" width="600" height="338" />
+												<h2 className="capitalize">{image.topic}</h2>
+												<div className="flex justify-between"><span className="text-sm">John Doe</span><i className="text-sm">01-01-2025</i></div>
+												<hr className="border-gray-200" />
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eget sem ut leo tempor placerat varius aliquet nunc. Sed euismod, nisl vel tincidunt lacinia, nunc est aliquam nunc, eget aliquam nisl nunc euismod nunc. Donec euismod, nisl vel tincidunt lacinia, nunc est aliquam nunc, eget aliquam nisl nunc euismod nunc.</p>
+												<button type="button" autoFocus onClick={() => { const dialog = document.getElementById(`${image.topic} ${image.id}`) as HTMLDialogElement | null; dialog?.close(); }}>Close</button>
+											</dialog>
+										</article>
+									);
+								})}
+							</div>
+						))}
+					</div>
+
+					<div ref={loadMoreRef} className="h-12" aria-hidden />
+
+					{loadingMore && (
+						<div className="flex justify-center py-6">
+							<div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+						</div>
+					)}
+
+					{!loadingMore && !showBreakPoint && !showLikedOnly && (
+						<div className="flex flex-col items-center gap-3 py-8">
+							<p className="text-sm text-slate-500">
+								You have viewed{" "}
+								<span className="font-semibold text-slate-700">
+									{images.length}
+								</span>{" "}
+								images
+							</p>
+							<button
+								type="button"
+								onClick={loadMoreImages}
+								className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-6 py-3 text-sm font-semibold text-emerald-600 shadow-sm transition-all hover:bg-emerald-50 hover:shadow-md"
+							>
+								<span>Load 10 more</span>
+								<span className="text-xs text-slate-400">→</span>
+							</button>
+							<p className="max-w-xs text-center text-xs text-slate-400">
+								You decide when to load more. Take your time.
+							</p>
+						</div>
+					)}
+				</div>
+			</section>
+		</>
+	);
 };
 
 export default MasonryGrid;

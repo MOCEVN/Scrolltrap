@@ -1,11 +1,18 @@
 # Dark Tech - Project 2025 - ScrollTrap
 
+## Quickstart
+
+1. `cp .env.example .env`
+2. `docker compose up -d db`
+3. `npm install`
+4. `npm run dev`
+
 ## Add your files
 
 - [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
 - [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
 
-```
+```bash
 cd existing_repo
 git remote add origin https://gitlab.fdmci.hva.nl/studio/dark-tech/templates/dark-tech-project-2025.git
 git branch -M main

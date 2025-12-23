@@ -142,6 +142,15 @@
   }
 }
 
+.dream-feed-pattern {
+  background-image:
+    radial-gradient(circle at 1px 1px,
+      color-mix(in oklab, var(--foreground) 12%, transparent) 1px,
+      transparent 0);
+  background-size: 28px 28px;
+  background-position: -10px -10px;
+}
+
 
 
 form {
@@ -174,16 +183,16 @@ form.user-details input {
   width: 100%;
 }
 
-&:required {
+form.user-details input:required {
   border-right: 5px solid coral;
 }
 
-&:required:user-invalid {
+form.user-details input:required:user-invalid {
   background-color: #fddede;
   border-right-color: crimson;
 }
 
-&:required:user-valid {
+form.user-details input:required:user-valid {
   background-color: #e0f7e9;
   border-right-color: mediumseagreen;
 }

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ProfilePage() {
+	const { isDoom } = useScenarioMode();
 	const [user, setUser] = useState<{
 		username: string;
 		email: string;
@@ -54,7 +55,7 @@ export default function ProfilePage() {
 	}, []);
 
 const handleDeleteAccount = async () => {
-  const confirmationsRequired = isDoom ? 5 : 1;
+  const confirmationsRequired = isDoom ? 7 : 1;
 
   for (let i = 1; i <= confirmationsRequired; i++) {
     let confirmed;
@@ -78,22 +79,49 @@ const handleDeleteAccount = async () => {
         );
         break;
       
-      case 5:
-        const response = prompt(
-          "FINAL WARNING: Type in 'Delete my account forever' as a camel to proceed:",
+	case 5:
+	  const mathResponse = prompt(
+          "FIRST TEST: Type in the solution to 1+2+3-6:",
         );
-        confirmed = response === "DELETE MY ACCOUNT FOREVER";
-        if (!confirmed) {
-          window.alert("Wrong confirmation text. Deletion cancelled. Try again if you're serious my friend.");
-          toast("Deletion cancelled. You are staying, welcome back my dearest walking money maker");
+		confirmed = mathResponse?.trim() === "0";
+
+       if (!confirmed) {
+          alert("Wrong answer. Deletion cancelled.");
+          toast("Deletion cancelled. Welcome back, my dearest walking money maker");
           return;
         }
         break;
-      
-      default:
-        confirmed = window.confirm(`Confirmation ${i}/${confirmationsRequired}`);
-    }
     
+		case 6:
+	  const abcResponse = prompt(
+          "SECOND TEST: Type in the solution to (16 - 4p + 12) > 0",
+        );
+		const cleaned = abcResponse?.replace(/\s/g, "").toLowerCase();
+        confirmed = cleaned === "p<7";
+
+        if (!confirmed) {
+          alert("Wrong answer. Deletion cancelled.");
+          toast("Deletion cancelled. Welcome back, my dearest walking money maker");
+          return;
+        }
+        break;
+
+	 case 7: {
+        const response = prompt(
+          "FINAL WARNING: Type in 'DELETE MY ACCOUNT FOREVER' in uppercase to proceed:"
+        );
+
+        confirmed = response === "DELETE MY ACCOUNT FOREVER";
+
+        if (!confirmed) {
+          alert("Wrong confirmation text. Deletion cancelled.");
+          toast("Deletion cancelled. Welcome back");
+          return;
+        }
+        break;
+      }
+    }
+
      if (!confirmed) {
       toast("Account deletion cancelled.");
       return;
@@ -123,7 +151,6 @@ const handleDeleteAccount = async () => {
   }, 1500);
   }
 }
-	const { isDoom } = useScenarioMode();
 
 	return (
 		<div className={`flex min-h-screen transition-colors duration-300 ${

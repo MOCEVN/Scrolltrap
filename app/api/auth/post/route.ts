@@ -23,10 +23,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Title and image required" }, { status: 400 });
     }
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Please upload an image (JPEG, PNG, WebP)" }, { status: 400 });
-    }
+  const allowedTypes = [
+  'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+  'video/mp4', 'video/webm', 'video/quicktime'
+];
+
+if (!allowedTypes.includes(file.type)) {
+  return NextResponse.json({ 
+    error: "Please upload an image (JPEG, PNG, WebP, GIF) or video (MP4, WebM, MOV)" 
+  }, { status: 400 });
+}
 
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({ error: "Image too large (10MB max)" }, { status: 400 });

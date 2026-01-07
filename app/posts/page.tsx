@@ -87,13 +87,31 @@ export default function PostsPage() {
                         </svg>
                       )}
                     </button>
-                    <img
-                      src={post.mediaUrl || "/placeholder.jpg"}
-                      width={400}
-                      height={300}
-                      alt={post.title}
-                      className="w-full h-64 object-cover"
-                    />
+            
+                    {post.mediaUrl ? (
+                      post.mediaUrl.match(/\.(mp4|webm|mov)$/i) ? (
+                        <video
+                          src={post.mediaUrl}
+                          className="w-full h-64 object-cover rounded-t-2xl"
+                          controls
+                          muted
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={post.mediaUrl}
+                          width={400}
+                          height={300}
+                          alt={post.title}
+                          className="w-full h-64 object-cover rounded-t-2xl"
+                        />
+                      )
+                    ) : (
+                      <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-t-2xl text-gray-500">
+                        No media
+                      </div>
+                    )}
+
                     <div className="p-6">
                       <h3 className="font-bold text-xl mb-2 line-clamp-2">{post.title}</h3>
                       <p className={`text-sm ${isDoom ? "text-slate-400" : "text-gray-500"}`}>

@@ -91,22 +91,32 @@ export default function Create() {
               onClick={() => ref.current?.click()}
             >
               {preview ? (
-                <img src={preview} className="w-full h-full object-cover rounded-xl" />
+                file?.type?.startsWith('video/') ? (
+                  <video
+                    src={preview}
+                    className="w-full h-full object-cover rounded-xl"
+                    controls
+                    muted
+                  />
+                ) : (
+                  <img src={preview} className="w-full h-full object-cover rounded-xl" />
+                )
               ) : (
                 <div className="text-center p-8">
                   <Upload className="w-8 h-8 mb-4 opacity-70 mx-auto " />
-                  <p className="text-lg font-medium">Click to upload image</p>
+                  <p className="text-lg font-medium">Click to upload image or video</p>
                 </div>
               )}
             </div>
+          
             <input
               ref={ref}
               type="file"
-              accept="image/*"
+              accept="image/*,video/mp4,video/webm,video/quicktime"
               className="hidden"
               onChange={e => {
                 const f = e.target.files?.[0];
-                if (f && (f.type.startsWith('image/'))) {
+                if (f && (f.type.startsWith('image/') || f.type.startsWith('video/'))) {
                   setFile(f);
                   setPreview(URL.createObjectURL(f));
                 }

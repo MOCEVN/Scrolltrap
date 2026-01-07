@@ -1,6 +1,7 @@
 'use client';
 
 import { useMindfulBreak } from '@/hooks/use-mindful-break';
+import { getDreamMockUser } from '@/lib/dream-mock-users';
 import { getDreamPostText } from '@/lib/dream-post-text';
 import type { ImageItem } from '@/types/image';
 import Image from 'next/image';
@@ -354,6 +355,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
                   const liked = isImageLiked(image.id);
                   const postText = getDreamPostText(image);
                   const dialogId = `${image.topic} ${image.id}`;
+                  const author = getDreamMockUser(image.id);
 
                   const openDialog = () => {
                     const dialog = document.getElementById(
@@ -401,11 +403,11 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
                           <div className="mt-2 flex items-center justify-between gap-3">
                             <div className="flex min-w-0 items-center gap-2">
                               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-700">
-                                JD
+                                {author.initials}
                               </div>
                               <div className="min-w-0">
                                 <p className="truncate text-xs font-medium text-slate-700">
-                                  John Doe
+                                  {author.name}
                                 </p>
                                 <p className="truncate text-[11px] text-slate-500">
                                   {postText.teaser}
@@ -456,7 +458,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({
                         />
                         <h2 className="text-xl font-semibold">{postText.title}</h2>
                         <div className="flex justify-between">
-                          <span className="text-sm">John Doe</span>
+                          <span className="text-sm">{author.name}</span>
                           <i className="text-sm">01-01-2025</i>
                         </div>
                         <hr className="border-gray-200" />

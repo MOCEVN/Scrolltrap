@@ -35,7 +35,7 @@ export default function Create() {
     },
     {
       title: "Deleting your account",
-      dark: "You can enjoy a long conversation with our customerservice 020-12345678910",
+      dark: "Follow exactly what the pop up asks from you",
       light: "You have the power to do anything with your information",
     },
   ];

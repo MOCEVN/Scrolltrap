@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ProfilePage() {
+	const { isDoom } = useScenarioMode();
 	const [user, setUser] = useState<{
 		username: string;
 		email: string;
@@ -53,32 +54,83 @@ export default function ProfilePage() {
 		};
 	}, []);
 
-	/*
-	const handleLogout = async () => {
-		try {
-			const response = await fetch("/api/auth/logout", {
-				method: "POST",
-				credentials: "include",
-			});
+const handleDeleteAccount = async () => {
+  const confirmationsRequired = isDoom ? 7 : 1;
 
-			if (!response.ok) {
-				throw new Error("Logout failed");
-			}
+  for (let i = 1; i <= confirmationsRequired; i++) {
+    let confirmed;
+   
+    switch (i) {
+      case 1:
+        confirmed = window.confirm("Are you sure you want to delete your account?");
+        break;
+      
+      case 2:
+        confirmed = window.confirm("Wait... are you REALLY sure? This cannot be undone.");
+        break;
+      
+      case 3:
+        confirmed = window.confirm("Think about it... Maybe you want to stay? Click OK if you're sure.");
+        break;
+      
+      case 4:
+        confirmed = window.confirm(
+          "This is your LAST chance. Are you absolutely POSITIVE?"
+        );
+        break;
+      
+	case 5:
+	  const mathResponse = prompt(
+          "FIRST TEST: Type in the solution to 1+2+3-6:",
+        );
+		confirmed = mathResponse?.trim() === "0";
 
-			setUser(null);
-			toast.success("You are logged out.");
-		} catch (error) {
-			console.error("Logout failed", error);
-			toast.error("Unable to log out, please try again.");
-		}
-	};
-	*/
+       if (!confirmed) {
+          alert("Wrong answer. Deletion cancelled.");
+          toast("Deletion cancelled. Welcome back, my dearest walking money maker");
+          return;
+        }
+        break;
+    
+		case 6:
+	  const abcResponse = prompt(
+          "SECOND TEST: Type in the solution to (16 - 4p + 12) > 0",
+        );
+		const cleaned = abcResponse?.replace(/\s/g, "").toLowerCase();
+        confirmed = cleaned === "p<7";
 
-	const handleDeleteAccount = async () => {
-        const confirmationOnDelete = window.confirm(
-     	 "Are you sure you want to delete your account?"
-    );
-     if (!confirmationOnDelete) return;
+        if (!confirmed) {
+          alert("Wrong answer. Deletion cancelled.");
+          toast("Deletion cancelled. Welcome back, my dearest walking money maker");
+          return;
+        }
+        break;
+
+	 case 7: {
+        const response = prompt(
+          "FINAL WARNING: Type in 'DELETE MY ACCOUNT FOREVER' in uppercase to proceed:"
+        );
+
+        confirmed = response === "DELETE MY ACCOUNT FOREVER";
+
+        if (!confirmed) {
+          alert("Wrong confirmation text. Deletion cancelled.");
+          toast("Deletion cancelled. Welcome back");
+          return;
+        }
+        break;
+      }
+    }
+
+     if (!confirmed) {
+      toast("Account deletion cancelled.");
+      return;
+    }
+    
+    if (i < confirmationsRequired) {
+      await new Promise(resolve => setTimeout(resolve, 800 + i * 200));
+    }
+  }
 
   const result = await fetch("/api/auth/delete", {
     method: "DELETE",
@@ -91,13 +143,14 @@ export default function ProfilePage() {
     toast.error(data.error || "Failed to delete account");
     return;
   }
-
+  
+  if(result.ok){
   toast.success("Your account has been successfully deleted");
-
-  window.location.href = "/";
-};
-
-	const { isDoom } = useScenarioMode();
+  setTimeout(() => {
+    window.location.replace("/");
+  }, 1500);
+  }
+}
 
 	return (
 		<div className={`flex min-h-screen transition-colors duration-300 ${
@@ -191,22 +244,18 @@ export default function ProfilePage() {
 									<button
 									type="button"
 									onClick={handleDeleteAccount}
-									disabled={isDoom}
 									className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200 group ${
 										isDoom
-										? "border-red-900/50 bg-red-900/20 text-red-400 cursor-not-allowed opacity-60 hover:bg-red-900/30"
+										? "border-red-400 bg-red-50/80 text-red-900 hover:border-red-500 hover:bg-red-100 hover:text-red-900 active:bg-red-200 shadow-sm focus-visible:ring-red-300 focus-visible:ring-offset-red-50"
 										: "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800 hover:bg-slate-50"
 									}`}
 									>
-									<span className="group-disabled:line-through">
 										Remove my account
-									</span>
 									</button>
 								</div>
 								)}
 						</div>
 
-						{/* Restored editable profile fields */}
 						{/* Restored editable profile fields */}
 						{user && (
 							<div className={`mt-8 rounded-2xl border p-6 shadow-sm transition-colors duration-300 ${

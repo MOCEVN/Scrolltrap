@@ -35,31 +35,37 @@ export const InterestSelector: React.FC<InterestSelectorProps> = ({
   };
 
   return (
-    <section className={`mx-auto mb-6 w-full max-w-5xl rounded-2xl border p-6 shadow-sm transition-colors duration-300 ${
-      isDoom 
-        ? "border-red-900/30 bg-slate-800" 
-        : "border-slate-200 bg-white"
-    }`}>
-      <header className="mb-4">
-        <p className={`text-sm font-semibold transition-colors duration-300 ${
-          isDoom ? "text-slate-200" : "text-slate-800"
-        }`}>Your Interests</p>
-        {interests.length > 0 ? (
-          <p className={`text-xs transition-colors duration-300 ${
-            isDoom ? "text-slate-400" : "text-slate-500"
-          }`}>
-            {interests.length} {interests.length === 1 ? 'topic' : 'topics'} selected
-          </p>
-        ) : (
-          <p className={`text-xs font-medium transition-colors duration-300 ${
-            isDoom ? "text-red-400" : "text-emerald-600"
-          }`}>
-            👋 Select topics to get started
-          </p>
-        )}
+    <section
+      className={`w-full transition-colors duration-300 ${
+        isDoom ? 'text-slate-100' : 'text-slate-900'
+      }`}
+    >
+      <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p
+          className={`text-sm font-semibold transition-colors duration-300 ${
+            isDoom ? 'text-slate-200' : 'text-slate-800'
+          }`}
+        >
+          Topics
+        </p>
+        <p
+          className={`text-xs transition-colors duration-300 ${
+            interests.length === 0
+              ? isDoom
+                ? 'text-red-400'
+                : 'text-emerald-600'
+              : isDoom
+                ? 'text-slate-400'
+                : 'text-slate-500'
+          }`}
+        >
+          {interests.length === 0
+            ? 'Select a few to get started'
+            : `${interests.length} selected`}
+        </p>
       </header>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2">
         {AVAILABLE_INTERESTS.map((interest) => {
           const isActive = interests.includes(interest);
 
@@ -68,27 +74,23 @@ export const InterestSelector: React.FC<InterestSelectorProps> = ({
               key={interest}
               type="button"
               onClick={() => toggleInterest(interest)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`inline-flex w-full items-center justify-between rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${
                 isActive
                   ? isDoom
-                    ? "border-red-500 bg-red-950 text-red-300"
-                    : "border-emerald-400 bg-emerald-100 text-emerald-700"
+                    ? 'border-red-500 bg-red-950 text-red-300'
+                    : 'border-emerald-400 bg-emerald-100 text-emerald-700'
                   : isDoom
-                    ? "border-slate-600 bg-slate-700 text-slate-300 hover:border-red-500/50 hover:text-red-300"
-                    : "border-slate-200 bg-slate-50 text-slate-600 hover:border-emerald-300 hover:text-emerald-600"
+                    ? 'border-slate-600 bg-slate-700 text-slate-300 hover:border-red-500/50 hover:text-red-300'
+                    : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-emerald-300 hover:text-emerald-600'
               }`}
               aria-pressed={isActive}
             >
-              {interest}
+              <span className="capitalize">{interest}</span>
+              <span className="text-xs opacity-70">{isActive ? 'On' : 'Off'}</span>
             </button>
           );
         })}
       </div>
-      <p className={`mt-3 text-xs leading-5 transition-colors duration-300 ${
-        isDoom ? "text-slate-400" : "text-slate-500"
-      }`}>
-        Tap a chip to select or deselect the topics you want to explore.
-      </p>
     </section>
   );
 };

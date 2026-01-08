@@ -1,68 +1,36 @@
 import 'dotenv/config';
-import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 
-const DEFAULT_PORT = 3306;
-const DEFAULT_CONNECTION_LIMIT = 10;
-
-type BaseConfig = {
-  host: string;
-  port: number;
-  user: string;
-  password: string;
-  database: string;
-  ssl?: { rejectUnauthorized: boolean };
-};
-
-function parseDatabaseUrl(raw: string): BaseConfig {
-  const url = new URL(raw);
-  const db = url.pathname?.slice(1);
-  if (!db) throw new Error("DATABASE_URL must include a database name (e.g. mysql://user:pass@host:3306/dbname)");
-  return {
-    host: url.hostname,
-    port: url.port ? Number(url.port) : DEFAULT_PORT,
-    user: decodeURIComponent(url.username),
-    password: decodeURIComponent(url.password),
-    database: db,
-  };
+function getDatabaseUrl(): string {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error('Missing required env: DATABASE_URL');
+  return url;
 }
 
-function envOrThrow(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`Missing required env: ${name}`);
-  return v;
-}
-
-function buildConfig(): BaseConfig {
-  if (process.env.DATABASE_URL) return parseDatabaseUrl(process.env.DATABASE_URL);
-  const host = envOrThrow("MYSQL_HOST");
-  const user = envOrThrow("MYSQL_USER");
-  const database = envOrThrow("MYSQL_DATABASE");
-  const port = process.env.MYSQL_PORT ? Number(process.env.MYSQL_PORT) : DEFAULT_PORT;
-  const password = process.env.MYSQL_PASSWORD || "";
-  const ssl = process.env.MYSQL_SSL === "1" ? { rejectUnauthorized: false } : undefined;
-  return { host, port, user, password, database, ssl };
+function shouldUseSsl(connectionString: string): boolean {
+  if (process.env.DATABASE_SSL === '1') return true;
+  if (process.env.NODE_ENV !== 'production') return false;
+  return !/localhost|127\.0\.0\.1/.test(connectionString);
 }
 
 function createPool() {
-  const cfg = buildConfig();
-  return mysql.createPool({
-    ...cfg,
-    waitForConnections: true,
-    connectionLimit: process.env.MYSQL_CONNECTION_LIMIT ? Number(process.env.MYSQL_CONNECTION_LIMIT) : DEFAULT_CONNECTION_LIMIT,
-    queueLimit: 0,
-    namedPlaceholders: true,
+  const connectionString = getDatabaseUrl();
+  const ssl = shouldUseSsl(connectionString) ? { rejectUnauthorized: false } : undefined;
+
+  return new Pool({
+    connectionString,
+    ssl,
+    max: process.env.PG_POOL_MAX ? Number(process.env.PG_POOL_MAX) : 10,
   });
 }
 
 export function getPool() {
-  if (!global.mysqlPool) global.mysqlPool = createPool();
-  return global.mysqlPool;
+  if (!global.pgPool) global.pgPool = createPool();
+  return global.pgPool;
 }
 
 export function getDb() {
   if (!global.drizzleDb) global.drizzleDb = drizzle(getPool());
   return global.drizzleDb;
 }
-
-export type Database = MySql2Database;

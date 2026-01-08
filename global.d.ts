@@ -1,13 +1,13 @@
-import type { MySql2Database } from "drizzle-orm/mysql2";
-import type { Pool } from "mysql2/promise";
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { Pool } from 'pg';
 
 declare global {
-  var mysqlPool: Pool | undefined;
-  var drizzleDb: MySql2Database | undefined;
+  var pgPool: Pool | undefined;
+  var drizzleDb: NodePgDatabase | undefined;
 }
 
-export { };
+export {};
 
-declare module "*.css";
-declare module "*.scss";
-declare module "*.sass";
+declare module '*.css';
+declare module '*.scss';
+declare module '*.sass';

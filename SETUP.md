@@ -4,14 +4,13 @@
 
 - Node.js 18+
 - Docker (or Docker Desktop) with Docker Compose v2
-- Optional: a self-managed MySQL if you do not want to use Docker
 
 ## 2. Environment variables
 
 Copy the example file and fill in your credentials:
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
 ## 3. Start the database
@@ -22,7 +21,7 @@ docker compose up -d db
 
 - Wait until the service reports `healthy` (`docker compose ps` or `docker compose logs -f db`).
 - Credentials are: user `scrolltrap`, password `super-secure-password`, database `scrolltrap`.
-- Data persists in the named Docker volume `mysql-data`; remove it with `docker compose down -v`
+- Data persists in the named Docker volume `postgres-data`; remove it with `docker compose down -v`
 
 ## 4. Install dependencies
 

@@ -1,201 +1,262 @@
-"use client";
+'use client';
 
-import Header from "@/components/header";
-import Sidebar from "@/components/sidebar";
-import { Button } from "@/components/ui/button";
-import { useScenarioMode } from "@/hooks/use-scenario-mode";
-import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
-import toast from "react-hot-toast";
-import {
-	HiOutlineEnvelope,
-	HiOutlineLockClosed,
-	HiOutlineUser,
-} from "react-icons/hi2";
+import Header from '@/components/header';
+import Sidebar from '@/components/sidebar';
+import { Button } from '@/components/ui/button';
+import { useScenarioMode } from '@/hooks/use-scenario-mode';
+import { useRouter } from 'next/navigation';
+import { type FormEvent, useState } from 'react';
+import toast from 'react-hot-toast';
+import { HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineUser } from 'react-icons/hi2';
 
 export default function DarkRegister() {
-	const { isDoom } = useScenarioMode();
-	const router = useRouter();
+  const { isDoom } = useScenarioMode();
+  const router = useRouter();
 
-	const [username, setUsername] = useState("");
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [confirm, setConfirm] = useState("");
-	const [isSubmitting, setIsSubmitting] = useState(false);
+  const MIN_PASSWORD_LENGTH = 6;
 
-	const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-		if (isSubmitting) {
-			return;
-		}
+  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-		if (!username || !email || !password || !confirm) {
-			toast.error("Please fill in all fields.");
-			return;
-		}
+    if (isSubmitting) {
+      return;
+    }
 
-		if (password !== confirm) {
-			toast.error("Passwords do not match.");
-			return;
-		}
+    if (!username || !email || !password || !confirm) {
+      toast.error('Please fill in all fields.');
+      return;
+    }
 
-		setIsSubmitting(true);
+    if (password !== confirm) {
+      toast.error('Passwords do not match.');
+      return;
+    }
 
-		try {
-			const response = await fetch("/api/auth/register", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				credentials: "include",
-				body: JSON.stringify({ username, email, password }),
-			});
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      toast.error(`Passwords must be at least ${MIN_PASSWORD_LENGTH} characters.`);
+      return;
+    }
 
-			const payload = await response.json();
+    setIsSubmitting(true);
 
-			if (!response.ok) {
-				const message =
-					typeof payload.error === "string"
-						? payload.error
-						: "We couldn't create your account.";
-				toast.error(message);
-				return;
-			}
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username, email, password }),
+      });
 
-			toast.success("Account created ✅");
-			setTimeout(() => router.push("/profile"), 800);
-		} catch (error) {
-			console.error("Register failed", error);
-			toast.error("Unable to reach the server. Please try again.");
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
+      const payload = await response.json();
 
-	return (
-		<div className={`relative min-h-screen flex justify-center transition-colors duration-300 ${isDoom ? "bg-slate-950" : "bg-slate-100"
-			}`}>
+      if (!response.ok) {
+        const message =
+          typeof payload.error === 'string'
+            ? payload.error
+            : "We couldn't create your account.";
+        toast.error(message);
+        return;
+      }
 
-			{/* Sidebar links */}
-			<Sidebar />
+      toast.success('Account created ✅');
+      setTimeout(() => router.push('/profile'), 800);
+    } catch (error) {
+      console.error('Register failed', error);
+      toast.error('Unable to reach the server. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-			{/* Rechterkant met Header + content */}
-			<div className="flex flex-1 flex-col">
-				<Header />
+  return (
+    <div
+      className={`relative min-h-screen flex justify-center transition-colors duration-300 ${
+        isDoom ? 'bg-slate-950' : 'bg-slate-100'
+      }`}
+    >
+      {/* Sidebar links */}
+      <Sidebar />
 
-				{/* Register card */}
-				<div className={`w-full max-w-md mx-auto rounded-2xl mt-10 p-8 shadow-xl transition-colors duration-300 ${isDoom ? "bg-slate-800" : "bg-white"
-					}`}>
-					<h1 className={`text-4xl font-bold text-center mb-6 transition-colors duration-300 ${isDoom ? "text-white" : "text-slate-900"
-						}`}>
-						Register
-					</h1>
+      {/* Rechterkant met Header + content */}
+      <div className="flex flex-1 flex-col">
+        <Header />
 
-					<p className={`text-center mb-8 transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-600"
-						}`}>
-						Create your account to get started.
-					</p>
+        {/* Register card */}
+        <div
+          className={`w-full max-w-md mx-auto rounded-2xl mt-10 p-8 shadow-xl transition-colors duration-300 ${
+            isDoom ? 'bg-slate-800' : 'bg-white'
+          }`}
+        >
+          <h1
+            className={`text-4xl font-bold text-center mb-6 transition-colors duration-300 ${
+              isDoom ? 'text-white' : 'text-slate-900'
+            }`}
+          >
+            Register
+          </h1>
 
-					<form onSubmit={handleRegister} className="space-y-5">
-						{/* Username */}
-						<div>
-							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
-								}`}>
-								<HiOutlineUser className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
-									}`} size={20} />
-								<input
-									type="text"
-									placeholder="Username"
-									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
-										}`}
-									value={username}
-									onChange={(e) => setUsername(e.target.value)}
-									autoComplete="username"
-									minLength={3}
-									maxLength={30}
-								/>
-							</div>
-						</div>
+          <p
+            className={`text-center mb-8 transition-colors duration-300 ${
+              isDoom ? 'text-slate-400' : 'text-slate-600'
+            }`}
+          >
+            Create your account to get started.
+          </p>
 
-						{/* Email */}
-						<div>
-							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
-								}`}>
-								<HiOutlineEnvelope className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
-									}`} size={20} />
-								<input
-									type="email"
-									placeholder="Email"
-									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
-										}`}
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									autoComplete="email"
-								/>
-							</div>
-						</div>
+          <form onSubmit={handleRegister} noValidate className="space-y-5">
+            {/* Username */}
+            <div>
+              <div
+                className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
+                  isDoom ? 'bg-slate-700' : 'bg-slate-100'
+                }`}
+              >
+                <HiOutlineUser
+                  className={`transition-colors duration-300 ${
+                    isDoom ? 'text-slate-400' : 'text-slate-500'
+                  }`}
+                  size={20}
+                />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
+                    isDoom
+                      ? 'text-white placeholder-slate-500'
+                      : 'text-slate-900 placeholder-slate-500'
+                  }`}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="username"
+                  minLength={3}
+                  maxLength={30}
+                />
+              </div>
+            </div>
 
-						{/* Password */}
-						<div>
-							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
-								}`}>
-								<HiOutlineLockClosed className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
-									}`} size={20} />
-								<input
-									type="password"
-									placeholder="Password"
-									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
-										}`}
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									autoComplete="new-password"
-								/>
-							</div>
-						</div>
+            {/* Email */}
+            <div>
+              <div
+                className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
+                  isDoom ? 'bg-slate-700' : 'bg-slate-100'
+                }`}
+              >
+                <HiOutlineEnvelope
+                  className={`transition-colors duration-300 ${
+                    isDoom ? 'text-slate-400' : 'text-slate-500'
+                  }`}
+                  size={20}
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
+                    isDoom
+                      ? 'text-white placeholder-slate-500'
+                      : 'text-slate-900 placeholder-slate-500'
+                  }`}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                />
+              </div>
+            </div>
 
-						{/* Confirm Password */}
-						<div>
-							<div className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${isDoom ? "bg-slate-700" : "bg-slate-100"
-								}`}>
-								<HiOutlineLockClosed className={`transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-500"
-									}`} size={20} />
-								<input
-									type="password"
-									placeholder="Confirm Password"
-									className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${isDoom ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-500"
-										}`}
-									value={confirm}
-									onChange={(e) => setConfirm(e.target.value)}
-									autoComplete="new-password"
-								/>
-							</div>
-						</div>
+            {/* Password */}
+            <div>
+              <div
+                className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
+                  isDoom ? 'bg-slate-700' : 'bg-slate-100'
+                }`}
+              >
+                <HiOutlineLockClosed
+                  className={`transition-colors duration-300 ${
+                    isDoom ? 'text-slate-400' : 'text-slate-500'
+                  }`}
+                  size={20}
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
+                    isDoom
+                      ? 'text-white placeholder-slate-500'
+                      : 'text-slate-900 placeholder-slate-500'
+                  }`}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                />
+              </div>
+            </div>
 
-						{/* Register button */}
-						<Button
-							type="submit"
-							disabled={isSubmitting}
-							className={`w-full py-3 disabled:opacity-70 text-white font-semibold rounded-xl flex items-center justify-center transition ${isDoom ? "bg-red-600 hover:bg-red-500" : "bg-emerald-500 hover:bg-emerald-600"
-								}`}
-						>
-							{isSubmitting ? "Creating account..." : "Create Account"}
-						</Button>
-					</form>
+            {/* Confirm Password */}
+            <div>
+              <div
+                className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 ${
+                  isDoom ? 'bg-slate-700' : 'bg-slate-100'
+                }`}
+              >
+                <HiOutlineLockClosed
+                  className={`transition-colors duration-300 ${
+                    isDoom ? 'text-slate-400' : 'text-slate-500'
+                  }`}
+                  size={20}
+                />
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  className={`ml-3 flex-1 bg-transparent outline-none transition-colors duration-300 ${
+                    isDoom
+                      ? 'text-white placeholder-slate-500'
+                      : 'text-slate-900 placeholder-slate-500'
+                  }`}
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  autoComplete="new-password"
+                />
+              </div>
+            </div>
 
-					{/* Extra tekst */}
-					<div className={`mt-6 text-center transition-colors duration-300 ${isDoom ? "text-slate-400" : "text-slate-600"
-						}`}>
-						<span>Already have an account?</span>
-						<Button
-							onClick={() => router.push("/login")}
-							className={`font-semibold ml-1 ${isDoom ? "text-red-400" : "text-emerald-600"
-								}`}
-							variant="ghost"
-						>
-							Login
-						</Button>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+            {/* Register button */}
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full py-3 disabled:opacity-70 text-white font-semibold rounded-xl flex items-center justify-center transition ${
+                isDoom
+                  ? 'bg-red-600 hover:bg-red-500'
+                  : 'bg-emerald-500 hover:bg-emerald-600'
+              }`}
+            >
+              {isSubmitting ? 'Creating account...' : 'Create Account'}
+            </Button>
+          </form>
+
+          {/* Extra tekst */}
+          <div
+            className={`mt-6 text-center transition-colors duration-300 ${
+              isDoom ? 'text-slate-400' : 'text-slate-600'
+            }`}
+          >
+            <span>Already have an account?</span>
+            <Button
+              onClick={() => router.push('/login')}
+              className={`font-semibold ml-1 ${
+                isDoom ? 'text-red-400' : 'text-emerald-600'
+              }`}
+              variant="ghost"
+            >
+              Login
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -162,6 +162,7 @@ form table {
   width: 100%;
   border-spacing: 1rem;
   border-collapse: separate;
+
 }
 
 @media screen and (max-width: 768px) {

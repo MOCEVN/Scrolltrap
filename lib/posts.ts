@@ -9,7 +9,7 @@ export const createPost = async (userId: number, title: string, mediaUrl: string
     userId,
     title,
     mediaUrl,
-  }).$returningId();
+  }).returning();
 
   return Number(result);
 };

@@ -399,7 +399,7 @@ export default function ProfilePage() {
 										<tbody
 											className={`[&_td]:p-2 [&_input]:w-full [&_input]:rounded-md [&_input]:border [&_input]:px-3 [&_input]:py-2 [&_label]:block transition-colors duration-300 ${
 												isDoom
-													? "[&_input]:border-red-900/50 [&_input]:bg-slate-700 [&_input]:text-slate-100 [&_input]:placeholder-slate-500 [&_label]:text-slate-300"
+													? "[&_input]:border-red-900/50 [&_input]:bg-slate-700 [&_input]:text-slate-900 [&_input]:placeholder-slate-600 [&_label]:text-slate-300"
 													: "[&_input]:border-slate-300 [&_input]:bg-white [&_label]:text-slate-600"
 											}`}
 										>

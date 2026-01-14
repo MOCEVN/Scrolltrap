@@ -8,19 +8,14 @@ function getDatabaseUrl(): string {
   return url;
 }
 
-function shouldUseSsl(connectionString: string): boolean {
-  if (process.env.DATABASE_SSL === '1') return true;
-  if (process.env.NODE_ENV !== 'production') return false;
-  return !/localhost|127\.0\.0\.1/.test(connectionString);
-}
-
 function createPool() {
   const connectionString = getDatabaseUrl();
-  const ssl = shouldUseSsl(connectionString) ? { rejectUnauthorized: false } : undefined;
-
+  
   return new Pool({
     connectionString,
-    ssl,
+    ssl: process.env.NODE_ENV === 'production' 
+      ? { rejectUnauthorized: false }
+      : false,
     max: process.env.PG_POOL_MAX ? Number(process.env.PG_POOL_MAX) : 10,
   });
 }

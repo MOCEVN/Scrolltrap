@@ -1,27 +1,17 @@
-import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
-function getDatabaseUrl(): string {
-  const url = process.env.DATABASE_URL;
-  if (!url) throw new Error('Missing required env: DATABASE_URL');
-  return url;
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is missing");
 }
 
-function createPool() {
-  return new Pool({
-    connectionString: getDatabaseUrl(),
-    ssl: { rejectUnauthorized: false },
-    max: 10,
-  });
-}
+const pool = new Pool({
+  connectionString: databaseUrl,
+  ssl: { rejectUnauthorized: false }, 
+  max: 10,
+});
 
-export function getPool() {
-  if (!global.pgPool) global.pgPool = createPool();
-  return global.pgPool;
-}
-
-export function getDb() {
-  if (!global.drizzleDb) global.drizzleDb = drizzle(getPool());
-  return global.drizzleDb;
-}
+export const db = drizzle(pool);

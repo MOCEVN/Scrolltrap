@@ -34,3 +34,5 @@ export function getDb() {
   if (!global.drizzleDb) global.drizzleDb = drizzle(getPool());
   return global.drizzleDb;
 }
+
+export const db = getDb();
